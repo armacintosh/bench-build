@@ -1680,10 +1680,13 @@ def build_html_part1() -> str:
               Simplified 3D CAD Build Video (Tool • Wood • Action — Zero Technical Jargon)
             </strong>
           </div>
-          <div style="display:flex; gap:8px; align-items:center;">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
             <button id="btn-switch-video-mode" class="cad-btn render-toggle" onclick="switchVideoEdition()">
               📐 Switch to: Detailed Engineering Blueprint Video
             </button>
+            <a id="btn-youtube-link" href="https://youtu.be/gW_k-L_8o7U" target="_blank" rel="noopener" class="cad-btn active-mode" style="text-decoration:none; background:#dc2626; border-color:#ef4444;">
+              ▶️ Watch on YouTube (Unlisted)
+            </a>
             <a id="btn-download-video" href="modular_couch_beginner_video.mp4" download class="cad-btn secondary" style="text-decoration:none;">
               ⬇ Download Beginner MP4
             </a>
@@ -3181,16 +3184,19 @@ def build_html_part2() -> str:
         srcEl.src = file;
         vid.load();
       }}
+      const ytEl = document.getElementById('btn-youtube-link');
       if (isBeginnerVideoEdition) {{
         titleEl.textContent = 'Simplified 3D CAD Build Video (Tool • Wood • Action — Zero Technical Jargon)';
         btnEl.textContent = '📐 Switch to: Detailed Engineering Blueprint Video';
         dlEl.href = file;
         dlEl.textContent = '⬇ Download Beginner MP4';
+        if (ytEl) ytEl.href = 'https://youtu.be/gW_k-L_8o7U';
       }} else {{
         titleEl.textContent = 'Complete 7-Phase Workshop Video Walkthrough (3D CAD + Blueprints + Fastener HUD)';
         btnEl.textContent = '🌱 Switch to: Simplified Beginner 3D Video';
         dlEl.href = file;
         dlEl.textContent = '⬇ Download Detailed MP4';
+        if (ytEl) ytEl.href = 'https://youtu.be/40DqGxwdRx4';
       }}
     }}
 
