@@ -1,4 +1,7 @@
 .env
+.env.*
 .video_build/
+*token*.json
+*secret*.json
 __pycache__/
 .DS_Store
