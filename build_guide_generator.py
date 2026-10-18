@@ -1257,11 +1257,65 @@ def build_html_part1() -> str:
     }}
     #cad-canvas-container {{
       width: 100%;
-      height: 510px;
+      height: 540px;
       position: relative;
       cursor: grab;
     }}
     #cad-canvas-container:active {{ cursor: grabbing; }}
+    .cad-btn.render-toggle {{
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      border-color: #f59e0b;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+    }}
+    .cad-btn.render-toggle:hover {{
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }}
+    #cad-tooltip {{
+      position: absolute;
+      pointer-events: none;
+      display: none;
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.94);
+      color: #f8fafc;
+      border: 1px solid #f59e0b;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+      line-height: 1.42;
+      max-width: 310px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(6px);
+    }}
+    #cad-tooltip .tt-head {{
+      font-weight: 800;
+      font-size: 0.86rem;
+      color: #fde68a;
+      margin-bottom: 0.22rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }}
+    #cad-tooltip .tt-badge {{
+      background: #1d4ed8;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      padding: 0.08rem 0.38rem;
+      border-radius: 4px;
+    }}
+    #cad-tooltip .tt-row {{
+      color: #cbd5e1;
+      font-size: 0.76rem;
+    }}
+    #cad-tooltip .tt-dims {{
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      font-weight: 700;
+      font-size: 0.76rem;
+      margin-top: 0.18rem;
+    }}
     .cad-legend {{
       display: flex;
       flex-wrap: wrap;
@@ -1545,6 +1599,9 @@ def build_html_part1() -> str:
       <div class="cad-wrapper">
         <div class="cad-toolbar">
           <div class="cad-btn-group">
+            <button id="btn-render-style" class="cad-btn render-toggle" onclick="toggleRenderStyle()">
+              ✨ Switch to: Finished Wood &amp; Fabric Render
+            </button>
             <button id="btn-mode" class="cad-btn active-mode" onclick="toggleCouchMode()">
               🛋️ Mode: Couch Mode (Backrests In)
             </button>
@@ -1568,15 +1625,17 @@ def build_html_part1() -> str:
             <button class="cad-btn secondary" onclick="setCameraView('rear')">Rear Slots</button>
           </div>
         </div>
-        <div id="cad-canvas-container"></div>
-        <div class="cad-legend">
+        <div id="cad-canvas-container">
+          <div id="cad-tooltip"></div>
+        </div>
+        <div class="cad-legend" id="cad-legend-bar">
           <span><i class="legend-dot" style="background:#60a5fa;"></i>4x4 Notched Legs (5×) &amp; 3/8&quot; Feet</span>
           <span><i class="legend-dot" style="background:#fbbf24;"></i>Coplanar 2x4 Frame &amp; Laminated Beam</span>
           <span><i class="legend-dot" style="background:#f97316;"></i>3/4&quot; Birch Plywood Torsion Deck</span>
           <span><i class="legend-dot" style="background:#a78bfa;"></i>1x6 Stain-Grade Apron (+1&quot; Lip)</span>
           <span><i class="legend-dot" style="background:#fb923c;"></i>Drop-In 10° Backrests (2× 40&quot;)</span>
           <span><i class="legend-dot" style="background:#38bdf8;"></i>4&quot; Foam Cushion &amp; Pillows</span>
-          <span style="margin-left:auto;color:#94a3b8;">🖱️ Left-Drag: Orbit | Right-Drag: Pan | Scroll: Zoom</span>
+          <span style="margin-left:auto;color:#fde68a;">🔍 Hover any 3D part to inspect its ID &amp; dimensions!</span>
         </div>
       </div>
     </section>
@@ -2298,43 +2357,168 @@ def build_html_part2() -> str:
       }});
     }}
 
-    // 2. Parametric 3D Three.js CAD Model
+    // 2. Parametric 3D Three.js CAD & Realistic Render Engine + Hover Tooltips
     // Note on Three.js Coordinate Mapping from Engineering Spec (X, Y, Z):
     //   Engineering X (0..80" Left-to-Right) -> Three.js X (centered: X - 40.0)
     //   Engineering Z (0..38.71" Height)     -> Three.js Y (Z)
     //   Engineering Y (0..29.0" Front-to-Back)-> Three.js Z (centered: Y - 14.5)
-    let scene, camera, renderer, controls;
+    let scene, camera, renderer, controls, gridHelper, studioFloor;
     let isCouchMode = true;
     let showCushions = true;
     let showBaskets = true;
-    const explodeParts = []; // {{ mesh, basePos: THREE.Vector3, dir: THREE.Vector3 }}
+    let isRealisticRender = false;
+    let hoveredMesh = null;
+
+    const explodeParts = []; // {{ mesh, line, cadMat, realMat, basePos, dir, info }}
+    const pickableMeshes = [];
     const backrestGroup = [];
     const cushionGroup = [];
+    const backPillowGroup = [];
     const basketGroup = [];
+    let texLib = {{}};
 
-    function addParametricBox(w, d, h, x0, y0, z0, colorHex, exDir, groupList, opacity=1.0) {{
+    function createProceduralTextures() {{
+      // 1. Stain-Grade Warm Walnut / White Oak (for 1x6 Apron, 1x2 Caps, 4x4 Legs)
+      const cOak = document.createElement('canvas');
+      cOak.width = 512; cOak.height = 512;
+      const ctxOak = cOak.getContext('2d');
+      ctxOak.fillStyle = '#9a6338';
+      ctxOak.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 220; i++) {{
+        ctxOak.fillStyle = i % 2 === 0 ? 'rgba(68, 36, 14, 0.16)' : 'rgba(210, 155, 100, 0.12)';
+        const y = Math.random() * 512;
+        const h = 1 + Math.random() * 4;
+        ctxOak.fillRect(0, y, 512, h);
+      }}
+      const stainOak = new THREE.CanvasTexture(cOak);
+      stainOak.wrapS = stainOak.wrapT = THREE.RepeatWrapping;
+
+      // 2. Cabinet-Grade Natural Birch Plywood (for Seat Deck & Backrest Panels)
+      const cBirch = document.createElement('canvas');
+      cBirch.width = 512; cBirch.height = 512;
+      const ctxB = cBirch.getContext('2d');
+      ctxB.fillStyle = '#e6c79c';
+      ctxB.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 160; i++) {{
+        ctxB.fillStyle = i % 2 === 0 ? 'rgba(180, 135, 82, 0.12)' : 'rgba(255, 243, 219, 0.15)';
+        ctxB.fillRect(0, Math.random() * 512, 512, 1 + Math.random() * 3);
+      }}
+      const birchPly = new THREE.CanvasTexture(cBirch);
+
+      // 3. Kiln-Dried Douglas Fir / Framing Pine (for 2x4 Frame & 2x6 Uprights)
+      const cFir = document.createElement('canvas');
+      cFir.width = 512; cFir.height = 512;
+      const ctxF = cFir.getContext('2d');
+      ctxF.fillStyle = '#d4a36a';
+      ctxF.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 180; i++) {{
+        ctxF.fillStyle = 'rgba(145, 92, 38, 0.14)';
+        ctxF.fillRect(0, Math.random() * 512, 512, 1.5 + Math.random() * 3);
+      }}
+      const dougFir = new THREE.CanvasTexture(cFir);
+
+      // 4. Woven Performance Boucle / Linen Fabric (Deep Slate Navy for Seat Cushion & Pillows)
+      const cFab = document.createElement('canvas');
+      cFab.width = 256; cFab.height = 256;
+      const ctxFab = cFab.getContext('2d');
+      ctxFab.fillStyle = '#2b3d54';
+      ctxFab.fillRect(0, 0, 256, 256);
+      for (let y = 0; y < 256; y += 4) {{
+        for (let x = 0; x < 256; x += 4) {{
+          ctxFab.fillStyle = ((x + y) % 8 === 0) ? 'rgba(255,255,255,0.07)' : 'rgba(10,18,30,0.12)';
+          ctxFab.fillRect(x, y, 3, 3);
+        }}
+      }}
+      const boucleFabric = new THREE.CanvasTexture(cFab);
+      boucleFabric.wrapS = boucleFabric.wrapT = THREE.RepeatWrapping;
+      boucleFabric.repeat.set(6, 3);
+
+      // 5. Woven Seagrass / Jute Storage Basket Texture
+      const cBask = document.createElement('canvas');
+      cBask.width = 256; cBask.height = 256;
+      const ctxBk = cBask.getContext('2d');
+      ctxBk.fillStyle = '#b89466';
+      ctxBk.fillRect(0, 0, 256, 256);
+      for (let y = 0; y < 256; y += 8) {{
+        ctxBk.fillStyle = 'rgba(82, 56, 26, 0.22)';
+        ctxBk.fillRect(0, y, 256, 3);
+        for (let x = 0; x < 256; x += 12) {{
+          ctxBk.fillStyle = 'rgba(235, 206, 165, 0.2)';
+          ctxBk.fillRect(x + (y % 16 === 0 ? 0 : 6), y, 6, 6);
+        }}
+      }}
+      const seagrass = new THREE.CanvasTexture(cBask);
+      seagrass.wrapS = seagrass.wrapT = THREE.RepeatWrapping;
+      seagrass.repeat.set(3, 2);
+
+      return {{ stainOak, birchPly, dougFir, boucleFabric, seagrass }};
+    }}
+
+    function makeRealMaterial(finishType) {{
+      if (finishType === 'stain_oak') {{
+        return new THREE.MeshStandardMaterial({{ map: texLib.stainOak, roughness: 0.30, metalness: 0.06 }});
+      }} else if (finishType === 'birch_ply') {{
+        return new THREE.MeshStandardMaterial({{ map: texLib.birchPly, roughness: 0.36, metalness: 0.04 }});
+      }} else if (finishType === 'doug_fir') {{
+        return new THREE.MeshStandardMaterial({{ map: texLib.dougFir, roughness: 0.55, metalness: 0.02 }});
+      }} else if (finishType === 'cushion_fabric') {{
+        return new THREE.MeshStandardMaterial({{ map: texLib.boucleFabric, roughness: 0.88, metalness: 0.02 }});
+      }} else if (finishType === 'pillow_fabric') {{
+        return new THREE.MeshStandardMaterial({{ map: texLib.boucleFabric, color: 0xdbeafe, roughness: 0.90, metalness: 0.01 }});
+      }} else if (finishType === 'basket') {{
+        return new THREE.MeshStandardMaterial({{ map: texLib.seagrass, roughness: 0.85, metalness: 0.02 }});
+      }} else if (finishType === 'rubber') {{
+        return new THREE.MeshStandardMaterial({{ color: 0x18181b, roughness: 0.92, metalness: 0.05 }});
+      }} else if (finishType === 'roller') {{
+        return new THREE.MeshStandardMaterial({{ color: 0x52525b, roughness: 0.35, metalness: 0.75 }});
+      }}
+      return new THREE.MeshStandardMaterial({{ map: texLib.dougFir, roughness: 0.5 }});
+    }}
+
+    function addParametricBox(w, d, h, x0, y0, z0, colorHex, exDir, groupList, opacity=1.0, info=null) {{
       const geom = new THREE.BoxGeometry(w, h, d);
-      const mat = new THREE.MeshStandardMaterial({{
+      const cadMat = new THREE.MeshStandardMaterial({{
         color: colorHex,
         roughness: 0.55,
         metalness: 0.08,
         transparent: opacity < 1.0,
         opacity: opacity
       }});
-      const mesh = new THREE.Mesh(geom, mat);
+      const realMat = makeRealMaterial(info ? info.finish : 'doug_fir');
+
+      const mesh = new THREE.Mesh(geom, isRealisticRender ? realMat : cadMat);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+
       // Add crisp CAD wireframe edges
       const edges = new THREE.EdgesGeometry(geom);
-      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({{ color: 0x0f172a, transparent: true, opacity: 0.45 }}));
+      const line = new THREE.LineSegments(
+        edges,
+        new THREE.LineBasicMaterial({{ color: 0x0f172a, transparent: true, opacity: 0.45 }})
+      );
       mesh.add(line);
 
       const cx = (x0 + w / 2) - 40.0;
       const cy = z0 + h / 2;
       const cz = (y0 + d / 2) - 14.5;
       mesh.position.set(cx, cy, cz);
+
+      mesh.userData = info || {{
+        tag: 'PART',
+        name: 'Structural Component',
+        stock: 'Kiln-Dried Lumber',
+        dims: `${{w}}" × ${{d}}" × ${{h}}"`,
+        note: `Z = ${{z0}}"..${{(z0 + h).toFixed(2)}}"`
+      }};
+
       scene.add(mesh);
+      pickableMeshes.push(mesh);
 
       const item = {{
         mesh,
+        line,
+        cadMat,
+        realMat,
         basePos: new THREE.Vector3(cx, cy, cz),
         dir: exDir || new THREE.Vector3(0, 0, 0)
       }};
@@ -2346,7 +2530,9 @@ def build_html_part2() -> str:
     function initCAD() {{
       const container = document.getElementById('cad-canvas-container');
       const W = container.clientWidth || 960;
-      const H = container.clientHeight || 510;
+      const H = container.clientHeight || 540;
+
+      texLib = createProceduralTextures();
 
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0f172a);
@@ -2357,6 +2543,8 @@ def build_html_part2() -> str:
       renderer = new THREE.WebGLRenderer({{ antialias: true }});
       renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
       controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -2364,89 +2552,281 @@ def build_html_part2() -> str:
       controls.enableDamping = true;
       controls.dampingFactor = 0.08;
 
-      // Lighting
-      scene.add(new THREE.AmbientLight(0xffffff, 0.68));
-      const dir1 = new THREE.DirectionalLight(0xffffff, 0.75);
-      dir1.position.set(60, 100, -70);
+      // Studio Lighting with Soft Shadows
+      scene.add(new THREE.AmbientLight(0xffffff, 0.66));
+      const dir1 = new THREE.DirectionalLight(0xfffbeb, 0.82);
+      dir1.position.set(55, 95, -65);
+      dir1.castShadow = true;
+      dir1.shadow.mapSize.width = 2048;
+      dir1.shadow.mapSize.height = 2048;
+      dir1.shadow.camera.near = 10;
+      dir1.shadow.camera.far = 260;
+      const dCam = 65;
+      dir1.shadow.camera.left = -dCam;
+      dir1.shadow.camera.right = dCam;
+      dir1.shadow.camera.top = dCam;
+      dir1.shadow.camera.bottom = -dCam;
       scene.add(dir1);
+
       const dir2 = new THREE.DirectionalLight(0x93c5fd, 0.35);
       dir2.position.set(-60, 40, 80);
       scene.add(dir2);
 
-      // Floor Grid
-      const grid = new THREE.GridHelper(120, 24, 0x334155, 0x1e293b);
-      scene.add(grid);
+      // CAD Floor Grid (visible in CAD mode)
+      gridHelper = new THREE.GridHelper(130, 26, 0x334155, 0x1e293b);
+      scene.add(gridHelper);
+
+      // Studio Floor Plane (visible in Finished Render mode)
+      const floorGeom = new THREE.PlaneGeometry(240, 240);
+      const floorMat = new THREE.MeshStandardMaterial({{ color: 0xcbd5e1, roughness: 0.75, metalness: 0.05 }});
+      studioFloor = new THREE.Mesh(floorGeom, floorMat);
+      studioFloor.rotation.x = -Math.PI / 2;
+      studioFloor.position.y = -0.02;
+      studioFloor.receiveShadow = true;
+      studioFloor.visible = false;
+      scene.add(studioFloor);
 
       // --- 1. FIVE 4x4 NOTCHED LEGS (Z = 0.375..19.00) + FEET (Z = 0..0.375) ---
       const legDown = new THREE.Vector3(0, -10, 0);
-      // Front-Left & Front-Right Legs + 3/8" Rubber Pads
-      [[0.75, 0.75], [75.75, 0.75]].forEach(([lx, ly]) => {{
-        addParametricBox(3.5, 3.5, 0.375, lx, ly, 0.0, 0x1e293b, legDown); // Rubber Pad
-        addParametricBox(3.5, 3.5, 15.125, lx, ly, 0.375, 0x60a5fa, legDown); // Lower Leg body
-        addParametricBox(3.5, 2.0, 3.50, lx, ly + 1.5, 15.50, 0x60a5fa, legDown); // Post behind 1.5" notch
+      [
+        [0.75, 0.75, 'Leg_FL (Front-Left)'],
+        [75.75, 0.75, 'Leg_FR (Front-Right)']
+      ].forEach(([lx, ly, legLabel]) => {{
+        addParametricBox(3.5, 3.5, 0.375, lx, ly, 0.0, 0x1e293b, legDown, null, 1.0, {{
+          tag: 'HARDWARE', name: `3/8" Solid Rubber Grip Pad — ${{legLabel}}`,
+          stock: 'Heavy-Duty Vulcanized Rubber', dims: '3.50" × 3.50" × 0.375" (3/8")',
+          note: 'Z = 0.000"..0.375" — Locks front of bench against sliding when kids jump', finish: 'rubber'
+        }});
+        const legInfo = {{
+          tag: 'PART A', name: `Notched 4x4 Post — ${{legLabel}}`,
+          stock: '4x4 Kiln-Dried Post (3.5"×3.5")', dims: '3.50" × 3.50" × 18.625" (18-5/8")',
+          note: 'Z = 0.375"..19.000" — Top notched 1.50"×3.50" to carry Outer Front Rail', finish: 'stain_oak'
+        }};
+        addParametricBox(3.5, 3.5, 15.125, lx, ly, 0.375, 0x60a5fa, legDown, null, 1.0, legInfo);
+        addParametricBox(3.5, 2.0, 3.50, lx, ly + 1.5, 15.50, 0x60a5fa, legDown, null, 1.0, legInfo);
       }});
-      // Rear 3 Legs (BL, BC, BR) at Y = 21.75..25.25 + 3/8" Rollers
-      [[0.75, 21.75], [38.25, 21.75], [75.75, 21.75]].forEach(([lx, ly]) => {{
-        addParametricBox(2.2, 2.2, 0.375, lx + 0.65, ly + 0.65, 0.0, 0xdc2626, legDown); // Red Roller
-        addParametricBox(3.5, 3.5, 15.125, lx, ly, 0.375, 0x60a5fa, legDown);
-        addParametricBox(3.5, 2.0, 3.50, lx, ly, 15.50, 0x60a5fa, legDown); // Post in front of 1.5" rear notch
+
+      [
+        [0.75, 21.75, 'Leg_BL (Back-Left)'],
+        [38.25, 21.75, 'Leg_BC (5th Center-Back Leg, X=38.25..41.75")'],
+        [75.75, 21.75, 'Leg_BR (Back-Right)']
+      ].forEach(([lx, ly, legLabel]) => {{
+        addParametricBox(2.2, 2.2, 0.375, lx + 0.65, ly + 0.65, 0.0, 0xdc2626, legDown, null, 1.0, {{
+          tag: 'HARDWARE', name: `Recessed Mortise Roller — ${{legLabel}}`,
+          stock: 'Fixed-Axle Low-Profile Roller', dims: '0.375" (3/8") Wheel Protrusion',
+          note: 'Z = 0.000"..0.375" — Lift front apron 1" to roll couch like a wheelbarrow!', finish: 'roller'
+        }});
+        const rLegInfo = {{
+          tag: 'PART A', name: `Notched Rear 4x4 Post — ${{legLabel}}`,
+          stock: '4x4 Kiln-Dried Post (3.5"×3.5")', dims: '3.50" × 3.50" × 18.625" (18-5/8")',
+          note: 'Y = 21.75"..25.25", Z = 0.375"..19.00" — Rear half-lap notch carries Main Back Rail', finish: 'stain_oak'
+        }};
+        addParametricBox(3.5, 3.5, 15.125, lx, ly, 0.375, 0x60a5fa, legDown, null, 1.0, rLegInfo);
+        addParametricBox(3.5, 2.0, 3.50, lx, ly, 15.50, 0x60a5fa, legDown, null, 1.0, rLegInfo);
       }});
 
       // --- 2. COPLANAR 2x4 STRUCTURAL FRAME (Z = 15.50..19.00) ---
       const frameDir = new THREE.Vector3(0, 0, 0);
-      // Outer Front Rail (78.5") & Inner Laminated Front Beam (71.5")
-      addParametricBox(78.5, 1.5, 3.5, 0.75, 0.75, 15.50, 0xfbbf24, new THREE.Vector3(0, 0, -4));
-      addParametricBox(71.5, 1.5, 3.5, 4.25, 2.25, 15.50, 0xf59e0b, new THREE.Vector3(0, 0, -2));
-      // Left & Right Side Rails (19.5")
-      addParametricBox(1.5, 19.5, 3.5, 0.75, 4.25, 15.50, 0x34d399, new THREE.Vector3(-4, 0, 0));
-      addParametricBox(1.5, 19.5, 3.5, 77.75, 4.25, 15.50, 0x34d399, new THREE.Vector3(4, 0, 0));
-      // 5 Interior Cross-Joists at X = 16, 28, 40, 52, 64
-      [16, 28, 40, 52, 64].forEach(jx => {{
-        addParametricBox(1.5, 20.0, 3.5, jx - 0.75, 3.75, 15.50, 0xfde68a, frameDir);
+      addParametricBox(78.5, 1.5, 3.5, 0.75, 0.75, 15.50, 0xfbbf24, new THREE.Vector3(0, 0, -4), null, 1.0, {{
+        tag: 'PART B', name: 'Outer Front Structural Rail',
+        stock: '2x4 Select Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 78.50" (78-1/2")',
+        note: 'Y = 0.75"..2.25", Z = 15.50"..19.00" — Rests on 1.5"×3.5" front leg notches', finish: 'doug_fir'
       }});
-      // Main Back Rail (78.5") & Rear Pocket Backer Rail (78.5")
-      addParametricBox(78.5, 1.5, 3.5, 0.75, 23.75, 15.50, 0xfbbf24, new THREE.Vector3(0, 0, 2));
-      addParametricBox(78.5, 1.5, 3.5, 0.75, 26.75, 15.50, 0xfbbf24, new THREE.Vector3(0, 0, 6));
-      // 5 Rear Mortise Pocket Spacers in Y = 25.25..26.75
-      [[0.75, 5.25], [9.50, 21.00], [34.00, 12.00], [49.50, 21.00], [74.00, 5.25]].forEach(([sx, sw]) => {{
-        addParametricBox(sw, 1.5, 3.5, sx, 25.25, 15.50, 0xf87171, new THREE.Vector3(0, 0, 4));
-        // 1x2 Spacer Cap Strip [Part M] at Z = 19.00..19.75
-        addParametricBox(sw, 1.5, 0.75, sx, 25.25, 19.00, 0xc4b5fd, new THREE.Vector3(0, 6, 4));
+      addParametricBox(71.5, 1.5, 3.5, 4.25, 2.25, 15.50, 0xf59e0b, new THREE.Vector3(0, 0, -2), null, 1.0, {{
+        tag: 'PART C', name: 'Inner Laminated Front Beam',
+        stock: '2x4 Select Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 71.50" (71-1/2")',
+        note: 'X = 4.25"..75.75", Y = 2.25"..3.75" — Face-glued & lagged to Outer Front Rail', finish: 'doug_fir'
       }});
-      // 1x2 Rear Pocket Cap Strip [Part J] at Z = 19.00..19.75
-      addParametricBox(78.5, 1.5, 0.75, 0.75, 26.75, 19.00, 0xc4b5fd, new THREE.Vector3(0, 6, 6));
+      addParametricBox(1.5, 19.5, 3.5, 0.75, 4.25, 15.50, 0x34d399, new THREE.Vector3(-4, 0, 0), null, 1.0, {{
+        tag: 'PART D', name: 'Left Side Frame Rail',
+        stock: '2x4 Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 19.50" (19-1/2")',
+        note: 'X = 0.75"..2.25", Y = 4.25"..23.75", Z = 15.50"..19.00"', finish: 'doug_fir'
+      }});
+      addParametricBox(1.5, 19.5, 3.5, 77.75, 4.25, 15.50, 0x34d399, new THREE.Vector3(4, 0, 0), null, 1.0, {{
+        tag: 'PART D', name: 'Right Side Frame Rail',
+        stock: '2x4 Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 19.50" (19-1/2")',
+        note: 'X = 77.75"..79.25", Y = 4.25"..23.75", Z = 15.50"..19.00"', finish: 'doug_fir'
+      }});
+      [16, 28, 40, 52, 64].forEach((jx, idx) => {{
+        addParametricBox(1.5, 20.0, 3.5, jx - 0.75, 3.75, 15.50, 0xfde68a, frameDir, null, 1.0, {{
+          tag: 'PART E', name: `Interior Cross-Joist #${{idx + 1}} (X = ${{jx}}.00")`,
+          stock: '2x4 Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 20.00"',
+          note: `Centered at X = ${{jx}}.00", Y = 3.75"..23.75", Z = 15.50"..19.00" (Coplanar)`, finish: 'doug_fir'
+        }});
+      }});
+      addParametricBox(78.5, 1.5, 3.5, 0.75, 23.75, 15.50, 0xfbbf24, new THREE.Vector3(0, 0, 2), null, 1.0, {{
+        tag: 'PART B', name: 'Main Structural Back Rail',
+        stock: '2x4 Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 78.50" (78-1/2")',
+        note: 'Y = 23.75"..25.25", Z = 15.50"..19.00" — Seated in 3 Rear Leg Half-Lap Notches', finish: 'doug_fir'
+      }});
+      addParametricBox(78.5, 1.5, 3.5, 0.75, 26.75, 15.50, 0xfbbf24, new THREE.Vector3(0, 0, 6), null, 1.0, {{
+        tag: 'PART B', name: 'Rear Mortise Pocket Backer Rail',
+        stock: '2x4 Stud (1.50"×3.50")', dims: '1.50" × 3.50" × 78.50" (78-1/2")',
+        note: 'Y = 26.75"..28.25", Z = 15.50"..19.00" — Closes the 4 captive backrest mortise slots', finish: 'doug_fir'
+      }});
+      [
+        [0.75, 5.25, 'Left End Spacer #1'],
+        [9.50, 21.00, 'Left-Mid Spacer #2 (Between Slots 1 & 2)'],
+        [34.00, 12.00, 'Center Spacer #3 (Between Slots 2 & 3)'],
+        [49.50, 21.00, 'Right-Mid Spacer #4 (Between Slots 3 & 4)'],
+        [74.00, 5.25, 'Right End Spacer #5']
+      ].forEach(([sx, sw, sName]) => {{
+        addParametricBox(sw, 1.5, 3.5, sx, 25.25, 15.50, 0xf87171, new THREE.Vector3(0, 0, 4), null, 1.0, {{
+          tag: 'PART F', name: `Rear Mortise Pocket Block — ${{sName}}`,
+          stock: '2x4 Stud (1.50"×3.50")', dims: `1.50" × 3.50" × ${{sw.toFixed(2)}}"`,
+          note: `X = ${{sx}}"..${{(sx + sw).toFixed(2)}}", Y = 25.25"..26.75", Z = 15.50"..19.00"`, finish: 'doug_fir'
+        }});
+        addParametricBox(sw, 1.5, 0.75, sx, 25.25, 19.00, 0xc4b5fd, new THREE.Vector3(0, 6, 4), null, 1.0, {{
+          tag: 'PART M', name: `1x2 Mortise Spacer Cap — ${{sName}}`,
+          stock: 'Stain-Grade 1x2 Trim (0.75"×1.50")', dims: `0.75" × 1.50" × ${{sw.toFixed(2)}}"`,
+          note: 'Z = 19.00"..19.75" — Caps spacer block flush with 3/4" Birch Plywood deck', finish: 'stain_oak'
+        }});
+      }});
+      addParametricBox(78.5, 1.5, 0.75, 0.75, 26.75, 19.00, 0xc4b5fd, new THREE.Vector3(0, 6, 6), null, 1.0, {{
+        tag: 'PART J', name: 'Rear Pocket Backer Cap Strip',
+        stock: 'Stain-Grade 1x2 Trim (0.75"×1.50")', dims: '0.75" × 1.50" × 78.50" (78-1/2")',
+        note: 'Y = 26.75"..28.25", Z = 19.00"..19.75" — Frames rear of the 4 drop-in slots', finish: 'stain_oak'
+      }});
 
       // --- 3. 3/4" BIRCH PLYWOOD SEAT DECK (Z = 19.00..19.75) ---
-      addParametricBox(78.5, 23.75, 0.75, 0.75, 0.75, 19.00, 0xd97706, new THREE.Vector3(0, 8, 0));
+      addParametricBox(78.5, 23.75, 0.75, 0.75, 0.75, 19.00, 0xd97706, new THREE.Vector3(0, 8, 0), null, 1.0, {{
+        tag: 'PART G', name: 'Recessed Torsion-Box Seat Deck',
+        stock: '3/4" Cabinet-Grade Birch Plywood', dims: '78.50" L × 23.75" D × 0.75" Thick',
+        note: 'Z = 19.00"..19.75" — Glued & screwed atop 2x4 frame; 1.00" below 1x6 apron lip', finish: 'birch_ply'
+      }});
 
       // --- 4. OUTER 1x6 STAIN-GRADE APRON TRIM (Z = 15.25..20.75) ---
-      addParametricBox(80.0, 0.75, 5.50, 0.0, 0.0, 15.25, 0xa78bfa, new THREE.Vector3(0, 2, -12)); // Front
-      addParametricBox(80.0, 0.75, 5.50, 0.0, 28.25, 15.25, 0xa78bfa, new THREE.Vector3(0, 2, 12)); // Rear
-      addParametricBox(0.75, 27.5, 5.50, 0.0, 0.75, 15.25, 0x8b5cf6, new THREE.Vector3(-12, 2, 0)); // Left
-      addParametricBox(0.75, 27.5, 5.50, 79.25, 0.75, 15.25, 0x8b5cf6, new THREE.Vector3(12, 2, 0)); // Right
+      addParametricBox(80.0, 0.75, 5.50, 0.0, 0.0, 15.25, 0xa78bfa, new THREE.Vector3(0, 2, -12), null, 1.0, {{
+        tag: 'PART H', name: 'Front Stain-Grade Outer Apron Trim',
+        stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 80.00" (45° Mitered Ends)',
+        note: 'Z = 15.25"..20.75" — Blind-screwed from inside; forms +1.00" cushion lip!', finish: 'stain_oak'
+      }});
+      addParametricBox(80.0, 0.75, 5.50, 0.0, 28.25, 15.25, 0xa78bfa, new THREE.Vector3(0, 2, 12), null, 1.0, {{
+        tag: 'PART H', name: 'Rear Stain-Grade Outer Apron Trim',
+        stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 80.00" (45° Mitered Ends)',
+        note: 'Y = 28.25"..29.00", Z = 15.25"..20.75" — Blind-screwed from inside', finish: 'stain_oak'
+      }});
+      addParametricBox(0.75, 27.5, 5.50, 0.0, 0.75, 15.25, 0x8b5cf6, new THREE.Vector3(-12, 2, 0), null, 1.0, {{
+        tag: 'PART I', name: 'Left Side Stain-Grade Outer Apron',
+        stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 29.00" (45° Mitered Ends)',
+        note: 'X = 0.00"..0.75", Z = 15.25"..20.75" — Projects +1.00" above plywood deck', finish: 'stain_oak'
+      }});
+      addParametricBox(0.75, 27.5, 5.50, 79.25, 0.75, 15.25, 0x8b5cf6, new THREE.Vector3(12, 2, 0), null, 1.0, {{
+        tag: 'PART I', name: 'Right Side Stain-Grade Outer Apron',
+        stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 29.00" (45° Mitered Ends)',
+        note: 'X = 79.25"..80.00", Z = 15.25"..20.75" — Projects +1.00" above plywood deck', finish: 'stain_oak'
+      }});
 
       // --- 5. TWO 40" MODULAR DROP-IN 10° SLANTED BACKRESTS ---
       const backDir = new THREE.Vector3(0, 18, 4);
-      // 4 Uprights in Slots 1..4: X = [6.0, 30.5, 46.0, 70.5]
-      [6.05, 30.55, 46.05, 70.55].forEach(ux => {{
-        // Straight bottom tenon in slot (Z = 15.50..19.75)
-        addParametricBox(3.4, 1.4, 4.25, ux, 25.3, 15.50, 0xfb923c, backDir, backrestGroup);
-        // Canted upper spine (Z = 19.75..38.50)
-        const spine = addParametricBox(3.4, 2.2, 19.0, ux, 26.6, 19.75, 0xf97316, backDir, backrestGroup);
+      [
+        [6.05, 'Slot #1 (X = 6.00..9.50", Left-Outer)'],
+        [30.55, 'Slot #2 (X = 30.50..34.00", Left-Inner)'],
+        [46.05, 'Slot #3 (X = 46.00..49.50", Right-Inner)'],
+        [70.55, 'Slot #4 (X = 70.50..74.00", Right-Outer)']
+      ].forEach(([ux, sDesc], idx) => {{
+        const upInfo = {{
+          tag: 'PART K', name: `10° Angled Backrest Upright #${{idx + 1}} — ${{sDesc}}`,
+          stock: 'Cut from 2x6 × 8 ft Board (1.50"×5.50")', dims: '23.50" Total L (4.25" Tenon + 19.25" 10° Spine)',
+          note: 'Drops vertically into 3.5"×1.5" captive slot; waxed with paraffin for 1-hand lift', finish: 'stain_oak'
+        }};
+        addParametricBox(3.4, 1.4, 4.25, ux, 25.3, 15.50, 0xfb923c, backDir, backrestGroup, 1.0, upInfo);
+        const spine = addParametricBox(3.4, 2.2, 19.0, ux, 26.6, 19.75, 0xf97316, backDir, backrestGroup, 1.0, upInfo);
         spine.rotation.x = THREE.MathUtils.degToRad(10.0);
       }});
-      // Two 39.25" x 15.00" x 0.75" Birch Backrest Panels (Left & Right)
-      const pL = addParametricBox(39.25, 0.75, 15.0, 0.6, 26.4, 23.25, 0xfdba74, backDir, backrestGroup);
+      const pL = addParametricBox(39.25, 0.75, 15.0, 0.6, 26.4, 23.25, 0xfdba74, backDir, backrestGroup, 1.0, {{
+        tag: 'PART L', name: 'Left Modular Backrest Face Panel (#1 of 2)',
+        stock: '3/4" Cabinet-Grade Birch Plywood', dims: '39.25" W × 15.00" H × 0.75" Thick',
+        note: 'Z = 23.25"..38.25" (Starts 3.50" above deck so 4" seat cushion tucks underneath)', finish: 'birch_ply'
+      }});
       pL.rotation.x = THREE.MathUtils.degToRad(10.0);
-      const pR = addParametricBox(39.25, 0.75, 15.0, 40.15, 26.4, 23.25, 0xfdba74, backDir, backrestGroup);
+      const pR = addParametricBox(39.25, 0.75, 15.0, 40.15, 26.4, 23.25, 0xfdba74, backDir, backrestGroup, 1.0, {{
+        tag: 'PART L', name: 'Right Modular Backrest Face Panel (#2 of 2)',
+        stock: '3/4" Cabinet-Grade Birch Plywood', dims: '39.25" W × 15.00" H × 0.75" Thick',
+        note: 'Lifts straight out in 3 seconds to convert couch into flat play/coffee table!', finish: 'birch_ply'
+      }});
       pR.rotation.x = THREE.MathUtils.degToRad(10.0);
 
-      // --- 6. SEAT CUSHION (78.0" x 23.5" x 4.0") & BACK PILLOWS ---
-      addParametricBox(78.0, 23.5, 4.0, 1.0, 0.85, 19.75, 0x38bdf8, new THREE.Vector3(0, 14, -3), cushionGroup, 0.85);
+      // --- 6. SEAT CUSHION (78.0" x 23.5" x 4.0") & BACKREST PILLOWS ---
+      addParametricBox(78.0, 23.5, 4.0, 1.0, 0.85, 19.75, 0x38bdf8, new THREE.Vector3(0, 14, -3), cushionGroup, 0.85, {{
+        tag: 'CUSHION', name: 'Recessed High-Density Foam Bench Cushion',
+        stock: '4.0" Foam (ILD 35–45) + Washable Performance Cover', dims: '78.00" L × 23.50" D × 4.00" Thick',
+        note: 'Z = 19.75"..23.75" — Locked inside the 1.00" sunken 1x6 perimeter tray without Velcro!', finish: 'cushion_fabric'
+      }});
+      // Two 39.0" Wide Angled Backrest Bolster Pillows (shown in Finished Render mode)
+      const pilL = addParametricBox(38.8, 3.6, 14.5, 0.9, 22.8, 23.8, 0x7dd3fc, new THREE.Vector3(0, 16, -2), backPillowGroup, 0.82, {{
+        tag: 'PILLOW #1', name: 'Left Modular Backrest Bolster Pillow',
+        stock: 'Medium-Firm Foam / Dacron Fill (ILD 28–32)', dims: '39.00" W × 16.00" H × 4.00" Thick',
+        note: 'Rests at 10° against Left Backrest Panel [Part L]', finish: 'pillow_fabric'
+      }});
+      pilL.rotation.x = THREE.MathUtils.degToRad(10.0);
+      pilL.visible = false; // toggled on in Realistic Render mode!
+      const pilR = addParametricBox(38.8, 3.6, 14.5, 40.3, 22.8, 23.8, 0x7dd3fc, new THREE.Vector3(0, 16, -2), backPillowGroup, 0.82, {{
+        tag: 'PILLOW #2', name: 'Right Modular Backrest Bolster Pillow',
+        stock: 'Medium-Firm Foam / Dacron Fill (ILD 28–32)', dims: '39.00" W × 16.00" H × 4.00" Thick',
+        note: 'Rests at 10° against Right Backrest Panel [Part L]', finish: 'pillow_fabric'
+      }});
+      pilR.rotation.x = THREE.MathUtils.degToRad(10.0);
+      pilR.visible = false;
+
       // 4 Under-Bench Storage Baskets inside the 71.50" x 15.50" clear bay
       for (let i = 0; i < 4; i++) {{
-        addParametricBox(15.5, 18.0, 12.5, 6.5 + i * 17.5, 2.5, 0.2, 0x475569, new THREE.Vector3(0, 0, -14), basketGroup, 0.55);
+        addParametricBox(15.5, 18.0, 12.5, 6.5 + i * 17.5, 2.5, 0.2, 0x475569, new THREE.Vector3(0, 0, -14), basketGroup, 0.55, {{
+          tag: `BASKET #${{i + 1}}`, name: `Under-Bench Playroom Storage Basket #${{i + 1}}`,
+          stock: 'Woven Seagrass / Felt Toy Bin', dims: '15.50" W × 18.00" D × 12.50" H',
+          note: 'Slides smoothly inside the 71.50" W × 15.50" H unobstructed front bay!', finish: 'basket'
+        }});
       }}
+
+      // --- 7. INTERACTIVE RAYCASTER HOVER TOOLTIP ---
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      const tooltip = document.getElementById('cad-tooltip');
+
+      container.addEventListener('mousemove', (ev) => {{
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const visibleMeshes = pickableMeshes.filter(m => m.visible);
+        const hits = raycaster.intersectObjects(visibleMeshes, false);
+
+        if (hoveredMesh && hoveredMesh.material && hoveredMesh.material.emissive) {{
+          hoveredMesh.material.emissive.setHex(0x000000);
+        }}
+
+        if (hits.length > 0) {{
+          const hitMesh = hits[0].object;
+          hoveredMesh = hitMesh;
+          if (hitMesh.material && hitMesh.material.emissive) {{
+            hitMesh.material.emissive.setHex(0x3b2806);
+          }}
+          const d = hitMesh.userData;
+          tooltip.innerHTML = `
+            <div class="tt-head"><span class="tt-badge">${{d.tag}}</span> ${{d.name}}</div>
+            <div class="tt-row"><strong>Material:</strong> ${{d.stock}}</div>
+            <div class="tt-dims">📏 ${{d.dims}}</div>
+            <div class="tt-row" style="margin-top:2px;color:#94a3b8;">${{d.note}}</div>
+          `;
+          tooltip.style.display = 'block';
+          const tx = Math.min(ev.clientX - rect.left + 16, rect.width - 320);
+          const ty = Math.max(ev.clientY - rect.top - 10, 10);
+          tooltip.style.left = Math.max(10, tx) + 'px';
+          tooltip.style.top = ty + 'px';
+        }} else {{
+          hoveredMesh = null;
+          tooltip.style.display = 'none';
+        }}
+      }});
+
+      container.addEventListener('mouseleave', () => {{
+        if (hoveredMesh && hoveredMesh.material && hoveredMesh.material.emissive) {{
+          hoveredMesh.material.emissive.setHex(0x000000);
+        }}
+        hoveredMesh = null;
+        tooltip.style.display = 'none';
+      }});
 
       window.addEventListener('resize', () => {{
         const nw = container.clientWidth;
@@ -2461,6 +2841,36 @@ def build_html_part2() -> str:
         controls.update();
         renderer.render(scene, camera);
       }})();
+    }}
+
+    function syncBackPillows() {{
+      const showPillows = isRealisticRender && isCouchMode && showCushions;
+      backPillowGroup.forEach(m => {{ m.visible = showPillows; }});
+    }}
+
+    function toggleRenderStyle() {{
+      isRealisticRender = !isRealisticRender;
+      const btn = document.getElementById('btn-render-style');
+      if (isRealisticRender) {{
+        scene.background = new THREE.Color(0xdbe4ef);
+        gridHelper.visible = false;
+        studioFloor.visible = true;
+        explodeParts.forEach(item => {{
+          item.mesh.material = item.realMat;
+          item.line.visible = false;
+        }});
+        btn.textContent = '📐 Switch to: Engineering CAD View';
+      }} else {{
+        scene.background = new THREE.Color(0x0f172a);
+        gridHelper.visible = true;
+        studioFloor.visible = false;
+        explodeParts.forEach(item => {{
+          item.mesh.material = item.cadMat;
+          item.line.visible = true;
+        }});
+        btn.textContent = '✨ Switch to: Finished Wood & Fabric Render';
+      }}
+      syncBackPillows();
     }}
 
     function updateExplode(val) {{
@@ -2479,6 +2889,7 @@ def build_html_part2() -> str:
       isCouchMode = !isCouchMode;
       const btn = document.getElementById('btn-mode');
       backrestGroup.forEach(m => {{ m.visible = isCouchMode; }});
+      syncBackPillows();
       if (isCouchMode) {{
         btn.textContent = '🛋️ Mode: Couch Mode (Backrests In)';
         btn.classList.add('active-mode');
@@ -2492,6 +2903,7 @@ def build_html_part2() -> str:
       showCushions = !showCushions;
       const btn = document.getElementById('btn-cushion');
       cushionGroup.forEach(m => {{ m.visible = showCushions; }});
+      syncBackPillows();
       btn.textContent = showCushions ? '🟦 Cushions: Visible' : '🟦 Cushions: Hidden (Inspect Deck)';
     }}
 
