@@ -1486,6 +1486,7 @@ def build_html_part1() -> str:
     <div class="container nav-inner">
       <div class="nav-links">
         <a href="#sec-1">1. Overview &amp; 3D CAD</a>
+        <a href="#video-walkthrough">🎬 Video Walkthrough</a>
         <a href="#sec-2">2. Tool Checklist</a>
         <a href="#sec-3">3. Shopping List</a>
         <a href="#sec-4">4. Cut List &amp; Maps</a>
@@ -1493,7 +1494,10 @@ def build_html_part1() -> str:
         <a href="#sec-6">6. Step-by-Step Build</a>
         <a href="#sec-7">7. Engineering Audit</a>
       </div>
-      <button class="btn-print" onclick="window.print()">🖨️ Print Workshop Guide (Cmd/Ctrl+P)</button>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a href="https://github.com/armacintosh/bench-build" target="_blank" rel="noopener" class="cad-btn secondary" style="text-decoration:none; padding:0.42rem 0.75rem; font-size:0.78rem;">💻 GitHub Repo</a>
+        <button class="btn-print" onclick="window.print()">🖨️ Print Workshop Guide</button>
+      </div>
     </div>
   </nav>
 
@@ -1670,10 +1674,10 @@ def build_html_part1() -> str:
       </div>
 
       <!-- EMBEDDED 1080p NARRATED INSTRUCTIONAL VIDEO WALKTHROUGH -->
-      <div class="cad-wrapper no-print" style="margin-top:1.5rem; background:#090d16; border:2px solid #1e293b;">
+      <div id="video-walkthrough" class="cad-wrapper no-print" style="margin-top:1.5rem; background:#090d16; border:2px solid #1e293b;">
         <div class="cad-toolbar" style="background:#0f172a; justify-content:space-between; flex-wrap:wrap; gap:8px;">
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span style="background:linear-gradient(135deg,#10b981,#059669); color:#052e16; font-weight:900; font-size:0.75rem; padding:4px 10px; border-radius:6px; letter-spacing:0.05em;">
+            <span id="video-edition-badge" style="background:linear-gradient(135deg,#10b981,#059669); color:#052e16; font-weight:900; font-size:0.75rem; padding:4px 10px; border-radius:6px; letter-spacing:0.05em;">
               🌱 BEGINNER DIY 3D WALKTHROUGH
             </span>
             <strong id="video-player-title" style="color:#f8fafc; font-size:0.96rem;">
@@ -1684,19 +1688,25 @@ def build_html_part1() -> str:
             <button id="btn-switch-video-mode" class="cad-btn render-toggle" onclick="switchVideoEdition()">
               📐 Switch to: Detailed Engineering Blueprint Video
             </button>
+            <button id="btn-toggle-yt-embed" class="cad-btn secondary" onclick="toggleYouTubeEmbed()">
+              📺 Switch Player: YouTube Embed
+            </button>
             <a id="btn-youtube-link" href="https://youtu.be/gW_k-L_8o7U" target="_blank" rel="noopener" class="cad-btn active-mode" style="text-decoration:none; background:#dc2626; border-color:#ef4444;">
-              ▶️ Watch on YouTube (Unlisted)
+              ▶️ Open on YouTube
             </a>
-            <a id="btn-download-video" href="modular_couch_beginner_video.mp4" download class="cad-btn secondary" style="text-decoration:none;">
-              ⬇ Download Beginner MP4
+            <a id="btn-download-video" href="videos/modular_couch_beginner_video.mp4" download class="cad-btn secondary" style="text-decoration:none;">
+              ⬇ Download MP4
             </a>
           </div>
         </div>
         <div style="padding:12px 16px; background:#070b14;">
           <video id="instructional-video" controls preload="metadata" style="width:100%; max-height:580px; border-radius:10px; border:1px solid #334155; background:#000;">
-            <source id="video-source-el" src="modular_couch_beginner_video.mp4" type="video/mp4" />
+            <source id="video-source-el" src="videos/modular_couch_beginner_video.mp4" type="video/mp4" />
             Your browser does not support the HTML5 video tag.
           </video>
+          <div id="youtube-embed-wrapper" style="display:none; position:relative; width:100%; padding-bottom:56.25%; border-radius:10px; overflow:hidden; border:1px solid #334155; background:#000;">
+            <iframe id="youtube-iframe" src="" title="Modular Couch Build Walkthrough" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
         </div>
         <div class="cad-toolbar" style="background:#0f172a; border-top:1px solid #1e293b; gap:6px; flex-wrap:wrap;">
           <span style="color:#94a3b8; font-size:0.76rem; font-weight:700; margin-right:4px;">Jump to Step (&amp; Sync 3D):</span>
@@ -3171,40 +3181,88 @@ def build_html_part2() -> str:
     }}
 
     let isBeginnerVideoEdition = true;
+    let isYouTubeEmbedActive = false;
+
+    function getYouTubeEmbedUrl(startSec = 0) {{
+      const vidId = isBeginnerVideoEdition ? 'gW_k-L_8o7U' : '40DqGxwdRx4';
+      const s = Math.floor(startSec || 0);
+      return `https://www.youtube.com/embed/${{vidId}}?rel=0&modestbranding=1${{s > 0 ? '&start=' + s + '&autoplay=1' : ''}}`;
+    }}
+
+    function toggleYouTubeEmbed() {{
+      isYouTubeEmbedActive = !isYouTubeEmbedActive;
+      const vid = document.getElementById('instructional-video');
+      const ytWrap = document.getElementById('youtube-embed-wrapper');
+      const ytIframe = document.getElementById('youtube-iframe');
+      const toggleBtn = document.getElementById('btn-toggle-yt-embed');
+      if (isYouTubeEmbedActive) {{
+        if (vid) {{
+          vid.pause();
+          vid.style.display = 'none';
+        }}
+        if (ytWrap && ytIframe) {{
+          ytIframe.src = getYouTubeEmbedUrl(vid ? vid.currentTime : 0);
+          ytWrap.style.display = 'block';
+        }}
+        if (toggleBtn) toggleBtn.textContent = '🎞️ Switch Player: Built-in MP4';
+      }} else {{
+        if (ytWrap && ytIframe) {{
+          ytIframe.src = '';
+          ytWrap.style.display = 'none';
+        }}
+        if (vid) vid.style.display = 'block';
+        if (toggleBtn) toggleBtn.textContent = '📺 Switch Player: YouTube Embed';
+      }}
+    }}
 
     function switchVideoEdition() {{
       isBeginnerVideoEdition = !isBeginnerVideoEdition;
       const vid = document.getElementById('instructional-video');
       const srcEl = document.getElementById('video-source-el');
       const titleEl = document.getElementById('video-player-title');
+      const badgeEl = document.getElementById('video-edition-badge');
       const btnEl = document.getElementById('btn-switch-video-mode');
       const dlEl = document.getElementById('btn-download-video');
-      const file = isBeginnerVideoEdition ? 'modular_couch_beginner_video.mp4' : 'modular_couch_instructional_video.mp4';
+      const ytIframe = document.getElementById('youtube-iframe');
+      const file = isBeginnerVideoEdition
+        ? 'videos/modular_couch_beginner_video.mp4'
+        : 'videos/modular_couch_instructional_video.mp4';
       if (srcEl && vid) {{
         srcEl.src = file;
         vid.load();
       }}
+      if (isYouTubeEmbedActive && ytIframe) {{
+        ytIframe.src = getYouTubeEmbedUrl(0);
+      }}
       const ytEl = document.getElementById('btn-youtube-link');
       if (isBeginnerVideoEdition) {{
+        if (badgeEl) badgeEl.textContent = '🌱 BEGINNER DIY 3D WALKTHROUGH';
         titleEl.textContent = 'Simplified 3D CAD Build Video (Tool • Wood • Action — Zero Technical Jargon)';
         btnEl.textContent = '📐 Switch to: Detailed Engineering Blueprint Video';
         dlEl.href = file;
-        dlEl.textContent = '⬇ Download Beginner MP4';
+        dlEl.textContent = '⬇ Download MP4';
         if (ytEl) ytEl.href = 'https://youtu.be/gW_k-L_8o7U';
       }} else {{
+        if (badgeEl) badgeEl.textContent = '📐 DETAILED CAD & BLUEPRINT WALKTHROUGH';
         titleEl.textContent = 'Complete 7-Phase Workshop Video Walkthrough (3D CAD + Blueprints + Fastener HUD)';
         btnEl.textContent = '🌱 Switch to: Simplified Beginner 3D Video';
         dlEl.href = file;
-        dlEl.textContent = '⬇ Download Detailed MP4';
+        dlEl.textContent = '⬇ Download MP4';
         if (ytEl) ytEl.href = 'https://youtu.be/40DqGxwdRx4';
       }}
     }}
 
     function seekVideoChapter(begSec, detSec, phaseNum) {{
-      const vid = document.getElementById('instructional-video');
-      if (vid) {{
-        vid.currentTime = isBeginnerVideoEdition ? begSec : detSec;
-        vid.play().catch(() => {{}});
+      const targetSec = isBeginnerVideoEdition ? begSec : detSec;
+      if (isYouTubeEmbedActive) {{
+        const ytIframe = document.getElementById('youtube-iframe');
+        if (ytIframe) ytIframe.src = getYouTubeEmbedUrl(targetSec);
+      }} else {{
+        const vid = document.getElementById('instructional-video');
+        if (vid) {{
+          vid.currentTime = targetSec;
+          vid.play().catch(() => {{}});
+        }}
       }}
       setBuildPhase(phaseNum);
     }}
@@ -3217,11 +3275,15 @@ def build_html_part2() -> str:
 
 
 def main():
-    out_path = Path(__file__).resolve().parent / "modular_couch_build_guide.html"
+    script_dir = Path(__file__).resolve().parent
+    repo_root = script_dir.parent if script_dir.name == "scripts" else script_dir
     full_html = build_html_part1() + build_html_part2()
-    out_path.write_text(full_html, encoding="utf-8")
-    print(f"[OK] Generated {out_path} ({len(full_html):,} bytes)")
+    for fname in ("modular_couch_build_guide.html", "index.html"):
+        out_path = repo_root / fname
+        out_path.write_text(full_html, encoding="utf-8")
+        print(f"[OK] Generated {out_path} ({len(full_html):,} bytes)")
 
 
 if __name__ == "__main__":
     main()
+

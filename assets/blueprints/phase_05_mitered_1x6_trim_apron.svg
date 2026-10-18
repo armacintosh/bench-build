@@ -1,0 +1,21 @@
+<svg viewBox="0 0 640 210" class="phase-svg" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="210" fill="#f8fafc" rx="8" stroke="#cbd5e1"/>
+  <text x="18" y="26" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0f172a">PHASE 5 DIAGRAM: Blind-Fastened 1x6 Apron Trim (Z = 15.25&quot;..20.75&quot;) &amp; 1.00&quot; Cushion Lip</text>
+  <!-- Cross section of apron reveal -->
+  <rect x="90" y="52" width="28" height="132" fill="#c4b5fd" stroke="#4c1d95" stroke-width="2"/>
+  <rect x="118" y="94" width="60" height="84" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <rect x="118" y="76" width="180" height="18" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+  <!-- 1.00" Lip callout -->
+  <line x1="68" y1="52" x2="86" y2="52" stroke="#dc2626" stroke-width="2"/>
+  <line x1="68" y1="76" x2="86" y2="76" stroke="#dc2626" stroke-width="2"/>
+  <text x="62" y="68" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#dc2626">+1.00&quot; LIP</text>
+  <!-- 0.25" bottom reveal callout -->
+  <text x="62" y="184" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#4c1d95">-0.25&quot; Drop</text>
+  <!-- Blind screw -->
+  <line x1="178" y1="136" x2="104" y2="136" stroke="#dc2626" stroke-width="3.2"/>
+  <text x="345" y="88" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#0f172a">Use Clamped 1.00&quot; Scrap Blocks on Plywood Deck</text>
+  <text x="345" y="108" font-family="Inter, sans-serif" font-size="11" fill="#334155">1. Place 1.00&quot; spacer blocks on top of the plywood deck.</text>
+  <text x="345" y="126" font-family="Inter, sans-serif" font-size="11" fill="#334155">2. Flush the top edge of the 1x6 apron to the 1.00&quot; blocks.</text>
+  <text x="345" y="144" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#dc2626">3. Drive #8 × 1-7/8&quot; screws from INSIDE the 2x4 frame!</text>
+  <text x="345" y="164" font-family="Inter, sans-serif" font-size="11" fill="#4c1d95">4. Cap rear pocket spacers with 1x2 trim [Parts J &amp; M] flush with deck.</text>
+</svg>

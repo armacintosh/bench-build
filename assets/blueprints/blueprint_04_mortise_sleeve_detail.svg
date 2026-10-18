@@ -1,0 +1,82 @@
+<svg viewBox="0 0 960 360" class="blueprint-svg" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="360" fill="#f8fafc" rx="8"/>
+  <rect x="14" y="12" width="932" height="34" fill="#0f172a" rx="5"/>
+  <text x="28" y="34" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#f8fafc">
+    BLUEPRINT 4: CLOSE-UP JOINERY DETAILS — HALF-LAP NOTCH, BLIND APRON SCREWS &amp; ROLLER MORTISE
+  </text>
+
+  <!-- CARD A: 4x4 Half-Lap Notch -->
+  <rect x="18" y="58" width="296" height="286" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8" rx="6"/>
+  <text x="32" y="82" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#1e3a8a">
+    DETAIL A: 4x4 Half-Lap Leg Notch
+  </text>
+  <text x="32" y="99" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#475569">
+    1.50&quot; Deep × 3.50&quot; Tall Wood-on-Wood Ledge
+  </text>
+  <!-- 4x4 Post with 1.5x3.5 notch -->
+  <polygon points="85,305 190,305 190,115 135,115 135,205 85,205" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>
+  <!-- 2x4 Rail seated in notch -->
+  <rect x="85" y="115" width="50" height="90" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <!-- 2x 3" GRK structural screws from inside -->
+  <line x1="185" y1="145" x2="98" y2="145" stroke="#dc2626" stroke-width="3"/>
+  <line x1="185" y1="175" x2="98" y2="175" stroke="#dc2626" stroke-width="3"/>
+  <text x="200" y="152" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#dc2626">2× 3.0&quot; GRK</text>
+  <text x="200" y="166" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#dc2626">From Inside</text>
+  <text x="32" y="328" font-family="Inter, sans-serif" font-size="10.5" font-weight="600" fill="#0f172a">
+    Direct wood ledge carries 100% of vertical jump load!
+  </text>
+
+  <!-- CARD B: Blind-Fastened 1x6 Outer Trim -->
+  <rect x="332" y="58" width="296" height="286" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8" rx="6"/>
+  <text x="346" y="82" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#4c1d95">
+    DETAIL B: Blind-Fastened 1x6 Apron
+  </text>
+  <text x="346" y="99" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#475569">
+    Zero Visible Screw Holes on Stain-Grade Exterior!
+  </text>
+  <!-- 1x6 Outer Trim (0.75" x 5.50") -->
+  <rect x="385" y="112" width="28" height="176" fill="#c4b5fd" stroke="#4c1d95" stroke-width="2"/>
+  <!-- 2x4 Rail (1.50" x 3.50") -->
+  <rect x="413" y="168" width="56" height="112" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <!-- 3/4" Plywood Deck (0.75" thick at Z=19.00..19.75) -->
+  <rect x="413" y="144" width="130" height="24" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+  <!-- 1.00" Cushion Pocket annotation -->
+  <line x1="425" y1="112" x2="425" y2="144" stroke="#dc2626" stroke-width="2"/>
+  <text x="435" y="132" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#dc2626">1.00&quot; Pocket Lip</text>
+  <!-- #8 x 1.875" (1-7/8") screw driven from inside -->
+  <line x1="469" y1="224" x2="399" y2="224" stroke="#dc2626" stroke-width="3"/>
+  <circle cx="469" cy="224" r="3.5" fill="#dc2626"/>
+  <text x="478" y="220" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#dc2626">#8 × 1-7/8&quot; Screw</text>
+  <text x="478" y="234" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">1.50&quot; Rail + 0.375&quot; Bite</text>
+  <text x="346" y="328" font-family="Inter, sans-serif" font-size="10.5" font-weight="700" fill="#b91c1c">
+    STOP! Never use 2-1/2&quot; screws here or they pierce the face!
+  </text>
+
+  <!-- CARD C: Rear Roller Mortise vs Front Grip Pad -->
+  <rect x="646" y="58" width="296" height="286" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8" rx="6"/>
+  <text x="660" y="82" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0369a1">
+    DETAIL C: Wheelbarrow Foot Geometry
+  </text>
+  <text x="660" y="99" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#475569">
+    Coplanar 3/8&quot; (0.375&quot;) Floor Reveal Front &amp; Rear
+  </text>
+  <!-- Floor line -->
+  <line x1="665" y1="285" x2="925" y2="285" stroke="#0f172a" stroke-width="2.2"/>
+  <!-- Front Leg Bottom + 3/8" Rubber Pad -->
+  <rect x="680" y="145" width="90" height="124" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>
+  <rect x="680" y="269" width="90" height="16" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+  <text x="725" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#1e3a8a">FRONT 2 LEGS</text>
+  <text x="725" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#1e3a8a">3/8&quot; Rubber Pad</text>
+  <text x="725" y="236" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#15803d">100% Locked</text>
+
+  <!-- Rear Leg Bottom + Mortised Roller -->
+  <rect x="815" y="145" width="90" height="124" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>
+  <rect x="835" y="225" width="50" height="44" fill="#475569" stroke="#0f172a" stroke-width="1.5"/>
+  <circle cx="860" cy="267" r="18" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/>
+  <circle cx="860" cy="267" r="5" fill="#f8fafc"/>
+  <text x="860" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#1e3a8a">REAR 3 LEGS</text>
+  <text x="860" y="212" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#dc2626">3/8&quot; Roller Reveal</text>
+  <text x="660" y="328" font-family="Inter, sans-serif" font-size="10.5" font-weight="600" fill="#0f172a">
+    Bore mortise depth so wheel protrudes exactly 3/8&quot; (0.375&quot;)!
+  </text>
+</svg>

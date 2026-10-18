@@ -1,0 +1,21 @@
+<svg viewBox="0 0 640 210" class="phase-svg" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="210" fill="#f8fafc" rx="8" stroke="#cbd5e1"/>
+  <text x="18" y="26" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0f172a">PHASE 2 DIAGRAM: Laminating the 3.00&quot; Front Beam &amp; Standing Front/Rear Portals</text>
+  <!-- Front Portal Diagram -->
+  <rect x="35" y="60" width="26" height="115" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>
+  <rect x="579" y="60" width="26" height="115" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>
+  <!-- Outer 78.5" Rail -->
+  <rect x="35" y="55" width="570" height="22" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <!-- Inner 71.5" Laminated Beam between legs -->
+  <rect x="61" y="77" width="518" height="22" fill="#fcd34d" stroke="#b45309" stroke-width="2"/>
+  <!-- W-pattern lag screws -->
+  <circle cx="95" cy="84" r="3" fill="#dc2626"/><circle cx="145" cy="92" r="3" fill="#dc2626"/>
+  <circle cx="195" cy="84" r="3" fill="#dc2626"/><circle cx="245" cy="92" r="3" fill="#dc2626"/>
+  <circle cx="295" cy="84" r="3" fill="#dc2626"/><circle cx="345" cy="92" r="3" fill="#dc2626"/>
+  <circle cx="395" cy="84" r="3" fill="#dc2626"/><circle cx="445" cy="92" r="3" fill="#dc2626"/>
+  <circle cx="495" cy="84" r="3" fill="#dc2626"/><circle cx="545" cy="92" r="3" fill="#dc2626"/>
+  <text x="320" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#78350f">PART B: Outer Front Rail (78.50&quot;) Seated in 4x4 Half-Lap Notches</text>
+  <text x="320" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#78350f">PART C: Inner Front Beam (71.50&quot;) — Glue + 2.75&quot; Screws in W-Pattern Every 8&quot;</text>
+  <text x="320" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#0369a1">← 71.50&quot; Clear Span Between Front Legs × 15.50&quot; Clear Basket Height →</text>
+  <text x="320" y="190" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#334155">Rear Portal Assembly: Identical 78.50&quot; Main Back Rail [Part B] + 3 Rear Legs (Left, Center at X=40&quot;, Right)</text>
+</svg>
