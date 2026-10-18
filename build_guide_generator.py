@@ -1671,36 +1671,41 @@ def build_html_part1() -> str:
 
       <!-- EMBEDDED 1080p NARRATED INSTRUCTIONAL VIDEO WALKTHROUGH -->
       <div class="cad-wrapper no-print" style="margin-top:1.5rem; background:#090d16; border:2px solid #1e293b;">
-        <div class="cad-toolbar" style="background:#0f172a; justify-content:space-between;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <span style="background:linear-gradient(135deg,#f59e0b,#d97706); color:#0f172a; font-weight:900; font-size:0.75rem; padding:4px 10px; border-radius:6px; letter-spacing:0.05em;">
-              🔊 DEEPGRAM AURA NARRATED 1080p VIDEO
+        <div class="cad-toolbar" style="background:#0f172a; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="background:linear-gradient(135deg,#10b981,#059669); color:#052e16; font-weight:900; font-size:0.75rem; padding:4px 10px; border-radius:6px; letter-spacing:0.05em;">
+              🌱 BEGINNER DIY 3D WALKTHROUGH
             </span>
-            <strong style="color:#f8fafc; font-size:0.98rem;">
-              Complete 7-Phase Workshop Video Walkthrough (3D CAD + Blueprints + Fastener HUD)
+            <strong id="video-player-title" style="color:#f8fafc; font-size:0.96rem;">
+              Simplified 3D CAD Build Video (Tool • Wood • Action — Zero Technical Jargon)
             </strong>
           </div>
-          <a href="modular_couch_instructional_video.mp4" download class="cad-btn secondary" style="text-decoration:none;">
-            ⬇ Download 1080p MP4 (55 MB)
-          </a>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button id="btn-switch-video-mode" class="cad-btn render-toggle" onclick="switchVideoEdition()">
+              📐 Switch to: Detailed Engineering Blueprint Video
+            </button>
+            <a id="btn-download-video" href="modular_couch_beginner_video.mp4" download class="cad-btn secondary" style="text-decoration:none;">
+              ⬇ Download Beginner MP4
+            </a>
+          </div>
         </div>
         <div style="padding:12px 16px; background:#070b14;">
           <video id="instructional-video" controls preload="metadata" style="width:100%; max-height:580px; border-radius:10px; border:1px solid #334155; background:#000;">
-            <source src="modular_couch_instructional_video.mp4" type="video/mp4" />
+            <source id="video-source-el" src="modular_couch_beginner_video.mp4" type="video/mp4" />
             Your browser does not support the HTML5 video tag.
           </video>
         </div>
         <div class="cad-toolbar" style="background:#0f172a; border-top:1px solid #1e293b; gap:6px; flex-wrap:wrap;">
-          <span style="color:#94a3b8; font-size:0.76rem; font-weight:700; margin-right:4px;">Jump to Chapter (&amp; Sync 3D):</span>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(0, 0)">00:00 Overview</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(25.1, 0)">00:25 Cut Maps</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(49.6, 1)">00:50 P1: 4×4 Legs</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(80.2, 2)">01:20 P2: Front Beam</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(107.9, 3)">01:48 P3: Joist Grid</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(139.6, 4)">02:20 P4: Birch Deck</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(169.0, 5)">02:49 P5: 1×6 Trim</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(196.5, 6)">03:17 P6: Backrests</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(221.3, 7)">03:41 P7: Finish &amp; Table Mode</button>
+          <span style="color:#94a3b8; font-size:0.76rem; font-weight:700; margin-right:4px;">Jump to Step (&amp; Sync 3D):</span>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(0, 0, 0)">Overview</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(13.1, 25.1, 0)">Cut Wood</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(32.8, 49.6, 1)">Step 1: 4×4 Legs</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(52.3, 80.2, 2)">Step 2: Front Beam</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(78.3, 107.9, 3)">Step 3: Cross Boards</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(105.6, 139.6, 4)">Step 4: Plywood Seat</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(125.0, 169.0, 5)">Step 5: 1×6 Trim</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(146.5, 196.5, 6)">Step 6: Backrests</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(169.9, 221.3, 7)">Step 7: Sand &amp; Cushions</button>
         </div>
       </div>
     </section>
@@ -3162,10 +3167,37 @@ def build_html_part2() -> str:
       }}, 3600);
     }}
 
-    function seekVideoChapter(sec, phaseNum) {{
+    let isBeginnerVideoEdition = true;
+
+    function switchVideoEdition() {{
+      isBeginnerVideoEdition = !isBeginnerVideoEdition;
+      const vid = document.getElementById('instructional-video');
+      const srcEl = document.getElementById('video-source-el');
+      const titleEl = document.getElementById('video-player-title');
+      const btnEl = document.getElementById('btn-switch-video-mode');
+      const dlEl = document.getElementById('btn-download-video');
+      const file = isBeginnerVideoEdition ? 'modular_couch_beginner_video.mp4' : 'modular_couch_instructional_video.mp4';
+      if (srcEl && vid) {{
+        srcEl.src = file;
+        vid.load();
+      }}
+      if (isBeginnerVideoEdition) {{
+        titleEl.textContent = 'Simplified 3D CAD Build Video (Tool • Wood • Action — Zero Technical Jargon)';
+        btnEl.textContent = '📐 Switch to: Detailed Engineering Blueprint Video';
+        dlEl.href = file;
+        dlEl.textContent = '⬇ Download Beginner MP4';
+      }} else {{
+        titleEl.textContent = 'Complete 7-Phase Workshop Video Walkthrough (3D CAD + Blueprints + Fastener HUD)';
+        btnEl.textContent = '🌱 Switch to: Simplified Beginner 3D Video';
+        dlEl.href = file;
+        dlEl.textContent = '⬇ Download Detailed MP4';
+      }}
+    }}
+
+    function seekVideoChapter(begSec, detSec, phaseNum) {{
       const vid = document.getElementById('instructional-video');
       if (vid) {{
-        vid.currentTime = sec;
+        vid.currentTime = isBeginnerVideoEdition ? begSec : detSec;
         vid.play().catch(() => {{}});
       }}
       setBuildPhase(phaseNum);
