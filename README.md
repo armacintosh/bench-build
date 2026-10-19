@@ -15,11 +15,19 @@ All while maintaining an unobstructed **71.50" W × 15.50" H** front under-bench
 
 ---
 
-## 🚀 Interactive 3D CAD Explorer & Video Walkthroughs
+## 🚀 Grounded Scientific GitHub Pages Website & 3D CAD Studio
 
-> **💡 Viewing on GitHub?** GitHub's code viewer displays raw HTML source code for `.html` files. To use the interactive Three.js 3D CAD viewer, hover tooltips, finished wood/fabric render toggle, and synchronized video chapters in your browser, open the **GitHub Pages Live App**:
+> **💡 Viewing on GitHub?** GitHub's code viewer displays raw HTML source code for `.html` files. Open the **Grounded Scientific Interactive Website** on GitHub Pages for the full multi-page experience (with light/dark mode, Three.js 3D CAD Studio, hover part inspector, and synchronized video chapters):
 >
-> ### 👉 **[Launch Interactive 3D CAD & Step-by-Step Build Guide (`armacintosh.github.io/bench-build`)](https://armacintosh.github.io/bench-build/)**
+> ### 👉 **[Launch Grounded Scientific Build Website (`armacintosh.github.io/bench-build`)](https://armacintosh.github.io/bench-build/)**
+>
+> | Website Page | Direct URL | Contents |
+> | :--- | :--- | :--- |
+> | **01 // Studio & 3D CAD** | [`/bench-build/`](https://armacintosh.github.io/bench-build/) | Interactive Three.js 3D CAD Studio, 3D Phase Stepper, 1080p Video Player & Z-Stack Spec |
+> | **02 // Materials & Cuts** | [`/bench-build/materials.html`](https://armacintosh.github.io/bench-build/materials.html) | Interactive Tool Checklist (`localStorage`), Master Shopping List (BOM) & SVG Cut Maps |
+> | **03 // Blueprints & Audit** | [`/bench-build/blueprints.html`](https://armacintosh.github.io/bench-build/blueprints.html) | 4 High-Res Orthographic Architectural Blueprints & Structural Engineering Audit |
+> | **04 // 7-Phase Roadmap** | [`/bench-build/roadmap.html`](https://armacintosh.github.io/bench-build/roadmap.html) | Sequential 7-Phase Assembly Timeline (`Why` / `Fasteners` / `Pro-Tip` + `▶ View in 3D CAD`) |
+> | **Full Manual (All-in-One)** | [`/bench-build/modular_couch_build_guide.html`](https://armacintosh.github.io/bench-build/modular_couch_build_guide.html) | Complete 8-section engineering & assembly manual on a single printable page |
 
 ### 🎬 Narrated 1080p Video Walkthroughs
 

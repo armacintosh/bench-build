@@ -975,231 +975,697 @@ def build_html_part1() -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>80&quot; × 29&quot; Heavy-Duty Modular Playroom Couch / Bench / Table — Master Build Guide</title>
+  <meta name="color-scheme" content="light dark" />
+  <title>Grounded Scientific // 80&quot; × 29&quot; Modular Couch, Bench &amp; Table — Open Hardware Portal</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script>
+    (function() {{
+      try {{
+        const saved = localStorage.getItem('gs_theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = saved === 'dark' || (!saved && prefersDark);
+        if (isDark) {{
+          document.documentElement.classList.add('dark');
+          const m = document.querySelector('meta[name="color-scheme"]');
+          if (m) m.setAttribute('content', 'dark');
+        }} else if (saved === 'light') {{
+          const m = document.querySelector('meta[name="color-scheme"]');
+          if (m) m.setAttribute('content', 'light');
+        }}
+      }} catch (e) {{}}
+    }})();
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <style>
     :root {{
-      --bg: #f1f5f9;
+      color-scheme: light dark;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+      /* Grounded Scientific Canonical Palette */
+      --color-primary: #1c2e36;
+      --color-forest-solid: #1c2e36;
+      --color-forest-deep: #1A2E2E;
+      --color-sage: #597E6D;
+      --color-sage-light: #7A9581;
+      --color-arctic: #E1E9EA;
+      --color-arctic-tint: rgba(225, 233, 234, 0.38);
+      --bg: #f6f7f7;
       --card: #ffffff;
-      --ink: #0f172a;
-      --muted: #475569;
-      --border: #cbd5e1;
-      --accent: #1d4ed8;
-      --accent-soft: #dbeafe;
-      --amber: #b45309;
+      --ink: #1c2e36;
+      --muted: #5E706B;
+      --border: #E1E8E5;
+      --border-strong: #1c2e36;
+
+      /* Functional Semantic Tokens */
+      --accent: #597E6D;
+      --accent-soft: #E1E9EA;
+      --amber: #92400e;
       --amber-soft: #fef3c7;
-      --emerald: #047857;
-      --emerald-soft: #d1fae5;
-      --danger: #b91c1c;
+      --emerald: #1c2e36;
+      --emerald-soft: rgba(89, 126, 109, 0.14);
+      --danger: #991b1b;
       --danger-soft: #fee2e2;
-      --purple: #5b21b6;
-      --purple-soft: #ede9fe;
     }}
+
+    html.dark {{
+      color-scheme: dark;
+      --color-primary: #e2e8ec;
+      --color-arctic: #1e2a2f;
+      --color-arctic-tint: rgba(30, 42, 47, 0.55);
+      --bg: #161a1c;
+      --card: #1c2427;
+      --ink: #e2e8ec;
+      --muted: #9eb0ac;
+      --border: #2a373c;
+      --border-strong: #597E6D;
+      --amber: #fcd34d;
+      --amber-soft: rgba(180, 83, 9, 0.22);
+      --emerald: #a7f3d0;
+      --emerald-soft: rgba(89, 126, 109, 0.22);
+      --danger: #fca5a5;
+      --danger-soft: rgba(153, 27, 27, 0.25);
+    }}
+
     * {{ box-sizing: border-box; }}
+    html {{ scroll-behavior: smooth; }}
     body {{
       margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: var(--font-sans);
       color: var(--ink);
       background: var(--bg);
-      line-height: 1.58;
+      line-height: 1.6;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }}
     code, pre, .mono {{
-      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: var(--font-mono);
     }}
-    .top-banner {{
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-      color: #fff;
-      padding: 2.4rem 1.5rem 2rem;
-      border-bottom: 4px solid #f59e0b;
+    code {{
+      background: var(--color-arctic);
+      color: var(--ink);
+      padding: 0.12rem 0.38rem;
+      font-size: 0.84em;
+      border-radius: 2px;
     }}
-    .container {{
-      max-width: 1220px;
+    .material-symbols-outlined {{
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+      line-height: 1;
+    }}
+
+    /* ====================================================================== */
+    /* GROUNDED SCIENTIFIC STICKY WEBSITE HEADER                              */
+    /* ====================================================================== */
+    .gs-header {{
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 1.1rem 1.5rem;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }}
+    .gs-header-inner {{
+      max-width: 1320px;
       margin: 0 auto;
-      padding: 0 1.25rem;
-    }}
-    .badge-row {{
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.55rem;
-      margin-bottom: 0.85rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
     }}
-    .badge {{
+    .gs-brand {{
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--ink);
+      flex-shrink: 0;
+    }}
+    .gs-brand img {{
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+    }}
+    .gs-brand-text {{
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }}
+    .gs-brand-title {{
+      font-size: 1.12rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+    }}
+    .gs-brand-sub {{
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--color-sage);
+      margin-top: 2px;
+    }}
+
+    .gs-nav-wrap {{
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }}
+    .gs-nav {{
+      display: flex;
+      align-items: center;
+      gap: 1.35rem;
+    }}
+    .gs-nav-link {{
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.35rem 0;
+      font-family: var(--font-sans);
       font-size: 0.76rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.28rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.14);
-      color: #fde68a;
-      border: 1px solid rgba(253,230,138,0.35);
-    }}
-    h1 {{
-      margin: 0 0 0.6rem 0;
-      font-size: 2.15rem;
-      line-height: 1.18;
-      letter-spacing: -0.02em;
-    }}
-    .subtitle {{
-      margin: 0;
-      color: #cbd5e1;
-      font-size: 1.04rem;
-      max-width: 920px;
-    }}
-    .sticky-nav {{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(15, 23, 42, 0.96);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #334155;
-      padding: 0.55rem 0;
-    }}
-    .nav-inner {{
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      align-items: center;
-      justify-content: space-between;
-    }}
-    .nav-links {{
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-    }}
-    .nav-links a {{
-      color: #e2e8f0;
+      letter-spacing: 0.12em;
+      color: var(--muted);
       text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.35rem 0.65rem;
-      border-radius: 6px;
-      transition: background 0.15s;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
     }}
-    .nav-links a:hover {{
-      background: #1e40af;
-      color: #fff;
+    .gs-nav-link:hover {{
+      color: var(--color-sage);
     }}
-    .btn-print {{
-      background: #f59e0b;
-      color: #0f172a;
+    .gs-nav-link.active {{
+      color: var(--ink);
+      border-bottom-color: var(--ink);
+    }}
+
+    /* Dropdown Menu (Grounded Scientific Services-style) */
+    .gs-dropdown {{
+      position: relative;
+      padding: 0.25rem 0;
+    }}
+    .gs-dropdown-menu {{
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      width: 280px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 32px rgba(28, 46, 54, 0.14);
+      padding: 0.5rem 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.22s ease;
+      z-index: 70;
+    }}
+    .gs-dropdown:hover .gs-dropdown-menu {{
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }}
+    .gs-dropdown-item {{
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
       border: none;
-      font-weight: 800;
-      font-size: 0.8rem;
-      padding: 0.42rem 0.85rem;
-      border-radius: 6px;
+      padding: 0.6rem 1rem;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }}
+    .gs-dropdown-item:hover {{
+      background: rgba(89, 126, 109, 0.1);
+      color: var(--color-sage);
+    }}
+
+    .gs-header-actions {{
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      border-left: 1px solid var(--border);
+      padding-left: 1.25rem;
+    }}
+    .gs-icon-btn {{
+      background: none;
+      border: none;
+      color: var(--muted);
+      padding: 0.4rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: color 0.2s;
+    }}
+    .gs-icon-btn:hover {{
+      color: var(--ink);
+    }}
+    .gs-cta-btn {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      background: var(--color-forest-solid);
+      color: #ffffff;
+      border: 2px solid var(--color-forest-solid);
+      font-family: var(--font-sans);
+      font-size: 0.73rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      height: 42px;
+      padding: 0 1.25rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      border-radius: 0;
+    }}
+    html.dark .gs-cta-btn {{
+      background: var(--color-sage);
+      border-color: var(--color-sage);
+      color: #ffffff;
+    }}
+    .gs-cta-btn:hover {{
+      background: var(--color-sage);
+      border-color: var(--color-sage);
+      color: #ffffff;
+    }}
+    html.dark .gs-cta-btn:hover {{
+      background: #ffffff;
+      border-color: #ffffff;
+      color: #1c2e36;
+    }}
+    .gs-cta-btn.outline {{
+      background: transparent;
+      color: var(--ink);
+      border: 2px solid var(--ink);
+    }}
+    .gs-cta-btn.outline:hover {{
+      background: var(--ink);
+      color: var(--card);
+    }}
+
+    .gs-mobile-toggle {{
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 0.4rem 0.55rem;
       cursor: pointer;
     }}
-    .btn-print:hover {{ background: #fbbf24; }}
+    @media (max-width: 1040px) {{
+      .gs-nav-wrap {{
+        display: none;
+      }}
+      .gs-nav-wrap.mobile-open {{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: fixed;
+        top: 71px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--card);
+        padding: 1.75rem;
+        z-index: 80;
+        overflow-y: auto;
+        border-top: 1px solid var(--border);
+      }}
+      .gs-nav-wrap.mobile-open .gs-nav {{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.1rem;
+        width: 100%;
+      }}
+      .gs-nav-wrap.mobile-open .gs-nav-link {{
+        font-size: 1.05rem;
+      }}
+      .gs-nav-wrap.mobile-open .gs-header-actions {{
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-left: 0;
+        padding-top: 1.25rem;
+        width: 100%;
+        flex-wrap: wrap;
+      }}
+      .gs-mobile-toggle {{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }}
+    }}
+
+    /* ====================================================================== */
+    /* GROUNDED SCIENTIFIC HERO & SUB-PAGE BANNERS                            */
+    /* ====================================================================== */
+    .gs-hero {{
+      background: var(--color-arctic-tint);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 1.5rem 3.5rem;
+      text-align: center;
+    }}
+    .gs-hero-inner {{
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.35rem;
+    }}
+    .gs-hero-bar {{
+      height: 4px;
+      width: 80px;
+      background: var(--color-sage);
+    }}
+    .gs-overline {{
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--color-sage);
+      margin: 0;
+    }}
+    .gs-hero h1 {{
+      margin: 0;
+      font-size: clamp(2.1rem, 4.6vw, 3.85rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }}
+    .gs-hero h1 .text-sage {{
+      color: var(--color-sage);
+    }}
+    .gs-hero-subtitle {{
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.65;
+    }}
+    .gs-hero-badges {{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }}
+    .gs-badge {{
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.32rem 0.75rem;
+      background: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }}
+    .gs-hero-ctas {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }}
+
+    /* ====================================================================== */
+    /* MULTI-PAGE WEBSITE VIEW ROUTING & CONTAINERS                           */
+    /* ====================================================================== */
+    .container {{
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }}
+    main.container {{
+      flex: 1;
+      padding-top: 2rem;
+      padding-bottom: 4rem;
+    }}
+
+    /* Page View Filtering: allows instant multi-page website switching */
+    body[data-page="studio"] section.card:not([data-view*="studio"]) {{ display: none; }}
+    body[data-page="materials"] section.card:not([data-view*="materials"]) {{ display: none; }}
+    body[data-page="blueprints"] section.card:not([data-view*="blueprints"]) {{ display: none; }}
+    body[data-page="roadmap"] section.card:not([data-view*="roadmap"]) {{ display: none; }}
+    body[data-page="materials"] .gs-hero,
+    body[data-page="blueprints"] .gs-hero,
+    body[data-page="roadmap"] .gs-hero {{
+      padding: 2.25rem 1.5rem 2rem;
+    }}
+
+    /* Page Switcher Pill Bar inside Main */
+    .gs-view-bar {{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--color-forest-solid);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.75rem;
+    }}
+    html.dark .gs-view-bar {{
+      border-left-color: var(--color-sage);
+    }}
+    .gs-view-tabs {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }}
+    .gs-tab-btn {{
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.48rem 0.95rem;
+      font-family: var(--font-sans);
+      font-size: 0.73rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }}
+    .gs-tab-btn:hover {{
+      border-color: var(--color-sage);
+      color: var(--ink);
+    }}
+    .gs-tab-btn.active {{
+      background: var(--color-forest-solid);
+      color: #ffffff;
+      border-color: var(--color-forest-solid);
+    }}
+    html.dark .gs-tab-btn.active {{
+      background: var(--color-sage);
+      border-color: var(--color-sage);
+      color: #ffffff;
+    }}
+
+    /* ====================================================================== */
+    /* GROUNDED SCIENTIFIC CARDS, BRUTALIST SHADOWS & TABLES                  */
+    /* ====================================================================== */
     section.card {{
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      margin: 1.5rem 0;
-      box-shadow: 0 2px 6px rgba(15,23,42,0.04);
+      border-radius: 0;
+      padding: 2.5rem;
+      margin: 0 0 2.25rem 0;
+      position: relative;
+    }}
+    @media (max-width: 640px) {{
+      section.card {{ padding: 1.35rem; }}
     }}
     .section-header {{
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 0.75rem;
-      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      border-left: 6px solid var(--color-forest-solid);
+      padding: 0.15rem 0 1rem 1.15rem;
+      margin-bottom: 1.75rem;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.75rem;
+    }}
+    html.dark .section-header {{
+      border-left-color: var(--color-sage);
     }}
     .section-num {{
-      background: #1e3a8a;
-      color: #fff;
-      font-weight: 800;
-      font-size: 0.82rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 6px;
-      letter-spacing: 0.04em;
+      background: var(--color-arctic);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.74rem;
+      padding: 0.3rem 0.7rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }}
     h2 {{
       margin: 0;
-      font-size: 1.45rem;
-      color: #0f172a;
+      font-size: 1.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      line-height: 1.15;
     }}
     h3 {{
-      margin: 1.35rem 0 0.6rem;
-      font-size: 1.12rem;
-      color: #1e293b;
+      margin: 2rem 0 0.85rem;
+      font-size: 1.15rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--ink);
     }}
     .grid-3 {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 1rem;
+      gap: 1.5rem;
+      margin: 1.5rem 0 2rem;
     }}
     .grid-2 {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 1.15rem;
+      gap: 1.35rem;
     }}
+
+    /* Grounded Scientific Brutalist-Scientific Feature Box */
     .feature-box {{
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
+      background: var(--card);
+      border: 1.5px solid var(--border-strong);
+      border-radius: 0;
+      padding: 1.65rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }}
+    .feature-box:hover {{
+      box-shadow: 8px 8px 0px 0px #597E6D;
+      transform: translate(-2px, -2px);
+    }}
+    .feature-icon-box {{
+      width: 48px;
+      height: 48px;
+      background: var(--color-forest-solid);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.35rem;
+    }}
+    html.dark .feature-icon-box {{
+      background: var(--color-sage);
+    }}
+    .feature-step-tag {{
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--color-sage);
     }}
     .feature-box h4 {{
-      margin: 0 0 0.4rem;
-      font-size: 1rem;
-      color: #1e3a8a;
+      margin: 0;
+      font-size: 1.12rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--ink);
     }}
     .feature-box p {{
       margin: 0;
       font-size: 0.9rem;
       color: var(--muted);
+      line-height: 1.6;
     }}
+
+    /* Tables */
     table {{
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
-      margin: 0.75rem 0 1.25rem;
+      font-size: 0.89rem;
+      margin: 0.85rem 0 1.5rem;
     }}
     th, td {{
-      border: 1px solid #cbd5e1;
-      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border);
+      padding: 0.7rem 0.85rem;
       text-align: left;
       vertical-align: top;
     }}
     th {{
-      background: #0f172a;
-      color: #f8fafc;
+      background: var(--color-forest-solid);
+      color: #ffffff;
+      font-family: var(--font-mono);
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.08em;
     }}
-    tr:nth-child(even) td {{ background: #f8fafc; }}
+    tr:nth-child(even) td {{ background: var(--bg); }}
     tr.checked-row td {{
-      background: #ecfdf5 !important;
-      color: #047857;
+      background: var(--emerald-soft) !important;
+      color: var(--color-sage);
       text-decoration: line-through;
     }}
     .part-tag {{
       display: inline-block;
-      background: #1e3a8a;
+      background: var(--color-forest-solid);
       color: #fff;
-      font-weight: 800;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 0.18rem 0.55rem;
+      border-radius: 0;
+      font-size: 0.8rem;
     }}
-    /* 3D CAD Explorer Styles */
+    html.dark .part-tag {{
+      background: var(--color-sage);
+    }}
+
+    /* ====================================================================== */
+    /* 3D CAD STUDIO & VIDEO WALKTHROUGH (GROUNDED SCIENTIFIC DARK SLATE)     */
+    /* ====================================================================== */
     .cad-wrapper {{
-      background: #0f172a;
-      border-radius: 12px;
+      background: #141f24;
+      border-radius: 0;
       overflow: hidden;
-      border: 2px solid #334155;
-      margin-top: 1.25rem;
+      border: 2px solid #1c2e36;
+      margin-top: 1.5rem;
+    }}
+    html.dark .cad-wrapper {{
+      border-color: #597E6D;
     }}
     .cad-toolbar {{
       display: flex;
@@ -1207,244 +1673,419 @@ def build_html_part1() -> str:
       gap: 0.75rem;
       align-items: center;
       justify-content: space-between;
-      padding: 0.85rem 1rem;
-      background: #1e293b;
-      border-bottom: 1px solid #334155;
-      color: #f8fafc;
+      padding: 0.85rem 1.15rem;
+      background: #1c2e36;
+      border-bottom: 1px solid rgba(225, 233, 234, 0.14);
+      color: #f6f7f7;
     }}
     .cad-btn-group {{
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.45rem;
       align-items: center;
     }}
     .cad-btn {{
-      background: #2563eb;
-      color: #fff;
-      border: 1px solid #3b82f6;
-      padding: 0.45rem 0.85rem;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 700;
+      background: #597E6D;
+      color: #ffffff;
+      border: 1px solid #7A9581;
+      padding: 0.48rem 0.88rem;
+      border-radius: 0;
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.15s ease;
     }}
-    .cad-btn:hover {{ background: #1d4ed8; }}
+    .cad-btn:hover {{ background: #7A9581; color: #161a1c; }}
     .cad-btn.secondary {{
-      background: #334155;
-      border-color: #475569;
+      background: #243842;
+      border-color: #38525e;
+      color: #E1E9EA;
     }}
-    .cad-btn.secondary:hover {{ background: #475569; }}
+    .cad-btn.secondary:hover {{
+      background: #597E6D;
+      border-color: #7A9581;
+      color: #ffffff;
+    }}
     .cad-btn.active-mode {{
-      background: #059669;
-      border-color: #10b981;
+      background: #E1E9EA;
+      border-color: #ffffff;
+      color: #1c2e36;
     }}
     .slider-wrap {{
       display: flex;
       align-items: center;
       gap: 0.55rem;
-      background: #0f172a;
-      padding: 0.35rem 0.75rem;
-      border-radius: 6px;
-      border: 1px solid #475569;
-      font-size: 0.82rem;
-      font-weight: 600;
+      background: #141f24;
+      padding: 0.38rem 0.8rem;
+      border-radius: 0;
+      border: 1px solid #38525e;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #E1E9EA;
     }}
     .slider-wrap input[type=range] {{
-      width: 135px;
-      accent-color: #f59e0b;
+      width: 130px;
+      accent-color: #597E6D;
       cursor: pointer;
     }}
     #cad-canvas-container {{
       width: 100%;
-      height: 540px;
+      height: 550px;
       position: relative;
       cursor: grab;
     }}
     #cad-canvas-container:active {{ cursor: grabbing; }}
     .cad-btn.render-toggle {{
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-      border-color: #f59e0b;
-      color: #fff;
-      box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+      background: #597E6D;
+      border-color: #E1E9EA;
+      color: #ffffff;
+      box-shadow: 3px 3px 0px 0px #E1E9EA;
     }}
     .cad-btn.render-toggle:hover {{
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      background: #E1E9EA;
+      color: #1c2e36;
     }}
     #cad-tooltip {{
       position: absolute;
       pointer-events: none;
       display: none;
       z-index: 30;
-      background: rgba(15, 23, 42, 0.94);
-      color: #f8fafc;
-      border: 1px solid #f59e0b;
-      border-left: 4px solid #f59e0b;
-      border-radius: 8px;
-      padding: 0.6rem 0.8rem;
+      background: rgba(22, 26, 28, 0.96);
+      color: #f6f7f7;
+      border: 1px solid #597E6D;
+      border-left: 4px solid #597E6D;
+      border-radius: 0;
+      padding: 0.65rem 0.85rem;
       font-size: 0.8rem;
-      line-height: 1.42;
-      max-width: 310px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(6px);
+      line-height: 1.45;
+      max-width: 320px;
+      box-shadow: 6px 6px 0px rgba(28, 46, 54, 0.65);
     }}
     #cad-tooltip .tt-head {{
-      font-weight: 800;
-      font-size: 0.86rem;
-      color: #fde68a;
-      margin-bottom: 0.22rem;
+      font-weight: 900;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      color: #E1E9EA;
+      margin-bottom: 0.25rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
     }}
     #cad-tooltip .tt-badge {{
-      background: #1d4ed8;
+      background: #597E6D;
       color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      padding: 0.08rem 0.38rem;
-      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.08rem 0.4rem;
+      border-radius: 0;
     }}
     #cad-tooltip .tt-row {{
       color: #cbd5e1;
       font-size: 0.76rem;
     }}
     #cad-tooltip .tt-dims {{
-      font-family: 'JetBrains Mono', monospace;
-      color: #38bdf8;
+      font-family: var(--font-mono);
+      color: #7A9581;
       font-weight: 700;
       font-size: 0.76rem;
-      margin-top: 0.18rem;
+      margin-top: 0.2rem;
     }}
     .cad-legend {{
       display: flex;
       flex-wrap: wrap;
       gap: 0.9rem;
-      padding: 0.65rem 1rem;
-      background: #0f172a;
-      border-top: 1px solid #334155;
-      color: #cbd5e1;
-      font-size: 0.78rem;
+      padding: 0.7rem 1.15rem;
+      background: #141f24;
+      border-top: 1px solid rgba(225, 233, 234, 0.14);
+      color: #E1E9EA;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
     }}
     .legend-dot {{
       display: inline-block;
       width: 11px;
       height: 11px;
-      border-radius: 3px;
+      border-radius: 0;
       margin-right: 5px;
       vertical-align: middle;
     }}
+
+    /* Blueprints & Callouts */
     .blueprint-svg, .phase-svg {{
       width: 100%;
       height: auto;
       display: block;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      margin: 0.85rem 0 1.35rem;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      margin: 0.9rem 0 1.5rem;
       background: #f8fafc;
     }}
     .alert-box {{
-      padding: 0.95rem 1.15rem;
-      border-radius: 8px;
-      margin: 0.85rem 0;
+      padding: 1.1rem 1.35rem;
+      border-radius: 0;
+      margin: 1rem 0;
       font-size: 0.9rem;
     }}
     .alert-danger {{
       background: var(--danger-soft);
-      border-left: 5px solid var(--danger);
-      color: #7f1d1d;
+      border-left: 4px solid var(--danger);
+      color: var(--ink);
     }}
     .alert-amber {{
       background: var(--amber-soft);
-      border-left: 5px solid var(--amber);
-      color: #78350f;
+      border-left: 4px solid var(--amber);
+      color: var(--ink);
     }}
     .alert-emerald {{
       background: var(--emerald-soft);
-      border-left: 5px solid var(--emerald);
-      color: #064e3b;
+      border-left: 4px solid var(--color-sage);
+      color: var(--ink);
     }}
+
+    /* Interactive Checklists */
     .checklist-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 0.65rem;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 0.75rem;
     }}
     .check-item {{
       display: flex;
       align-items: flex-start;
-      gap: 0.6rem;
-      padding: 0.65rem 0.8rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background: #f8fafc;
+      gap: 0.65rem;
+      padding: 0.75rem 0.95rem;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--color-sage);
+      border-radius: 0;
+      background: var(--bg);
       cursor: pointer;
       font-size: 0.88rem;
+      transition: border-color 0.15s, background 0.15s;
+    }}
+    .check-item:hover {{
+      border-color: var(--color-sage);
     }}
     .check-item input[type=checkbox] {{
-      margin-top: 0.2rem;
+      margin-top: 0.22rem;
       width: 17px;
       height: 17px;
-      accent-color: #059669;
+      accent-color: var(--color-sage);
       cursor: pointer;
     }}
+
+    /* ====================================================================== */
+    /* GROUNDED SCIENTIFIC 7-PHASE ROADMAP TIMELINE (ServiceRoadmap.tsx UX)   */
+    /* ====================================================================== */
+    .gs-roadmap-timeline {{
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }}
+    .gs-roadmap-timeline::before {{
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background: var(--border);
+    }}
     .phase-card {{
-      border: 2px solid #cbd5e1;
-      border-radius: 10px;
-      padding: 1.35rem;
-      margin-bottom: 1.5rem;
-      background: #ffffff;
+      position: relative;
+      margin-left: 56px;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      padding: 1.75rem;
+      background: var(--card);
+      box-shadow: 0 2px 10px rgba(28, 46, 54, 0.05);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }}
+    .phase-card:hover {{
+      border-color: var(--color-sage);
+      box-shadow: 6px 6px 0px 0px rgba(89, 126, 109, 0.35);
+    }}
+    .phase-card::before {{
+      content: '';
+      position: absolute;
+      left: -46px;
+      top: 28px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 4px solid var(--ink);
+      transition: border-color 0.25s ease, transform 0.25s ease;
+      z-index: 2;
+    }}
+    .phase-card:hover::before {{
+      border-color: var(--color-sage);
+      transform: scale(1.12);
+    }}
+    @media (max-width: 640px) {{
+      .gs-roadmap-timeline::before {{ display: none; }}
+      .phase-card {{ margin-left: 0; padding: 1.25rem; }}
+      .phase-card::before {{ display: none; }}
     }}
     .phase-title {{
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 0.75rem;
       margin-top: 0;
-      margin-bottom: 0.85rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
       font-size: 1.22rem;
-      color: #0f172a;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--ink);
     }}
     .phase-pill {{
-      background: #f59e0b;
-      color: #0f172a;
-      font-weight: 900;
-      padding: 0.22rem 0.65rem;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-family: 'JetBrains Mono', monospace;
+      background: var(--color-arctic);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 0;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+    }}
+    .phase-3d-jump {{
+      margin-left: auto;
+      background: var(--color-forest-solid);
+      color: #ffffff;
+      border: 1px solid var(--color-forest-solid);
+      padding: 0.32rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }}
+    .phase-3d-jump:hover {{
+      background: var(--color-sage);
+      border-color: var(--color-sage);
     }}
     .phase-meta-grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 0.8rem;
-      margin: 0.85rem 0;
+      gap: 0.9rem;
+      margin: 1rem 0;
     }}
     .meta-panel {{
-      padding: 0.75rem 0.9rem;
-      border-radius: 7px;
+      padding: 0.85rem 1rem;
+      border-radius: 0;
       font-size: 0.86rem;
+      background: var(--bg);
+      border-left: 4px solid var(--color-sage);
     }}
-    .meta-why {{ background: #eff6ff; border-left: 4px solid #2563eb; }}
-    .meta-fasteners {{ background: #fef3c7; border-left: 4px solid #d97706; }}
-    .meta-protip {{ background: #ecfdf5; border-left: 4px solid #059669; }}
+    .meta-why {{ background: rgba(89, 126, 109, 0.1); border-left: 4px solid var(--color-sage); }}
+    .meta-fasteners {{ background: var(--color-arctic-tint); border-left: 4px solid var(--color-forest-solid); }}
+    .meta-protip {{ background: var(--amber-soft); border-left: 4px solid var(--amber); }}
+
     details.audit-details {{
-      border: 2px solid #0f172a;
-      border-radius: 10px;
-      background: #f8fafc;
-      padding: 1rem 1.25rem;
+      border: 2px solid var(--border-strong);
+      border-radius: 0;
+      background: var(--bg);
+      padding: 1.25rem 1.5rem;
     }}
     details.audit-details summary {{
-      font-weight: 800;
-      font-size: 1.1rem;
+      font-weight: 900;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
       cursor: pointer;
-      color: #0f172a;
+      color: var(--ink);
+    }}
+
+    /* ====================================================================== */
+    /* GROUNDED SCIENTIFIC FOOTER (Footer.tsx replica)                        */
+    /* ====================================================================== */
+    .gs-footer {{
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 3.5rem 1.5rem 2.5rem;
+      color: var(--ink);
+      margin-top: auto;
+    }}
+    .gs-footer-inner {{
+      max-width: 1240px;
+      margin: 0 auto;
+    }}
+    .gs-footer-grid {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3rem;
+      margin-bottom: 2.5rem;
+    }}
+    .gs-footer-col-main {{
+      flex: 2 1 340px;
+    }}
+    .gs-footer-col {{
+      flex: 1 1 180px;
+    }}
+    .gs-footer-col h4 {{
+      font-size: 0.75rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin: 0 0 1.1rem 0;
+      color: var(--ink);
+    }}
+    .gs-footer-col ul {{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }}
+    .gs-footer-col a, .gs-footer-col button {{
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      text-align: left;
+      transition: color 0.15s;
+    }}
+    .gs-footer-col a:hover, .gs-footer-col button:hover {{
+      color: var(--color-sage);
+    }}
+    .gs-footer-bottom {{
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
     }}
 
     /* SECTION 8: PRINT & EXPORT READY STYLES */
     @media print {{
-      body {{ background: #fff; color: #000; font-size: 10.5pt; }}
-      .sticky-nav, .cad-wrapper, .btn-print, .no-print {{ display: none !important; }}
-      .top-banner {{ background: #fff !important; color: #000 !important; border-bottom: 2px solid #000; padding: 0.5rem 0; }}
-      .subtitle, .badge {{ color: #000 !important; border-color: #000 !important; }}
+      body {{ background: #fff !important; color: #000 !important; font-size: 10.5pt; }}
+      body[data-page] section.card {{ display: block !important; }}
+      .gs-header, .gs-view-bar, .cad-wrapper, .gs-footer, .no-print {{ display: none !important; }}
+      .gs-hero {{ background: #fff !important; color: #000 !important; border-bottom: 2px solid #000; padding: 0.75rem 0; }}
       section.card, .phase-card {{
         box-shadow: none !important;
         border: 1px solid #94a3b8 !important;
@@ -1460,56 +2101,153 @@ def build_html_part1() -> str:
     }}
   </style>
 </head>
-<body>
+<body data-page="studio">
 
-  <!-- TOP BANNER -->
-  <header class="top-banner">
-    <div class="container">
-      <div class="badge-row">
-        <span class="badge">Canonical Torsion-Box Z-Stack</span>
-        <span class="badge">&gt;1,000 lb Dynamic Kid-Jump Rated</span>
-        <span class="badge">71.50&quot; × 15.50&quot; Clear Basket Bay</span>
-        <span class="badge">1.00&quot; Recessed Cushion Tray</span>
-        <span class="badge">Hidden Wheelbarrow Mobility</span>
-        <span class="badge">Zero-Context DIY Manual</span>
+  <!-- GROUNDED SCIENTIFIC STICKY WEBSITE HEADER -->
+  <header class="gs-header">
+    <div class="gs-header-inner">
+      <a href="index.html" class="gs-brand" onclick="if(window.switchSitePage){{event.preventDefault();switchSitePage('studio');}}">
+        <img src="assets/images/gs-logo.png" alt="Grounded Scientific Logo" />
+        <div class="gs-brand-text">
+          <span class="gs-brand-title">Grounded Scientific</span>
+          <span class="gs-brand-sub">// Open Hardware Spec 01</span>
+        </div>
+      </a>
+
+      <button class="gs-mobile-toggle" onclick="toggleMobileNav()" aria-label="Toggle navigation menu">
+        <span class="material-symbols-outlined" id="mobile-menu-icon">menu</span>
+      </button>
+
+      <div class="gs-nav-wrap" id="gs-nav-wrap">
+        <nav class="gs-nav" aria-label="Primary Website Navigation">
+          <a href="index.html" class="gs-nav-link active" data-nav="studio" onclick="if(window.switchSitePage){{event.preventDefault();switchSitePage('studio');}}">
+            01 // Studio &amp; 3D CAD
+          </a>
+          <a href="materials.html" class="gs-nav-link" data-nav="materials" onclick="if(window.switchSitePage){{event.preventDefault();switchSitePage('materials');}}">
+            02 // Materials &amp; Cuts
+          </a>
+          <a href="blueprints.html" class="gs-nav-link" data-nav="blueprints" onclick="if(window.switchSitePage){{event.preventDefault();switchSitePage('blueprints');}}">
+            03 // Blueprints &amp; Audit
+          </a>
+          <div class="gs-dropdown">
+            <a href="roadmap.html" class="gs-nav-link" data-nav="roadmap" onclick="if(window.switchSitePage){{event.preventDefault();switchSitePage('roadmap');}}">
+              04 // Build Roadmap
+              <span class="material-symbols-outlined" style="font-size:16px;">expand_more</span>
+            </a>
+            <div class="gs-dropdown-menu">
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(1)">Phase 01 // Five 4×4 Legs &amp; Rollers</button>
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(2)">Phase 02 // Laminated Front Beam</button>
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(3)">Phase 03 // Coplanar Joists &amp; Slots</button>
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(4)">Phase 04 // 3/4&quot; Birch Torsion Deck</button>
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(5)">Phase 05 // Mitered 1×6 Trim Apron</button>
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(6)">Phase 06 // 10° Slanted Backrests</button>
+              <button class="gs-dropdown-item" onclick="jumpToPhaseRoadmap(7)">Phase 07 // Finish, Wax &amp; Cushions</button>
+            </div>
+          </div>
+          <a href="modular_couch_build_guide.html" class="gs-nav-link" data-nav="all" onclick="if(window.switchSitePage){{event.preventDefault();switchSitePage('all');}}">
+            Full Manual
+          </a>
+        </nav>
+
+        <div class="gs-header-actions">
+          <a href="https://groundedscientific.com/" target="_blank" rel="noopener" class="gs-icon-btn" title="Grounded Scientific Website">
+            <span class="material-symbols-outlined" style="font-size:19px;">science</span>
+          </a>
+          <a href="https://github.com/armacintosh/bench-build" target="_blank" rel="noopener" class="gs-icon-btn" title="GitHub Repository">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width:17px;height:17px;fill:currentColor;"><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8"/></svg>
+          </a>
+          <a href="https://youtu.be/gW_k-L_8o7U" target="_blank" rel="noopener" class="gs-icon-btn" title="Watch on YouTube">
+            <span class="material-symbols-outlined" style="font-size:20px;">smart_display</span>
+          </a>
+          <button class="gs-icon-btn" onclick="toggleGsTheme()" aria-label="Toggle dark mode" title="Toggle Light / Dark Theme">
+            <span class="material-symbols-outlined" id="gs-theme-icon" style="font-size:19px;">dark_mode</span>
+          </button>
+          <button class="gs-cta-btn" onclick="window.print()">
+            <span class="material-symbols-outlined" style="font-size:16px;">print</span>
+            Print Guide
+          </button>
+        </div>
       </div>
-      <h1>80&quot; × 29&quot; Heavy-Duty Modular Playroom Couch, Bench &amp; Table</h1>
-      <p class="subtitle">
-        Complete Structural Blueprint, Cut List Optimizer, Interactive 3D CAD Explorer &amp; Step-by-Step Assembly Guide.
-        Designed so any DIYer can buy the exact lumber, understand every joint, and build an heirloom-grade playroom centerpiece.
-      </p>
     </div>
   </header>
 
-  <!-- STICKY NAVIGATION BAR -->
-  <nav class="sticky-nav">
-    <div class="container nav-inner">
-      <div class="nav-links">
-        <a href="#sec-1">1. Overview &amp; 3D CAD</a>
-        <a href="#video-walkthrough">🎬 Video Walkthrough</a>
-        <a href="#sec-2">2. Tool Checklist</a>
-        <a href="#sec-3">3. Shopping List</a>
-        <a href="#sec-4">4. Cut List &amp; Maps</a>
-        <a href="#sec-5">5. Blueprints</a>
-        <a href="#sec-6">6. Step-by-Step Build</a>
-        <a href="#sec-7">7. Engineering Audit</a>
+  <!-- GROUNDED SCIENTIFIC HERO SECTION -->
+  <section class="gs-hero">
+    <div class="gs-hero-inner">
+      <div class="gs-hero-bar"></div>
+      <p class="gs-overline">PhD-Level Structural Rigour // Zero-Context DIY Execution</p>
+      <h1>
+        80&quot; × 29&quot; Modular Couch.<br />
+        <span class="text-sage">Built to Trust &amp; Convert.</span>
+      </h1>
+      <p class="gs-hero-subtitle">
+        An overbuilt playroom and basement rec-room platform engineered with a coplanar stressed-skin torsion box, hidden wheelbarrow mobility, and two 10° drop-in backrests. Converts in 10 seconds between a lounging sofa, a 1,000+ lb jump-proof bench, and a flat table.
+      </p>
+      <div class="gs-hero-badges">
+        <span class="gs-badge">Canonical Z-Stack</span>
+        <span class="gs-badge">&gt;1,000 lb Dynamic Rated</span>
+        <span class="gs-badge">71.50&quot; × 15.50&quot; Basket Bay</span>
+        <span class="gs-badge">1.00&quot; Recessed Cushion Tray</span>
+        <span class="gs-badge">3/8&quot; Hidden Rear Rollers</span>
       </div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <a href="https://github.com/armacintosh/bench-build" target="_blank" rel="noopener" class="cad-btn secondary" style="text-decoration:none; padding:0.42rem 0.75rem; font-size:0.78rem;">💻 GitHub Repo</a>
-        <button class="btn-print" onclick="window.print()">🖨️ Print Workshop Guide</button>
+      <div class="gs-hero-ctas no-print">
+        <button class="gs-cta-btn" onclick="switchSitePage('studio'); document.getElementById('cad-canvas-container').scrollIntoView({{behavior:'smooth'}});">
+          <span class="material-symbols-outlined" style="font-size:18px;">view_in_ar</span>
+          Launch 3D CAD Studio
+        </button>
+        <button class="gs-cta-btn outline" onclick="switchSitePage('studio'); document.getElementById('video-walkthrough').scrollIntoView({{behavior:'smooth'}});">
+          <span class="material-symbols-outlined" style="font-size:18px;">play_circle</span>
+          Watch 1080p Video Guide
+        </button>
+        <button class="gs-cta-btn outline" onclick="switchSitePage('roadmap')">
+          <span class="material-symbols-outlined" style="font-size:18px;">timeline</span>
+          7-Phase Build Roadmap
+        </button>
       </div>
     </div>
-  </nav>
+  </section>
 
   <main class="container">
+
+    <!-- MULTI-PAGE WEBSITE VIEW CONTROLLER BAR -->
+    <div class="gs-view-bar no-print">
+      <div>
+        <span class="mono" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:var(--color-sage); display:block;">
+          Interactive Portal View
+        </span>
+        <strong id="active-view-label" style="font-size:0.95rem; text-transform:uppercase; letter-spacing:-0.01em;">
+          01 // Interactive 3D CAD Studio, Video Walkthrough &amp; Z-Stack Spec
+        </strong>
+      </div>
+      <div class="gs-view-tabs">
+        <button class="gs-tab-btn active" data-tab="studio" onclick="switchSitePage('studio')">
+          <span class="material-symbols-outlined" style="font-size:16px;">view_in_ar</span> 01. 3D Studio &amp; Video
+        </button>
+        <button class="gs-tab-btn" data-tab="materials" onclick="switchSitePage('materials')">
+          <span class="material-symbols-outlined" style="font-size:16px;">carpenter</span> 02. Materials &amp; Cut Maps
+        </button>
+        <button class="gs-tab-btn" data-tab="blueprints" onclick="switchSitePage('blueprints')">
+          <span class="material-symbols-outlined" style="font-size:16px;">architecture</span> 03. Blueprints &amp; Audit
+        </button>
+        <button class="gs-tab-btn" data-tab="roadmap" onclick="switchSitePage('roadmap')">
+          <span class="material-symbols-outlined" style="font-size:16px;">checklist</span> 04. 7-Phase Roadmap
+        </button>
+        <button class="gs-tab-btn" data-tab="all" onclick="switchSitePage('all')">
+          <span class="material-symbols-outlined" style="font-size:16px;">menu_book</span> All Sections
+        </button>
+      </div>
+    </div>
 
     <!-- ================================================================== -->
     <!-- SECTION 1: PROJECT OVERVIEW & INTERACTIVE 3D CAD EXPLORER          -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-1">
+    <section class="card" id="sec-1" data-view="studio all">
       <div class="section-header">
-        <h2>1. Project Overview &amp; Interactive 3D CAD Explorer</h2>
-        <span class="section-num">Section 01 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Core Architecture &amp; Digital Twin</p>
+          <h2>1. Project Overview &amp; Interactive 3D CAD Studio</h2>
+        </div>
+        <span class="section-num">Module 01 // Studio</span>
       </div>
 
       <p>
@@ -1518,19 +2256,31 @@ def build_html_part1() -> str:
 
       <div class="grid-3">
         <div class="feature-box">
-          <h4>1. Sunken 1.00&quot; Recessed Cushion Pocket</h4>
+          <div class="feature-icon-box">
+            <span class="material-symbols-outlined">layers</span>
+          </div>
+          <span class="feature-step-tag">Architecture // 01</span>
+          <h4>Sunken 1.00&quot; Cushion Tray</h4>
           <p>
             A <code>3/4&quot;</code> Birch Plywood deck sits directly atop the coplanar <code>2x4</code> torsion frame (<code>Z = 19.00&quot;..19.75&quot;</code>), while a stain-grade <code>1x6</code> outer trim apron rises to <code>Z = 20.75&quot;</code>. This creates a <strong>1.00&quot; perimeter tray</strong> that locks the 4&quot; foam seat cushion in place without Velcro.
           </p>
         </div>
         <div class="feature-box">
-          <h4>2. &ldquo;Wheelbarrow&rdquo; Hidden Mobility</h4>
+          <div class="feature-icon-box">
+            <span class="material-symbols-outlined">motion_photos_on</span>
+          </div>
+          <span class="feature-step-tag">Architecture // 02</span>
+          <h4>&ldquo;Wheelbarrow&rdquo; Hidden Mobility</h4>
           <p>
             The <strong>2 front legs</strong> sit on high-friction <code>3/8&quot;</code> solid rubber grip pads (100% locked when kids jump). The <strong>3 rear legs</strong> house recessed fixed-axle rollers protruding exactly <code>3/8&quot;</code>. Lift the front apron by 1 inch to roll the entire couch effortlessly on the rear wheels!
           </p>
         </div>
         <div class="feature-box">
-          <h4>3. Drop-In 10° Slanted Backrests</h4>
+          <div class="feature-icon-box">
+            <span class="material-symbols-outlined">view_week</span>
+          </div>
+          <span class="feature-step-tag">Architecture // 03</span>
+          <h4>Drop-In 10° Slanted Backrests</h4>
           <p>
             Two independent <code>40&quot;</code>-wide backrest modules feature <code>2x6</code> uprights with straight <code>4.25&quot;</code> bottom tenons that drop vertically into <strong>4 captive wooden mortise sleeves</strong> behind the main back rail, reclining at an ergonomic <code>10°</code> angle—or lifting straight out for flat table mode.
           </p>
@@ -1726,10 +2476,13 @@ def build_html_part1() -> str:
     <!-- ================================================================== -->
     <!-- SECTION 2: COMPLETE TOOL CHECKLIST                                 -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-2">
+    <section class="card" id="sec-2" data-view="materials all">
       <div class="section-header">
-        <h2>2. Complete Tool Checklist (Required vs. Nice-to-Have)</h2>
-        <span class="section-num">Section 02 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Workshop Preparation // Interactive Checklist</p>
+          <h2>2. Complete Tool Checklist (Required vs. Nice-to-Have)</h2>
+        </div>
+        <span class="section-num">Module 02A // Tools</span>
       </div>
       <p>Check off your tools below—your progress is automatically saved in your browser (<code>localStorage</code>).</p>
 
@@ -1757,10 +2510,13 @@ def build_html_part1() -> str:
     <!-- ================================================================== -->
     <!-- SECTION 3: MASTER SHOPPING LIST                                    -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-3">
+    <section class="card" id="sec-3" data-view="materials all">
       <div class="section-header">
-        <h2>3. Master Shopping List (Lumber, Sheet Goods, Hardware &amp; Cushion Spec)</h2>
-        <span class="section-num">Section 03 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Bill of Materials // Lumber, Fasteners &amp; Upholstery</p>
+          <h2>3. Master Shopping List (Lumber, Sheet Goods, Hardware &amp; Cushion Spec)</h2>
+        </div>
+        <span class="section-num">Module 02B // BOM</span>
       </div>
 
       <h3>3A. Lumber &amp; Sheet Goods Table (Exact Board Counts)</h3>
@@ -1916,10 +2672,13 @@ def build_html_part1() -> str:
     <!-- ================================================================== -->
     <!-- SECTION 4: MASTER CUT LIST & INTERACTIVE CUT DIAGRAMS (SVG)        -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-4">
+    <section class="card" id="sec-4" data-view="materials all">
       <div class="section-header">
-        <h2>4. Master Cut List &amp; Programmatic Cut Diagrams (SVG)</h2>
-        <span class="section-num">Section 04 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Cut Optimization // Parts A through M</p>
+          <h2>4. Master Cut List &amp; Programmatic Cut Diagrams (SVG)</h2>
+        </div>
+        <span class="section-num">Module 02C // Cuts</span>
       </div>
       <p>
         Every single component is labeled <strong>Part A through Part M</strong> and reconciled to the <strong>Coplanar Torsion-Box Z-Stack</strong>. Check off each row as you cut and label your parts with painter&apos;s tape.
@@ -2103,10 +2862,13 @@ def build_html_part2() -> str:
     <!-- ================================================================== -->
     <!-- SECTION 5: ARCHITECTURAL ORTHOGRAPHIC BLUEPRINTS (HIGH-RES SVGs)   -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-5">
+    <section class="card" id="sec-5" data-view="blueprints all">
       <div class="section-header">
-        <h2>5. Architectural Orthographic Blueprints (Embedded High-Res SVGs)</h2>
-        <span class="section-num">Section 05 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Cartesian Geometry // X = 0..80&quot;, Y = 0..29&quot;, Z = 0..38.71&quot;</p>
+          <h2>5. Architectural Orthographic Blueprints (Embedded High-Res SVGs)</h2>
+        </div>
+        <span class="section-num">Module 03A // Blueprints</span>
       </div>
       <p>
         All 4 orthographic sheets are generated directly from the canonical Cartesian coordinate stack (<code>X = 0..80&quot;</code>, <code>Y = 0..29&quot;</code>, <code>Z = 0..38.71&quot;</code>) with fractional and decimal callouts.
@@ -2128,214 +2890,278 @@ def build_html_part2() -> str:
     <!-- ================================================================== -->
     <!-- SECTION 6: STEP-BY-STEP ASSEMBLY MANUAL (7 FOOLPROOF PHASES)       -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-6">
+    <section class="card" id="sec-6" data-view="roadmap all">
       <div class="section-header">
-        <h2>6. Step-by-Step Assembly Manual (Zero-Context DIY Walkthrough)</h2>
-        <span class="section-num">Section 06 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Execution Protocol // Sequential 7-Phase Timeline</p>
+          <h2>6. Step-by-Step Assembly Roadmap (Zero-Context DIY Walkthrough)</h2>
+        </div>
+        <span class="section-num">Module 04 // Roadmap</span>
       </div>
       <p>
-        Follow these 7 sequential phases in order. Every phase lists <strong>Why We Do This</strong>, <strong>Exact Fasteners to Use</strong>, <strong>Pro-Tips / Common Mistakes to Avoid</strong>, and a dedicated step diagram.
+        Follow these 7 sequential phases in order. Every phase includes <strong>Why We Do This</strong>, <strong>Exact Fasteners to Use</strong>, <strong>Pro-Tips / Common Mistakes to Avoid</strong>, a dedicated step diagram, and a one-click button to isolate that phase in the <strong>Interactive 3D CAD Studio</strong>.
       </p>
 
-      <!-- PHASE 1 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 01 / 07</span> Prepping the 5 Legs: 18-5/8&quot; Cuts, Roller Mortises, Grip Pads &amp; Half-Lap Notches</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            Cutting the <code>1.50&quot; × 3.50&quot;</code> half-lap notch into the top of all five <code>4x4</code> posts creates a solid wood-on-wood shoulder at <code>Z = 15.50&quot;</code>. When kids jump on the couch, the vertical load transfers directly into the end-grain of the <code>4x4</code> posts rather than relying on screw shear!
+      <div class="gs-roadmap-timeline">
+        <!-- PHASE 1 -->
+        <div class="phase-card" id="phase-card-1">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 01 // 07</span>
+            <span>Prepping the 5 Legs: 18-5/8&quot; Cuts, Roller Mortises, Grip Pads &amp; Half-Lap Notches</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(1)">▶ View Phase 01 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              Cutting the <code>1.50&quot; × 3.50&quot;</code> half-lap notch into the top of all five <code>4x4</code> posts creates a solid wood-on-wood shoulder at <code>Z = 15.50&quot;</code>. When kids jump on the couch, the vertical load transfers directly into the end-grain of the <code>4x4</code> posts rather than relying on screw shear!
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
+              • <strong>3× Rear Recessed Rollers</strong> (installed into bottom of <code>Leg_BL</code>, <code>Leg_BC</code>, <code>Leg_BR</code> with included mounting screws).<br>
+              • <strong>2× Front Rubber Grip Pads</strong> (<code>3.5&quot;×3.5&quot;×3/8&quot;</code>) attached to bottom of <code>Leg_FL</code> &amp; <code>Leg_FR</code> with contact cement + recessed 1&quot; pan-head screws.
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              Clamp all 5 cut legs (<code>18.625&quot; / 18-5/8&quot;</code>) side-by-side flush at the top, set your circular saw blade depth to <strong>exactly <code>1-1/2&quot; (1.50&quot;)</code></strong>, and gang-cut the 6–8 kerf passes across all 5 legs at once! Every notch will be 100% identical in 5 minutes.
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-            • <strong>3× Rear Recessed Rollers</strong> (installed into bottom of <code>Leg_BL</code>, <code>Leg_BC</code>, <code>Leg_BR</code> with included mounting screws).<br>
-            • <strong>2× Front Rubber Grip Pads</strong> (<code>3.5&quot;×3.5&quot;×3/8&quot;</code>) attached to bottom of <code>Leg_FL</code> &amp; <code>Leg_FR</code> with contact cement + recessed 1&quot; pan-head screws.
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            Clamp all 5 cut legs (<code>18.625&quot; / 18-5/8&quot;</code>) side-by-side flush at the top, set your circular saw blade depth to <strong>exactly <code>1-1/2&quot; (1.50&quot;)</code></strong>, and gang-cut the 6–8 kerf passes across all 5 legs at once! Every notch will be 100% identical in 5 minutes.
+          <ol>
+            <li><strong>Crosscut the 5 Legs [Part A]:</strong> From your single 8-ft <code>4x4</code> post, measure and cut five pieces to <strong><code>18.625&quot; (18-5/8&quot;)</code></strong>. Label two as <code>Leg_FL</code> / <code>Leg_FR</code> (Front) and three as <code>Leg_BL</code> / <code>Leg_BC</code> / <code>Leg_BR</code> (Rear).</li>
+            <li><strong>Bore the 3 Rear Roller Pockets:</strong> On the bottom end-grain of the <strong>3 Rear Legs</strong>, trace your recessed roller housing centered left-to-right and aligned so the roller axle rolls front-to-back (along Y). Use a Forstner bit or plunge router to mortise the pocket to the exact depth where the wheel protrudes <strong><code>0.375&quot; (3/8&quot;)</code></strong> below the wood. Screw the 3 rollers in place.</li>
+            <li><strong>Attach the 2 Front Grip Pads:</strong> Fasten the <code>3.50&quot; × 3.50&quot; × 3/8&quot;</code> solid rubber pads to the bottom of the <strong>2 Front Legs</strong>. Verify that all 5 legs now stand exactly <strong><code>19.000&quot;</code></strong> tall (<code>18.625&quot; wood + 0.375&quot; foot</code>).</li>
+            <li><strong>Cut the 1.50&quot; × 3.50&quot; Half-Lap Notches:</strong> Measure <code>3.50&quot;</code> down from the top of each leg. Set your circular saw blade depth to <code>1.50&quot;</code>, make kerf cuts every <code>1/2&quot;</code> across the top <code>3.50&quot;</code> zone, knock out the wood wafers with a hammer, and pare the face smooth with a sharp chisel. Test-fit a scrap <code>2x4</code>—it should sit dead-flush with both the top and face of the post.</li>
+          </ol>
+          {p_svgs[1]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 01</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">All 5 legs measure 19.000&quot; total height w/ 1.50&quot;×3.50&quot; top half-lap shoulders</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Crosscut the 5 Legs [Part A]:</strong> From your single 8-ft <code>4x4</code> post, measure and cut five pieces to <strong><code>18.625&quot; (18-5/8&quot;)</code></strong>. Label two as <code>Leg_FL</code> / <code>Leg_FR</code> (Front) and three as <code>Leg_BL</code> / <code>Leg_BC</code> / <code>Leg_BR</code> (Rear).</li>
-          <li><strong>Bore the 3 Rear Roller Pockets:</strong> On the bottom end-grain of the <strong>3 Rear Legs</strong>, trace your recessed roller housing centered left-to-right and aligned so the roller axle rolls front-to-back (along Y). Use a Forstner bit or plunge router to mortise the pocket to the exact depth where the wheel protrudes <strong><code>0.375&quot; (3/8&quot;)</code></strong> below the wood. Screw the 3 rollers in place.</li>
-          <li><strong>Attach the 2 Front Grip Pads:</strong> Fasten the <code>3.50&quot; × 3.50&quot; × 3/8&quot;</code> solid rubber pads to the bottom of the <strong>2 Front Legs</strong>. Verify that all 5 legs now stand exactly <strong><code>19.000&quot;</code></strong> tall (<code>18.625&quot; wood + 0.375&quot; foot</code>).</li>
-          <li><strong>Cut the 1.50&quot; × 3.50&quot; Half-Lap Notches:</strong> Measure <code>3.50&quot;</code> down from the top of each leg. Set your circular saw blade depth to <code>1.50&quot;</code>, make kerf cuts every <code>1/2&quot;</code> across the top <code>3.50&quot;</code> zone, knock out the wood wafers with a hammer, and pare the face smooth with a sharp chisel. Test-fit a scrap <code>2x4</code>—it should sit dead-flush with both the top and face of the post.</li>
-        </ol>
-        {p_svgs[1]}
-      </div>
 
-      <!-- PHASE 2 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 02 / 07</span> Laminating the Unbreakable Front Beam &amp; Assembling Front/Rear Portals</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            To achieve a massive <strong><code>71.50&quot;</code> unobstructed front basket opening</strong> with zero center front leg, we glue and screw the <code>71.50&quot;</code> Inner Front Beam [Part C] directly behind the <code>78.50&quot;</code> Outer Front Rail [Part B], creating a monolithic <code>3.00&quot; × 3.50&quot;</code> structural header.
+        <!-- PHASE 2 -->
+        <div class="phase-card" id="phase-card-2">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 02 // 07</span>
+            <span>Laminating the Unbreakable Front Beam &amp; Assembling Front/Rear Portals</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(2)">▶ View Phase 02 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              To achieve a massive <strong><code>71.50&quot;</code> unobstructed front basket opening</strong> with zero center front leg, we glue and screw the <code>71.50&quot;</code> Inner Front Beam [Part C] directly behind the <code>78.50&quot;</code> Outer Front Rail [Part B], creating a monolithic <code>3.00&quot; × 3.50&quot;</code> structural header.
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
+              • <strong>10× <code>#10 × 3.00&quot;</code> GRK R4 Structural Screws</strong> (2 per leg notch, driven from inside of post into rail, or through rail into post + glue).<br>
+              • <strong>20× <code>#10 × 2.75&quot; (2-3/4&quot;)</code> GRK Structural Screws</strong> + Titebond glue in a staggered W-pattern every 8&quot; for beam lamination.
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              If either front <code>2x4</code> has a slight crown (curve along its edge), orient both crowns <strong>pointing UP (<code>+Z</code>)</strong> so any downward seating weight flattens the beam rather than sagging!
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-            • <strong>10× <code>#10 × 3.00&quot;</code> GRK R4 Structural Screws</strong> (2 per leg notch, driven from inside of post into rail, or through rail into post + glue).<br>
-            • <strong>20× <code>#10 × 2.75&quot; (2-3/4&quot;)</code> GRK Structural Screws</strong> + Titebond glue in a staggered W-pattern every 8&quot; for beam lamination.
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            If either front <code>2x4</code> has a slight crown (curve along its edge), orient both crowns <strong>pointing UP (<code>+Z</code>)</strong> so any downward seating weight flattens the beam rather than sagging!
+          <ol>
+            <li><strong>Build the Front Portal:</strong> Lay <code>Leg_FL</code> and <code>Leg_FR</code> flat on your workbench/floor with their notches facing up. Spread wood glue in both notches, seat the <code>78.50&quot;</code> Outer Front Rail [Part B] flush into the notches (<code>X = 0.75&quot;..79.25&quot;</code>), check for 90° squareness with a speed square, and drive two <code>3.00&quot;</code> structural screws per joint.</li>
+            <li><strong>Laminate the Inner Front Beam [Part C]:</strong> Spread a generous coat of wood glue along the back face of the Outer Front Rail between the two front legs (<code>X = 4.25&quot;..75.75&quot;</code>). Drop the <code>71.50&quot;</code> Inner Front Beam [Part C] tightly between the inner faces of <code>Leg_FL</code> and <code>Leg_FR</code>, clamp flush at the top edge (<code>Z = 19.00&quot;</code>), and drive twenty <code>2.75&quot;</code> structural screws from the inside face in a staggered W-pattern every <code>8.0&quot;</code>.</li>
+            <li><strong>Build the 3-Leg Rear Portal:</strong> Lay <code>Leg_BL</code> (<code>X = 0.75..4.25&quot;</code>), the 5th Center-Back Leg <code>Leg_BC</code> (<code>X = 38.25..41.75&quot;</code>, centered at <code>X = 40.00&quot;</code>), and <code>Leg_BR</code> (<code>X = 75.75..79.25&quot;</code>) with their rear-facing notches up. Glue and fasten the <code>78.50&quot;</code> Main Structural Back Rail [Part B] into all three notches using two <code>3.00&quot;</code> structural screws per leg.</li>
+          </ol>
+          {p_svgs[2]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 02</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">Front 2-Leg Portal &amp; Rear 3-Leg Portal square at 90° with 71.50&quot; clear front span</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Build the Front Portal:</strong> Lay <code>Leg_FL</code> and <code>Leg_FR</code> flat on your workbench/floor with their notches facing up. Spread wood glue in both notches, seat the <code>78.50&quot;</code> Outer Front Rail [Part B] flush into the notches (<code>X = 0.75&quot;..79.25&quot;</code>), check for 90° squareness with a speed square, and drive two <code>3.00&quot;</code> structural screws per joint.</li>
-          <li><strong>Laminate the Inner Front Beam [Part C]:</strong> Spread a generous coat of wood glue along the back face of the Outer Front Rail between the two front legs (<code>X = 4.25&quot;..75.75&quot;</code>). Drop the <code>71.50&quot;</code> Inner Front Beam [Part C] tightly between the inner faces of <code>Leg_FL</code> and <code>Leg_FR</code>, clamp flush at the top edge (<code>Z = 19.00&quot;</code>), and drive twenty <code>2.75&quot;</code> structural screws from the inside face in a staggered W-pattern every <code>8.0&quot;</code>.</li>
-          <li><strong>Build the 3-Leg Rear Portal:</strong> Lay <code>Leg_BL</code> (<code>X = 0.75..4.25&quot;</code>), the 5th Center-Back Leg <code>Leg_BC</code> (<code>X = 38.25..41.75&quot;</code>, centered at <code>X = 40.00&quot;</code>), and <code>Leg_BR</code> (<code>X = 75.75..79.25&quot;</code>) with their rear-facing notches up. Glue and fasten the <code>78.50&quot;</code> Main Structural Back Rail [Part B] into all three notches using two <code>3.00&quot;</code> structural screws per leg.</li>
-        </ol>
-        {p_svgs[2]}
-      </div>
 
-      <!-- PHASE 3 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 03 / 07</span> Building the Coplanar Ladder Joist Grid &amp; Rear Drop-In Mortise Sleeve</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            Because all <code>2x4</code> rails, joists, and spacer blocks share the exact same elevation (<code>Z = 15.50&quot; to 19.00&quot;</code>), you never have to rip a single <code>2x4</code>! And using a scrap block as a temporary spacer gauge while clamping the rear pocket channel guarantees your 4 backrest slots will never bind.
+        <!-- PHASE 3 -->
+        <div class="phase-card" id="phase-card-3">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 03 // 07</span>
+            <span>Building the Coplanar Ladder Joist Grid &amp; Rear Drop-In Mortise Sleeve</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(3)">▶ View Phase 03 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              Because all <code>2x4</code> rails, joists, and spacer blocks share the exact same elevation (<code>Z = 15.50&quot; to 19.00&quot;</code>), you never have to rip a single <code>2x4</code>! And using a scrap block as a temporary spacer gauge while clamping the rear pocket channel guarantees your 4 backrest slots will never bind.
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
+              • <strong>24× <code>2.50&quot; (2-1/2&quot;)</code> Heavy-Duty Pocket Screws</strong> (2 per end on the 2 Side Rails [Part D] and 5 Cross-Joists [Part E]).<br>
+              • <strong>14× <code>#10 × 3.00&quot;</code> Structural Screws</strong> to lock the 5 Spacer Blocks [Part F] and Rear Pocket Backer Rail [Part B].
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              <strong>NEVER rely on a tape measure alone when spacing the 4 rear backrest slots!</strong> Wrap a single layer of painter&apos;s tape around a scrap piece of <code>2x4</code> (<code>3.50&quot; × 1.50&quot;</code>) and clamp it inside each slot while screwing the adjacent spacer block. When you pull the taped scrap block out, you automatically get a velvety <code>1/32&quot;</code> slip-fit clearance!
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-            • <strong>24× <code>2.50&quot; (2-1/2&quot;)</code> Heavy-Duty Pocket Screws</strong> (2 per end on the 2 Side Rails [Part D] and 5 Cross-Joists [Part E]).<br>
-            • <strong>14× <code>#10 × 3.00&quot;</code> Structural Screws</strong> to lock the 5 Spacer Blocks [Part F] and Rear Pocket Backer Rail [Part B].
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            <strong>NEVER rely on a tape measure alone when spacing the 4 rear backrest slots!</strong> Wrap a single layer of painter&apos;s tape around a scrap piece of <code>2x4</code> (<code>3.50&quot; × 1.50&quot;</code>) and clamp it inside each slot while screwing the adjacent spacer block. When you pull the taped scrap block out, you automatically get a velvety <code>1/32&quot;</code> slip-fit clearance!
+          <ol>
+            <li><strong>Connect Front &amp; Rear Portals with Side Rails [Part D]:</strong> Stand the Front and Rear Portals upright on a flat floor. Glue and pocket-screw the two <code>19.50&quot;</code> Side Frame Rails [Part D] between the front and rear corner legs (<code>Y = 4.25&quot;..23.75&quot;</code>), keeping the top faces 100% coplanar at <code>Z = 19.00&quot;</code>.</li>
+            <li><strong>Install the 5 Coplanar Cross-Joists [Part E]:</strong> Mark joist centerlines at <strong><code>X = 16.00&quot;, 28.00&quot;, 40.00&quot;, 52.00&quot;, and 64.00&quot;</code></strong> along the Inner Front Beam (<code>Y = 3.75&quot;</code>) and Main Back Rail (<code>Y = 23.75&quot;</code>). Glue and pocket-screw the five <code>20.00&quot;</code> Cross-Joists [Part E] flush with the top of the frame (<code>Z = 19.00&quot;</code>).</li>
+            <li><strong>Assemble the Rear Mortise Pocket Channel (<code>Y = 25.25&quot;..28.25&quot;</code>):</strong> Behind the Main Back Rail, glue and screw the 5 Spacer Blocks [Part F] at their exact X-positions:
+              <ul>
+                <li><code>Spacer 1 (5.25&quot;)</code> at <code>X = 0.75..6.00&quot;</code> → leaves <strong>Slot 1 at <code>X = 6.00..9.50&quot;</code></strong></li>
+                <li><code>Spacer 2 (21.00&quot;)</code> at <code>X = 9.50..30.50&quot;</code> → leaves <strong>Slot 2 at <code>X = 30.50..34.00&quot;</code></strong></li>
+                <li><code>Spacer 3 (12.00&quot; Center)</code> at <code>X = 34.00..46.00&quot;</code> → leaves <strong>Slot 3 at <code>X = 46.00..49.50&quot;</code></strong></li>
+                <li><code>Spacer 4 (21.00&quot;)</code> at <code>X = 49.50..70.50&quot;</code> → leaves <strong>Slot 4 at <code>X = 70.50..74.00&quot;</code></strong></li>
+                <li><code>Spacer 5 (5.25&quot;)</code> at <code>X = 74.00..79.25&quot;</code></li>
+              </ul>
+            </li>
+            <li><strong>Close the Mortise Sleeve:</strong> Glue and screw the <code>78.50&quot;</code> Rear Pocket Backer Rail [Part B] (<code>Y = 26.75&quot;..28.25&quot;</code>) across the back of all 5 spacer blocks using <code>3.00&quot;</code> structural screws, checking each of the 4 slots with your taped scrap gauge block as you go.</li>
+          </ol>
+          {p_svgs[3]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 03</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">All joists coplanar at Z = 19.00&quot;; scrap 2x4 slides smoothly into all 4 rear mortise slots</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Connect Front &amp; Rear Portals with Side Rails [Part D]:</strong> Stand the Front and Rear Portals upright on a flat floor. Glue and pocket-screw the two <code>19.50&quot;</code> Side Frame Rails [Part D] between the front and rear corner legs (<code>Y = 4.25&quot;..23.75&quot;</code>), keeping the top faces 100% coplanar at <code>Z = 19.00&quot;</code>.</li>
-          <li><strong>Install the 5 Coplanar Cross-Joists [Part E]:</strong> Mark joist centerlines at <strong><code>X = 16.00&quot;, 28.00&quot;, 40.00&quot;, 52.00&quot;, and 64.00&quot;</code></strong> along the Inner Front Beam (<code>Y = 3.75&quot;</code>) and Main Back Rail (<code>Y = 23.75&quot;</code>). Glue and pocket-screw the five <code>20.00&quot;</code> Cross-Joists [Part E] flush with the top of the frame (<code>Z = 19.00&quot;</code>).</li>
-          <li><strong>Assemble the Rear Mortise Pocket Channel (<code>Y = 25.25&quot;..28.25&quot;</code>):</strong> Behind the Main Back Rail, glue and screw the 5 Spacer Blocks [Part F] at their exact X-positions:
-            <ul>
-              <li><code>Spacer 1 (5.25&quot;)</code> at <code>X = 0.75..6.00&quot;</code> → leaves <strong>Slot 1 at <code>X = 6.00..9.50&quot;</code></strong></li>
-              <li><code>Spacer 2 (21.00&quot;)</code> at <code>X = 9.50..30.50&quot;</code> → leaves <strong>Slot 2 at <code>X = 30.50..34.00&quot;</code></strong></li>
-              <li><code>Spacer 3 (12.00&quot; Center)</code> at <code>X = 34.00..46.00&quot;</code> → leaves <strong>Slot 3 at <code>X = 46.00..49.50&quot;</code></strong></li>
-              <li><code>Spacer 4 (21.00&quot;)</code> at <code>X = 49.50..70.50&quot;</code> → leaves <strong>Slot 4 at <code>X = 70.50..74.00&quot;</code></strong></li>
-              <li><code>Spacer 5 (5.25&quot;)</code> at <code>X = 74.00..79.25&quot;</code></li>
-            </ul>
-          </li>
-          <li><strong>Close the Mortise Sleeve:</strong> Glue and screw the <code>78.50&quot;</code> Rear Pocket Backer Rail [Part B] (<code>Y = 26.75&quot;..28.25&quot;</code>) across the back of all 5 spacer blocks using <code>3.00&quot;</code> structural screws, checking each of the 4 slots with your taped scrap gauge block as you go.</li>
-        </ol>
-        {p_svgs[3]}
-      </div>
 
-      <!-- PHASE 4 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 04 / 07</span> Installing the 3/4&quot; Birch Plywood Torsion-Box Seat Deck</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            Gluing and screwing the <code>78.50&quot; × 23.75&quot; × 3/4&quot;</code> Birch Plywood sheet [Part G] across the coplanar <code>2x4</code> grid locks the top flange and bottom framing into a rigid <strong>stressed-skin torsion box</strong>, multiplying stiffness across the <code>71.50&quot;</code> span.
+        <!-- PHASE 4 -->
+        <div class="phase-card" id="phase-card-4">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 04 // 07</span>
+            <span>Installing the 3/4&quot; Birch Plywood Torsion-Box Seat Deck</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(4)">▶ View Phase 04 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              Gluing and screwing the <code>78.50&quot; × 23.75&quot; × 3/4&quot;</code> Birch Plywood sheet [Part G] across the coplanar <code>2x4</code> grid locks the top flange and bottom framing into a rigid <strong>stressed-skin torsion box</strong>, multiplying stiffness across the <code>71.50&quot;</code> span.
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
+              • <strong>45× <code>#8 × 1.75&quot; (1-3/4&quot;)</code> Countersunk Wood Screws</strong> spaced every <code>8.0&quot;</code> along perimeter rails and all 5 interior joists + continuous bead of Titebond wood glue.
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              Notice that the plywood deck is <strong><code>23.75&quot;</code> deep</strong> (spanning <code>Y = 0.75&quot;</code> to <code>Y = 24.50&quot;</code>, halfway across the Main Back Rail). Do NOT cover <code>Y = 25.25&quot;..26.75&quot;</code> with the seat deck—that rear zone stays open for the 4 drop-in backrest slots!
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-            • <strong>45× <code>#8 × 1.75&quot; (1-3/4&quot;)</code> Countersunk Wood Screws</strong> spaced every <code>8.0&quot;</code> along perimeter rails and all 5 interior joists + continuous bead of Titebond wood glue.
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            Notice that the plywood deck is <strong><code>23.75&quot;</code> deep</strong> (spanning <code>Y = 0.75&quot;</code> to <code>Y = 24.50&quot;</code>, halfway across the Main Back Rail). Do NOT cover <code>Y = 25.25&quot;..26.75&quot;</code> with the seat deck—that rear zone stays open for the 4 drop-in backrest slots!
+          <ol>
+            <li><strong>Dry-Fit &amp; Square the Frame:</strong> Lay the <code>78.50&quot; × 23.75&quot;</code> Birch Plywood Seat Deck [Part G] on top of the <code>2x4</code> frame (<code>Z = 19.00&quot;..19.75&quot;</code>). Align its front and side edges flush with the outside of the <code>2x4</code> perimeter (<code>X = 0.75..79.25&quot;</code>, <code>Y = 0.75..24.50&quot;</code>)—the factory-square plywood sheet automatically squares the entire bench!</li>
+            <li><strong>Snap Chalk/Pencil Lines for Joists:</strong> Mark the 5 interior joist centerlines (<code>X = 16&quot;, 28&quot;, 40&quot;, 52&quot;, 64&quot;</code>) across the top face of the plywood.</li>
+            <li><strong>Glue &amp; Screw Down:</strong> Lift the deck, run a <code>1/4&quot;</code> bead of wood glue along the top of all perimeter rails and joists, set the deck back down, and drive <code>#8 × 1-3/4&quot;</code> screws every <code>8.0&quot;</code> around the perimeter and along each joist line. Countersink every screw head flush.</li>
+          </ol>
+          {p_svgs[4]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 04</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">78.50&quot;×23.75&quot; Birch deck glued &amp; screwed at Z = 19.75&quot; with rear mortise channel unobstructed</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Dry-Fit &amp; Square the Frame:</strong> Lay the <code>78.50&quot; × 23.75&quot;</code> Birch Plywood Seat Deck [Part G] on top of the <code>2x4</code> frame (<code>Z = 19.00&quot;..19.75&quot;</code>). Align its front and side edges flush with the outside of the <code>2x4</code> perimeter (<code>X = 0.75..79.25&quot;</code>, <code>Y = 0.75..24.50&quot;</code>)—the factory-square plywood sheet automatically squares the entire bench!</li>
-          <li><strong>Snap Chalk/Pencil Lines for Joists:</strong> Mark the 5 interior joist centerlines (<code>X = 16&quot;, 28&quot;, 40&quot;, 52&quot;, 64&quot;</code>) across the top face of the plywood.</li>
-          <li><strong>Glue &amp; Screw Down:</strong> Lift the deck, run a <code>1/4&quot;</code> bead of wood glue along the top of all perimeter rails and joists, set the deck back down, and drive <code>#8 × 1-3/4&quot;</code> screws every <code>8.0&quot;</code> around the perimeter and along each joist line. Countersink every screw head flush.</li>
-        </ol>
-        {p_svgs[4]}
-      </div>
 
-      <!-- PHASE 5 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 05 / 07</span> Wrapping the Blind-Fastened 1x6 Stain-Grade Apron &amp; Rear Pocket Cap Trim</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            Mounting the <code>5.50&quot;</code> tall <code>1x6</code> apron from <code>Z = 15.25&quot;</code> to <code>Z = 20.75&quot;</code> hides the bottom of the rough <code>2x4</code> frame by <code>1/4&quot;</code> while projecting <strong>exactly <code>1.00&quot;</code> above the plywood deck (<code>Z = 19.75&quot;..20.75&quot;</code>)</strong> to form the sunken cushion tray—with zero visible screws on the outside!
+        <!-- PHASE 5 -->
+        <div class="phase-card" id="phase-card-5">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 05 // 07</span>
+            <span>Wrapping the Blind-Fastened 1x6 Stain-Grade Apron &amp; Rear Pocket Cap Trim</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(5)">▶ View Phase 05 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              Mounting the <code>5.50&quot;</code> tall <code>1x6</code> apron from <code>Z = 15.25&quot;</code> to <code>Z = 20.75&quot;</code> hides the bottom of the rough <code>2x4</code> frame by <code>1/4&quot;</code> while projecting <strong>exactly <code>1.00&quot;</code> above the plywood deck (<code>Z = 19.75&quot;..20.75&quot;</code>)</strong> to form the sunken cushion tray—with zero visible screws on the outside!
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
+              • <strong>36× <code>#8 × 1.875&quot; (1-7/8&quot;)</code> Screws</strong> driven strictly from the <em>inside</em> of the <code>2x4</code> rails into the back of the <code>1x6</code> apron.<br>
+              • <strong>1-1/4&quot; Finish Brads + Glue</strong> (or countersunk <code>1-1/2&quot;</code> trim screws) for the <code>1x2</code> Rear Pocket Cap Strips [Parts J &amp; M].
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              To get a laser-consistent <strong><code>1.00&quot;</code> cushion lip</strong> all the way around without measuring each clamp, place four <code>1.00&quot;</code> thick scrap blocks on top of the plywood deck near the edges and clamp your <code>1x6</code> apron flush with the top of those blocks!
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-            • <strong>36× <code>#8 × 1.875&quot; (1-7/8&quot;)</code> Screws</strong> driven strictly from the <em>inside</em> of the <code>2x4</code> rails into the back of the <code>1x6</code> apron.<br>
-            • <strong>1-1/4&quot; Finish Brads + Glue</strong> (or countersunk <code>1-1/2&quot;</code> trim screws) for the <code>1x2</code> Rear Pocket Cap Strips [Parts J &amp; M].
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            To get a laser-consistent <strong><code>1.00&quot;</code> cushion lip</strong> all the way around without measuring each clamp, place four <code>1.00&quot;</code> thick scrap blocks on top of the plywood deck near the edges and clamp your <code>1x6</code> apron flush with the top of those blocks!
+          <ol>
+            <li><strong>Cap the Rear Mortise Channel [Parts J &amp; M]:</strong> Glue and brad-nail the <code>78.50&quot;</code> <code>1x2</code> Rear Pocket Cap Strip [Part J] atop the Rear Pocket Backer Rail (<code>Y = 26.75&quot;..28.25&quot;</code>, <code>Z = 19.00&quot;..19.75&quot;</code>) and the five <code>1x2</code> Spacer Caps [Part M] directly atop the 5 spacer blocks. Now the entire rear deck surface around the 4 open mortise slots sits coplanar with the <code>Z = 19.75&quot;</code> Birch Plywood deck!</li>
+            <li><strong>Miter &amp; Clamp the Front &amp; Side 1x6 Aprons [Parts H &amp; I]:</strong> Cut the two <code>80.00&quot;</code> Front/Rear Aprons [Part H] and two <code>29.00&quot;</code> Side Aprons [Part I] with crisp <code>45°</code> mitered ends (long-point to long-point). Clamp the Front Apron in place so its top edge sits at <strong><code>Z = 20.75&quot;</code></strong> (<code>1.00&quot;</code> above the plywood deck) and its bottom edge sits at <code>Z = 15.25&quot;</code> (<code>0.25&quot;</code> below the <code>2x4</code> rail).</li>
+            <li><strong>Drive the Blind Inside Screws:</strong> Crawl/reach underneath the frame and drive <code>#8 × 1-7/8&quot;</code> screws through the <code>1.50&quot;</code> thick <code>2x4</code> perimeter rails into the back of the <code>0.75&quot;</code> <code>1x6</code> apron every <code>10&quot;–12&quot;</code>. Glue the <code>45°</code> miter corners tightly with wood glue and clamp until cured.</li>
+          </ol>
+          {p_svgs[5]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 05</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">Outer footprint 80.00&quot;×29.00&quot; with uniform 1.00&quot; cushion lip at Z = 20.75&quot;</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Cap the Rear Mortise Channel [Parts J &amp; M]:</strong> Glue and brad-nail the <code>78.50&quot;</code> <code>1x2</code> Rear Pocket Cap Strip [Part J] atop the Rear Pocket Backer Rail (<code>Y = 26.75&quot;..28.25&quot;</code>, <code>Z = 19.00&quot;..19.75&quot;</code>) and the five <code>1x2</code> Spacer Caps [Part M] directly atop the 5 spacer blocks. Now the entire rear deck surface around the 4 open mortise slots sits coplanar with the <code>Z = 19.75&quot;</code> Birch Plywood deck!</li>
-          <li><strong>Miter &amp; Clamp the Front &amp; Side 1x6 Aprons [Parts H &amp; I]:</strong> Cut the two <code>80.00&quot;</code> Front/Rear Aprons [Part H] and two <code>29.00&quot;</code> Side Aprons [Part I] with crisp <code>45°</code> mitered ends (long-point to long-point). Clamp the Front Apron in place so its top edge sits at <strong><code>Z = 20.75&quot;</code></strong> (<code>1.00&quot;</code> above the plywood deck) and its bottom edge sits at <code>Z = 15.25&quot;</code> (<code>0.25&quot;</code> below the <code>2x4</code> rail).</li>
-          <li><strong>Drive the Blind Inside Screws:</strong> Crawl/reach underneath the frame and drive <code>#8 × 1-7/8&quot;</code> screws through the <code>1.50&quot;</code> thick <code>2x4</code> perimeter rails into the back of the <code>0.75&quot;</code> <code>1x6</code> apron every <code>10&quot;–12&quot;</code>. Glue the <code>45°</code> miter corners tightly with wood glue and clamp until cured.</li>
-        </ol>
-        {p_svgs[5]}
-      </div>
 
-      <!-- PHASE 6 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 06 / 07</span> Cutting &amp; Assembling the Two 40&quot; Slanted Drop-In Backrests</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            Splitting the 80&quot; backrest into two lightweight <strong><code>40&quot;</code> modules</strong> means one adult can lift either backrest straight out in 3 seconds—converting half the couch into a chaise or the entire couch into a flat play table!
+        <!-- PHASE 6 -->
+        <div class="phase-card" id="phase-card-6">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 06 // 07</span>
+            <span>Cutting &amp; Assembling the Two 40&quot; Slanted Drop-In Backrests</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(6)">▶ View Phase 06 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              Splitting the 80&quot; backrest into two lightweight <strong><code>40&quot;</code> modules</strong> means one adult can lift either backrest straight out in 3 seconds—converting half the couch into a chaise or the entire couch into a flat play table!
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
+              • <strong>16× <code>#8 × 1.75&quot; (1-3/4&quot;)</code> Countersunk Wood Screws</strong> (4 per upright, driven from the rear/angled face of the upright or countersunk through the front panel into the <code>1.50&quot;</code> thick <code>2x6</code> spine) + Titebond wood glue.
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              <strong>Assemble the panels to the uprights while the uprights are sitting inside the bench slots!</strong> That way, the bench itself acts as your assembly jig and guarantees the two uprights are spaced at the exact slot pitch (<code>24.50&quot;</code> center-to-center) with zero bind.
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-            • <strong>16× <code>#8 × 1.75&quot; (1-3/4&quot;)</code> Countersunk Wood Screws</strong> (4 per upright, driven from the rear/angled face of the upright or countersunk through the front panel into the <code>1.50&quot;</code> thick <code>2x6</code> spine) + Titebond wood glue.
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            <strong>Assemble the panels to the uprights while the uprights are sitting inside the bench slots!</strong> That way, the bench itself acts as your assembly jig and guarantees the two uprights are spaced at the exact slot pitch (<code>24.50&quot;</code> center-to-center) with zero bind.
+          <ol>
+            <li><strong>Cut the Four 2x6 Angled Uprights [Part K]:</strong> Follow <strong>SVG 2</strong> in Section 4 to crosscut your 8-ft <code>2x6</code> into four <code>23.50&quot;</code> blanks. Lay out the <code>4.25&quot;</code> bottom tenon (<code>3-7/16&quot;</code> wide) and the <code>19.25&quot;</code> upper spine canted backward at <strong><code>10.0°</code></strong>. Cut along the layout lines with your circular saw and straight-edge guide.</li>
+            <li><strong>Chamfer &amp; Test-Fit the Tenons:</strong> Lightly sand or plane the lower <code>4.25&quot;</code> tenon of each upright to <code>1-7/16&quot; × 3-7/16&quot;</code> and add a <code>1/8&quot;</code> lead-in chamfer around the bottom tip so each upright drops effortlessly into Slots 1, 2, 3, and 4 down to the <code>Z = 15.50&quot;</code> bottom stop (or add a screw stop pin under the slot at <code>Z = 15.50&quot;</code>).</li>
+            <li><strong>Attach the Two 39.25&quot; × 15.00&quot; Birch Panels [Part L]:</strong> Insert the Left pair of uprights into <strong>Slots 1 &amp; 2</strong> and the Right pair into <strong>Slots 3 &amp; 4</strong>. Place a temporary <code>3.50&quot;</code> tall scrap <code>2x4</code> block flat on the plywood seat deck so the bottom edge of each <code>39.25&quot; × 15.00&quot;</code> Birch Plywood panel starts at <code>Z = 23.25&quot;</code> (allowing the <code>4.00&quot;</code> foam seat cushion to tuck cleanly underneath!). Glue, clamp, and screw each panel to its two uprights with four <code>#8 × 1-3/4&quot;</code> screws per upright.</li>
+          </ol>
+          {p_svgs[6]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 06</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">Both 40&quot; backrest modules drop in &amp; lift out cleanly with one hand at 10° recline</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Cut the Four 2x6 Angled Uprights [Part K]:</strong> Follow <strong>SVG 2</strong> in Section 4 to crosscut your 8-ft <code>2x6</code> into four <code>23.50&quot;</code> blanks. Lay out the <code>4.25&quot;</code> bottom tenon (<code>3-7/16&quot;</code> wide) and the <code>19.25&quot;</code> upper spine canted backward at <strong><code>10.0°</code></strong>. Cut along the layout lines with your circular saw and straight-edge guide.</li>
-          <li><strong>Chamfer &amp; Test-Fit the Tenons:</strong> Lightly sand or plane the lower <code>4.25&quot;</code> tenon of each upright to <code>1-7/16&quot; × 3-7/16&quot;</code> and add a <code>1/8&quot;</code> lead-in chamfer around the bottom tip so each upright drops effortlessly into Slots 1, 2, 3, and 4 down to the <code>Z = 15.50&quot;</code> bottom stop (or add a screw stop pin under the slot at <code>Z = 15.50&quot;</code>).</li>
-          <li><strong>Attach the Two 39.25&quot; × 15.00&quot; Birch Panels [Part L]:</strong> Insert the Left pair of uprights into <strong>Slots 1 &amp; 2</strong> and the Right pair into <strong>Slots 3 &amp; 4</strong>. Place a temporary <code>3.50&quot;</code> tall scrap <code>2x4</code> block flat on the plywood seat deck so the bottom edge of each <code>39.25&quot; × 15.00&quot;</code> Birch Plywood panel starts at <code>Z = 23.25&quot;</code> (allowing the <code>4.00&quot;</code> foam seat cushion to tuck cleanly underneath!). Glue, clamp, and screw each panel to its two uprights with four <code>#8 × 1-3/4&quot;</code> screws per upright.</li>
-        </ol>
-        {p_svgs[6]}
-      </div>
 
-      <!-- PHASE 7 -->
-      <div class="phase-card">
-        <h3 class="phase-title"><span class="phase-pill">PHASE 07 / 07</span> Sanding, Staining/Finishing, and Waxing the Backrest Tenons</h3>
-        <div class="phase-meta-grid">
-          <div class="meta-panel meta-why">
-            <strong>💡 Why We Do This:</strong><br>
-            Rounding over the top inside edge of the <code>1x6</code> cushion lip prevents fabric wear on your cushion cover, while rubbing dry <strong>paraffin wax</strong> onto the bare wood tenons gives a silky, non-stick glide that never gums up like oil or grease.
+        <!-- PHASE 7 -->
+        <div class="phase-card" id="phase-card-7">
+          <h3 class="phase-title">
+            <span class="phase-pill">PHASE 07 // 07</span>
+            <span>Sanding, Staining/Finishing, and Waxing the Backrest Tenons</span>
+            <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(7)">▶ View Phase 07 in 3D CAD</button>
+          </h3>
+          <div class="phase-meta-grid">
+            <div class="meta-panel meta-why">
+              <strong>💡 Why We Do This:</strong><br>
+              Rounding over the top inside edge of the <code>1x6</code> cushion lip prevents fabric wear on your cushion cover, while rubbing dry <strong>paraffin wax</strong> onto the bare wood tenons gives a silky, non-stick glide that never gums up like oil or grease.
+            </div>
+            <div class="meta-panel meta-fasteners">
+              <strong>🔩 Exact Consumables:</strong><br>
+              • <strong>80 → 120 → 180 Grit Sandpaper Discs</strong><br>
+              • <strong>Pre-Stain Conditioner + Wood Stain + 3 Coats Water-Based Matte/Satin Polyurethane</strong><br>
+              • <strong>Household Paraffin Wax Block</strong>
+            </div>
+            <div class="meta-panel meta-protip">
+              <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
+              Wrap painter&apos;s tape around the bottom <code>4.25&quot;</code> tenons of the four backrest uprights before applying stain or polyurethane! Thick film finishes inside mortise-and-tenon joints cause sticky wood-on-wood friction in humid summer weather.
+            </div>
           </div>
-          <div class="meta-panel meta-fasteners">
-            <strong>🔩 Exact Consumables:</strong><br>
-            • <strong>80 → 120 → 180 Grit Sandpaper Discs</strong><br>
-            • <strong>Pre-Stain Conditioner + Wood Stain + 3 Coats Water-Based Matte/Satin Polyurethane</strong><br>
-            • <strong>Household Paraffin Wax Block</strong>
-          </div>
-          <div class="meta-panel meta-protip">
-            <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-            Wrap painter&apos;s tape around the bottom <code>4.25&quot;</code> tenons of the four backrest uprights before applying stain or polyurethane! Thick film finishes inside mortise-and-tenon joints cause sticky wood-on-wood friction in humid summer weather.
+          <ol>
+            <li><strong>Orbital Sanding Progression:</strong> Sand all visible <code>1x6</code> aprons, <code>1x2</code> cap strips, and Birch backrest panels starting with <code>80-grit</code> (leveling miter joints), then <code>120-grit</code>, and finishing with <code>180-grit</code>. Soften all sharp top edges to a kid-friendly <code>1/8&quot;</code> radius.</li>
+            <li><strong>Stain &amp; Clear Topcoat:</strong> Vacuum all dust, wipe with a damp tack cloth, apply pre-stain wood conditioner (if using pine/poplar), stain to your desired tone, and seal with 3 coats of water-based polyurethane (sanding lightly with <code>220-grit</code> between coats).</li>
+            <li><strong>Wax the Tenons &amp; Drop In the Cushion:</strong> Peel the painter&apos;s tape off the four <code>4.25&quot;</code> backrest tenons and rub a block of dry paraffin wax firmly over all four faces of each tenon. Drop the two <code>40&quot;</code> backrests into the 4 slots, drop your <code>78.0&quot; × 23.5&quot; × 4.0&quot;</code> foam cushion into the <code>1.00&quot;</code> recessed tray, and test your 1-inch wheelbarrow lift!</li>
+          </ol>
+          {p_svgs[7]}
+          <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 07</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">Waxed tenons, 4&quot; cushion seated in 1.00&quot; tray, 1-inch wheelbarrow lift verified</span>
           </div>
         </div>
-        <ol>
-          <li><strong>Orbital Sanding Progression:</strong> Sand all visible <code>1x6</code> aprons, <code>1x2</code> cap strips, and Birch backrest panels starting with <code>80-grit</code> (leveling miter joints), then <code>120-grit</code>, and finishing with <code>180-grit</code>. Soften all sharp top edges to a kid-friendly <code>1/8&quot;</code> radius.</li>
-          <li><strong>Stain &amp; Clear Topcoat:</strong> Vacuum all dust, wipe with a damp tack cloth, apply pre-stain wood conditioner (if using pine/poplar), stain to your desired tone, and seal with 3 coats of water-based polyurethane (sanding lightly with <code>220-grit</code> between coats).</li>
-          <li><strong>Wax the Tenons &amp; Drop In the Cushion:</strong> Peel the painter&apos;s tape off the four <code>4.25&quot;</code> backrest tenons and rub a block of dry paraffin wax firmly over all four faces of each tenon. Drop the two <code>40&quot;</code> backrests into the 4 slots, drop your <code>78.0&quot; × 23.5&quot; × 4.0&quot;</code> foam cushion into the <code>1.00&quot;</code> recessed tray, and test your 1-inch wheelbarrow lift!</li>
-        </ol>
-        {p_svgs[7]}
       </div>
     </section>
 
     <!-- ================================================================== -->
     <!-- SECTION 7: BUILT-IN ENGINEERING AUDIT SUMMARY                      -->
     <!-- ================================================================== -->
-    <section class="card" id="sec-7">
+    <section class="card" id="sec-7" data-view="blueprints roadmap all">
       <div class="section-header">
-        <h2>7. Built-In Structural Engineering Audit Summary</h2>
-        <span class="section-num">Section 07 / 08</span>
+        <div>
+          <p class="gs-overline" style="margin-bottom:4px;">Structural Verification // Mechanics of Materials</p>
+          <h2>7. Built-In Structural Engineering Audit Summary</h2>
+        </div>
+        <span class="section-num">Module 03B // Audit</span>
       </div>
 
       <details class="audit-details" open>
@@ -2357,28 +3183,28 @@ def build_html_part2() -> str:
                 <td class="mono">&delta; = (P &middot; L³) / (48 &middot; E &middot; I<sub>comp</sub>)<br>P = 600 lb center point load, L = 71.50&quot;</td>
                 <td class="mono"><strong>&delta; = {audit["delta_center"]:.3f}&quot;</strong><br>(L / {audit["span_ratio"]:.0f} stiffness)</td>
                 <td class="mono">&delta;<sub>max</sub> = L / 360 = <strong>{audit["limit_L360"]:.3f}&quot;</strong></td>
-                <td><strong style="color:#047857;">✅ PASS (40% Margin)</strong></td>
+                <td><strong style="color:var(--color-sage);">✅ PASS (40% Margin)</strong></td>
               </tr>
               <tr>
                 <td><strong>2. Direct Half-Lap Bearing Capacity</strong><br><small>(1.50&quot; × 3.50&quot; Notched 4x4 Ledges)</small></td>
                 <td class="mono">R<sub>allow</sub> = N<sub>legs</sub> &middot; A<sub>ledge</sub> &middot; F<sub>c&parallel;</sub><br>A<sub>ledge</sub> = 5.25 in² per leg</td>
                 <td class="mono"><strong>{audit["direct_wood_capacity_two_front_legs"]:,.0f} lbs</strong> (Front 2 Legs)<br><strong>30,187 lbs</strong> (All 5 Legs)</td>
                 <td class="mono">&gt; 1,000 lbs Dynamic Jump Load</td>
-                <td><strong style="color:#047857;">✅ PASS (&gt;12× Factor)</strong></td>
+                <td><strong style="color:var(--color-sage);">✅ PASS (&gt;12× Factor)</strong></td>
               </tr>
               <tr>
                 <td><strong>3. Volumetric Clash Detection</strong><br><small>(5 Legs vs. 4 Backrest Receiver Slots)</small></td>
                 <td class="mono">Rear Legs: Y = [21.75..25.25&quot;]<br>Backrest Slots: Y = [25.25..26.75&quot;]</td>
                 <td class="mono"><strong>0.000 in³ Overlap</strong><br>(Disjoint in both X &amp; Y!)</td>
                 <td class="mono">0.000 in³ Clash</td>
-                <td><strong style="color:#047857;">✅ PASS (100% Clear)</strong></td>
+                <td><strong style="color:var(--color-sage);">✅ PASS (100% Clear)</strong></td>
               </tr>
               <tr>
                 <td><strong>4. Anti-Tip Stability at 10° Recline</strong><br><small>(Rear Roller Fulcrum at Y = 23.50&quot;)</small></td>
                 <td class="mono">SF<sub>tip</sub> = M<sub>restoring</sub> / M<sub>overturning</sub><br>Under 150 lb horizontal backrest lean</td>
                 <td class="mono"><strong>SF = {audit["safety_factor_tip"]:.2f}×</strong> (Seated)<br><strong>SF = 1.54×</strong> (Unoccupied)</td>
                 <td class="mono">SF &ge; 1.50×</td>
-                <td><strong style="color:#047857;">✅ PASS (Zero Tip Risk)</strong></td>
+                <td><strong style="color:var(--color-sage);">✅ PASS (Zero Tip Risk)</strong></td>
               </tr>
             </tbody>
           </table>
@@ -2387,30 +3213,193 @@ def build_html_part2() -> str:
     </section>
 
     <!-- ================================================================== -->
-    <!-- SECTION 8: PRINT & EXPORT READY SUMMARY                            -->
+    <!-- SECTION 8: GROUNDED SCIENTIFIC WORKSHOP CTA BANNER                 -->
     <!-- ================================================================== -->
-    <section class="card no-print" id="sec-8">
-      <div class="section-header">
-        <h2>8. Print &amp; Workshop Export Ready</h2>
-        <span class="section-num">Section 08 / 08</span>
-      </div>
-      <p>
-        This document is styled with dedicated <code>@media print</code> rules that automatically hide the dark navigation chrome and interactive WebGL viewport while formatting all tables, checklists, cut maps, and orthographic SVG blueprints cleanly onto standard <code>8.5&quot; × 11&quot;</code> workshop sheets.
+    <section class="card no-print" id="sec-8" data-view="studio materials blueprints roadmap all" style="border:2px solid var(--border-strong); padding:3rem 2rem; text-align:center; position:relative; margin-top:2.5rem;">
+      <div style="position:absolute; top:-14px; right:-14px; width:44px; height:44px; background:var(--color-sage);"></div>
+      <p class="gs-overline" style="margin-bottom:0.5rem;">Workshop Ready // Print or Export</p>
+      <h2 style="font-size:2rem; margin-bottom:0.75rem;">Ready to Build in the Shop?</h2>
+      <p style="max-width:640px; margin:0 auto 1.75rem; color:var(--muted);">
+        Print the complete workshop packet with dedicated <code>@media print</code> formatting for <code>8.5&quot; × 11&quot;</code> sheets, or switch to the continuous single-page manual view.
       </p>
-      <button class="btn-print" style="font-size:0.95rem;padding:0.65rem 1.25rem;" onclick="window.print()">
-        🖨️ Print Complete Workshop Packet (Cmd+P / Ctrl+P)
-      </button>
-      <button class="cad-btn secondary" style="margin-left:0.6rem;padding:0.65rem 1.1rem;" onclick="resetAllCheckboxes()">
-        🔄 Reset All Saved Checkboxes
-      </button>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
+        <button class="gs-cta-btn" onclick="window.print()">
+          <span class="material-symbols-outlined" style="font-size:17px;">print</span>
+          Print Complete Workshop Packet (Cmd/Ctrl+P)
+        </button>
+        <button class="gs-cta-btn outline" onclick="switchSitePage('all')">
+          <span class="material-symbols-outlined" style="font-size:17px;">menu_book</span>
+          View All Sections on One Page
+        </button>
+        <button class="gs-cta-btn outline" onclick="resetAllCheckboxes()">
+          <span class="material-symbols-outlined" style="font-size:17px;">restart_alt</span>
+          Reset Saved Checkboxes
+        </button>
+      </div>
     </section>
 
   </main>
 
+  <!-- GROUNDED SCIENTIFIC FOOTER -->
+  <footer class="gs-footer no-print">
+    <div class="gs-footer-inner">
+      <div class="gs-footer-grid">
+        <div class="gs-footer-col-main">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
+            <img src="assets/images/gs-logo.png" alt="Grounded Scientific Logo" style="height:36px; width:auto;" />
+            <strong style="font-size:1.05rem; font-weight:900; text-transform:uppercase; letter-spacing:-0.03em;">Grounded Scientific</strong>
+          </div>
+          <p style="color:var(--muted); font-size:0.88rem; max-width:380px; margin:0 0 1.25rem;">
+            Grounded Scientific brings PhD-level structural and analytical rigour to practical systems. This open-source hardware portal documents the 80&quot; × 29&quot; Modular Playroom Couch, Bench &amp; Table.
+          </p>
+          <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+            <a href="https://groundedscientific.com/" target="_blank" rel="noopener" class="gs-cta-btn">
+              Visit GroundedScientific.com
+            </a>
+            <a href="https://github.com/armacintosh/bench-build" target="_blank" rel="noopener" class="gs-cta-btn outline">
+              GitHub Repository
+            </a>
+          </div>
+        </div>
+
+        <div class="gs-footer-col">
+          <h4>Portal Modules</h4>
+          <ul>
+            <li><button onclick="switchSitePage('studio')">01 // 3D CAD Studio &amp; Video</button></li>
+            <li><button onclick="switchSitePage('materials')">02 // Tool &amp; Shopping Checklists</button></li>
+            <li><button onclick="switchSitePage('materials')">03 // Programmatic SVG Cut Maps</button></li>
+            <li><button onclick="switchSitePage('blueprints')">04 // Orthographic Blueprints</button></li>
+            <li><button onclick="switchSitePage('roadmap')">05 // 7-Phase Assembly Roadmap</button></li>
+            <li><button onclick="switchSitePage('all')">06 // Full Continuous Manual</button></li>
+          </ul>
+        </div>
+
+        <div class="gs-footer-col">
+          <h4>Video &amp; Assets</h4>
+          <ul>
+            <li><a href="https://youtu.be/gW_k-L_8o7U" target="_blank" rel="noopener">Beginner 3D DIY Video (YouTube)</a></li>
+            <li><a href="https://youtu.be/40DqGxwdRx4" target="_blank" rel="noopener">Detailed Blueprint Video (YouTube)</a></li>
+            <li><a href="videos/modular_couch_beginner_video.mp4" download>Download Beginner MP4</a></li>
+            <li><a href="videos/modular_couch_instructional_video.mp4" download>Download Detailed MP4</a></li>
+            <li><a href="docs/bench_spec.md" target="_blank">Canonical Geometry Spec (.md)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="gs-footer-bottom">
+        <span>&copy; 2026 Grounded Scientific // Alexander MacIntosh. All Rights Reserved.</span>
+        <span>Design System: Grounded Scientific (#1C2E36 • #597E6D • #E1E9EA • Inter &amp; JetBrains Mono)</span>
+      </div>
+    </div>
+  </footer>
+
   <!-- ==================================================================== -->
-  <!-- JAVASCRIPT: LOCALSTORAGE CHECKLISTS & THREE.JS PARAMETRIC 3D VIEWER  -->
+  <!-- JAVASCRIPT: WEBSITE ROUTER, THEME TOGGLE, CHECKLISTS & THREE.JS CAD  -->
   <!-- ==================================================================== -->
   <script>
+    // 0. Grounded Scientific Multi-Page Website Router & Dark Mode Toggle
+    const GS_VIEW_TITLES = {{
+      studio: '01 // Interactive 3D CAD Studio, Video Walkthrough & Z-Stack Spec',
+      materials: '02 // Tool Checklist, Master Shopping List & SVG Cut Maps',
+      blueprints: '03 // Orthographic Architectural Blueprints & Structural Audit',
+      roadmap: '04 // 7-Phase Step-by-Step DIY Assembly Roadmap',
+      all: 'Full Manual // All 8 Engineering & Assembly Sections'
+    }};
+
+    function switchSitePage(page, skipScroll = false) {{
+      const valid = ['studio', 'materials', 'blueprints', 'roadmap', 'all'];
+      const target = valid.includes(page) ? page : 'studio';
+      document.body.setAttribute('data-page', target);
+
+      document.querySelectorAll('.gs-nav-link[data-nav]').forEach(el => {{
+        el.classList.toggle('active', el.getAttribute('data-nav') === target);
+      }});
+      document.querySelectorAll('.gs-tab-btn[data-tab]').forEach(el => {{
+        el.classList.toggle('active', el.getAttribute('data-tab') === target);
+      }});
+      const lbl = document.getElementById('active-view-label');
+      if (lbl && GS_VIEW_TITLES[target]) lbl.textContent = GS_VIEW_TITLES[target];
+
+      // Close mobile menu if open
+      const navWrap = document.getElementById('gs-nav-wrap');
+      const menuIcon = document.getElementById('mobile-menu-icon');
+      if (navWrap && navWrap.classList.contains('mobile-open')) {{
+        navWrap.classList.remove('mobile-open');
+        if (menuIcon) menuIcon.textContent = 'menu';
+      }}
+
+      // Resize 3D canvas when switching back to studio or all
+      if ((target === 'studio' || target === 'all') && typeof renderer !== 'undefined' && renderer && camera) {{
+        setTimeout(() => {{
+          const container = document.getElementById('cad-canvas-container');
+          if (container && container.clientWidth > 0) {{
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+          }}
+        }}, 60);
+      }}
+
+      try {{
+        history.replaceState(null, '', '#' + target);
+      }} catch (e) {{}}
+
+      if (!skipScroll) {{
+        window.scrollTo({{ top: 0, behavior: 'smooth' }});
+      }}
+    }}
+
+    function jumpToPhaseRoadmap(phaseNum) {{
+      switchSitePage('roadmap', true);
+      setTimeout(() => {{
+        const card = document.getElementById('phase-card-' + phaseNum);
+        if (card) card.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+      }}, 50);
+    }}
+
+    function viewPhaseIn3DStudio(phaseNum) {{
+      switchSitePage('studio', true);
+      setTimeout(() => {{
+        setBuildPhase(phaseNum);
+        const cadEl = document.getElementById('cad-canvas-container');
+        if (cadEl) cadEl.scrollIntoView({{ behavior: 'smooth', block: 'center' }});
+      }}, 80);
+    }}
+
+    function toggleMobileNav() {{
+      const navWrap = document.getElementById('gs-nav-wrap');
+      const menuIcon = document.getElementById('mobile-menu-icon');
+      if (!navWrap) return;
+      const open = navWrap.classList.toggle('mobile-open');
+      if (menuIcon) menuIcon.textContent = open ? 'close' : 'menu';
+    }}
+
+    function syncThemeIcon() {{
+      const isDark = document.documentElement.classList.contains('dark');
+      const icon = document.getElementById('gs-theme-icon');
+      if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    }}
+
+    function toggleGsTheme() {{
+      const isDark = document.documentElement.classList.toggle('dark');
+      const m = document.querySelector('meta[name="color-scheme"]');
+      if (m) m.setAttribute('content', isDark ? 'dark' : 'light');
+      try {{
+        localStorage.setItem('gs_theme', isDark ? 'dark' : 'light');
+      }} catch (e) {{}}
+      syncThemeIcon();
+    }}
+
+    window.addEventListener('DOMContentLoaded', () => {{
+      syncThemeIcon();
+      const preset = window.__INITIAL_GS_PAGE;
+      const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+      if (['studio', 'materials', 'blueprints', 'roadmap', 'all'].includes(hash)) {{
+        switchSitePage(hash, true);
+      }} else if (preset) {{
+        switchSitePage(preset, true);
+      }}
+    }});
     // 1. LocalStorage Persistence for All Checkboxes
     (function initChecklists() {{
       const boxes = document.querySelectorAll('input[type="checkbox"][data-store]');
@@ -3277,13 +4266,27 @@ def build_html_part2() -> str:
 def main():
     script_dir = Path(__file__).resolve().parent
     repo_root = script_dir.parent if script_dir.name == "scripts" else script_dir
-    full_html = build_html_part1() + build_html_part2()
-    for fname in ("modular_couch_build_guide.html", "index.html"):
+    base_html = build_html_part1() + build_html_part2()
+
+    pages = [
+        ("index.html", "studio"),
+        ("materials.html", "materials"),
+        ("blueprints.html", "blueprints"),
+        ("roadmap.html", "roadmap"),
+        ("modular_couch_build_guide.html", "all"),
+    ]
+    for fname, default_view in pages:
+        page_html = base_html.replace(
+            '<body data-page="studio">',
+            f'<body data-page="{default_view}">\n  <script>window.__INITIAL_GS_PAGE = "{default_view}";</script>',
+            1,
+        )
         out_path = repo_root / fname
-        out_path.write_text(full_html, encoding="utf-8")
-        print(f"[OK] Generated {out_path} ({len(full_html):,} bytes)")
+        out_path.write_text(page_html, encoding="utf-8")
+        print(f"[OK] Generated {out_path} (default_view='{default_view}', {len(page_html):,} bytes)")
 
 
 if __name__ == "__main__":
     main()
+
 
