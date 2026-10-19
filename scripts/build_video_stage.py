@@ -10,7 +10,8 @@ import json
 import os
 import re
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(SCRIPT_DIR) if os.path.basename(SCRIPT_DIR) == "scripts" else SCRIPT_DIR
 VIDEO_BUILD_DIR = os.path.join(BASE_DIR, ".video_build")
 HTML_GUIDE_PATH = os.path.join(BASE_DIR, "modular_couch_build_guide.html")
 MANIFEST_PATH = os.path.join(VIDEO_BUILD_DIR, "chapters_manifest.json")
@@ -20,7 +21,8 @@ STAGE_HTML_PATH = os.path.join(VIDEO_BUILD_DIR, "video_studio_stage.html")
 def extract_svgs_as_data_uris(html_path: str) -> list[str]:
     with open(html_path, "r", encoding="utf-8") as f:
         html = f.read()
-    svgs = re.findall(r"<svg[\s\S]*?</svg>", html)
+    all_svgs = re.findall(r"<svg[\s\S]*?</svg>", html)
+    svgs = [s for s in all_svgs if "blueprint-svg" in s or "phase-svg" in s]
     uris = []
     for s in svgs:
         if 'xmlns=' not in s[:120]:
@@ -247,7 +249,7 @@ addBox(1.5, 22.25, 3.5, 77.75, 3.75, 15.5, 'joist', 3, [15, 14, 0]);
   addBox(1.5, 20.0, 3.5, jx - 0.75, 3.75, 15.5, 'joist', 3, [0, 16, 0]);
 }});
 addBox(78.5, 1.5, 3.5, 0.75, 23.75, 15.5, 'beam', 3, [0, 18, -5]);
-[[0.75, 5.25], [9.50, 21.00], [34.00, 12.00], [49.50, 21.00], [74.00, 5.25]].forEach(([sx, sw]) => {{
+[[0.75, 5.50], [9.375, 21.25], [33.75, 12.50], [49.375, 21.25], [73.75, 5.50]].forEach(([sx, sw]) => {{
   addBox(sw, 1.5, 3.5, sx, 25.25, 15.5, 'spacer', 3, [0, 20, -8]);
 }});
 
@@ -257,18 +259,46 @@ addBox(78.5, 1.5, 0.75, 0.75, 26.75, 19.0, 'deck', 4, [0, 22, -6]);
 
 // PHASE 5: Stain-Grade 1x6 Outer Apron Trim (Z = 15.25 to 20.75)
 addBox(80.0, 0.75, 5.5, 0.0, 0.0, 15.25, 'trim', 5, [0, 6, 18]);
-addBox(80.0, 0.75, 5.5, 0.0, 28.25, 15.25, 'trim', 5, [0, 6, -18]);
+addBox(80.0, 0.75, 4.5, 0.0, 28.25, 15.25, 'trim', 5, [0, 6, -18]);
 addBox(0.75, 29.0, 5.5, 0.0, 0.0, 15.25, 'trim', 5, [-20, 6, 0]);
 addBox(0.75, 29.0, 5.5, 79.25, 0.0, 15.25, 'trim', 5, [20, 6, 0]);
 
-// PHASE 6: Two 40" Drop-In 10-Degree Slanted Backrests
-[6.0, 30.5, 46.0, 70.5].forEach(sx => {{
-  addBox(3.5, 1.5, 4.25, sx, 25.25, 15.5, 'backSpine', 6, [0, 24, 0]);
-  const p = addBox(3.5, 2.2, 16.0, sx, 25.6, 19.75, 'backSpine', 6, [0, 24, 0]);
-  p.mesh.rotation.x = -10 * Math.PI / 180;
+// PHASE 6: Two 40" Drop-In 10-Degree Slanted Backrests (4 Doubled 2x6 Uprights = 8 Halves with 90° Rear Ledge + 10° Front Lean)
+function addExtruded2x6Half(x0, phaseNum, flyOffset) {{
+  const sh = new THREE.Shape();
+  sh.moveTo(0.0, 0.0);
+  sh.lineTo(1.44, 0.0);
+  sh.lineTo(1.44, 4.25);
+  sh.lineTo(5.50, 4.25);
+  sh.lineTo(5.50, 23.50);
+  sh.lineTo(3.39, 23.50);
+  sh.lineTo(0.0, 4.25);
+  sh.closePath();
+  const geom = new THREE.ExtrudeGeometry(sh, {{ depth: 1.50, bevelEnabled: false }});
+  geom.rotateY(Math.PI / 2);
+  const mesh = new THREE.Mesh(geom, cadMats['backSpine']);
+  const basePos = new THREE.Vector3(x0 - 40, 15.5, 14.5 - 25.25);
+  mesh.position.copy(basePos);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  const edges = new THREE.EdgesGeometry(geom);
+  const line = new THREE.LineSegments(
+    edges,
+    new THREE.LineBasicMaterial({{ color: 0x0f172a, transparent: true, opacity: 0.55 }})
+  );
+  mesh.add(line);
+  scene.add(mesh);
+  allParts.push({{
+    mesh, line, matKey: 'backSpine', phaseNum, basePos,
+    flyOffset: new THREE.Vector3(flyOffset[0], flyOffset[1], flyOffset[2])
+  }});
+}}
+[6.3125, 30.6875, 46.3125, 70.6875].forEach(ux => {{
+  addExtruded2x6Half(ux, 6, [0, 24, 0]);
+  addExtruded2x6Half(ux + 1.50, 6, [0, 24, 0]);
 }});
 [0.5, 40.25].forEach(bx => {{
-  const bp = addBox(39.25, 0.75, 15.0, bx, 24.9, 20.2, 'backPanel', 6, [0, 26, 0]);
+  const bp = addBox(39.25, 0.75, 15.0, bx, 25.3, 23.25, 'backPanel', 6, [0, 26, 0]);
   bp.mesh.rotation.x = -10 * Math.PI / 180;
 }});
 
@@ -296,25 +326,25 @@ const CAM_PATHS = [
 
 const ACTIVE_PARTS_LABELS = [
   'Full 80" × 29" Modular Couch, Bench & Table System (Parts A–M)',
-  'Exploded Material Nesting: 1× Birch Plywood (4ft × 8ft) + 8ft Dimensional Boards',
-  'Installing: Part A (3× Rear 4×4 Legs + Rollers) & Part B (2× Front 4×4 Legs + Grip Pads)',
-  'Installing: Part C (Dual Laminated 78.5" Front 2×4 Beam) & Part D (Rear 78.5" Rail)',
-  'Installing: Part E (Side Rails), Part F (5× Joists @ 16"–64") & Part G (5× Mortise Spacers)',
-  'Installing: Part H (78.50" × 23.75" × 3/4" Birch Deck) & Part M (1×2 Pocket Caps)',
-  'Installing: Part I (2× 80" Front/Rear 1×6 Trim) & Part J (2× 29" Side 1×6 Trim)',
-  'Installing: Part K (4× 10° Angled 2×6 Spines) & Part L (2× 39.25" Birch Back Panels)',
+  'Exploded Material Nesting: 1× Birch Plywood (4ft × 8ft) + Two 2×6s + Dimensional Boards',
+  'Installing: Part A (3× Rear 4×4 Legs + Rollers & 2× Front 4×4 Legs + Grip Pads)',
+  'Installing: Part B & C (Dual Laminated Front 2×4 Beam & Main Structural Back Rail)',
+  'Installing: Part D (Side Rails), Part E (5× Joists) & Part F (5× Spacers → Four 3-1/8"×1-1/2" Slots)',
+  'Installing: Part G (78.50" × 23.75" × 3/4" Birch Deck) & Parts J/M (1×2 Pocket Caps)',
+  'Installing: Part H (2× 80" Front/Rear 1×6 Trim) & Part I (2× 29" Side 1×6 Trim)',
+  'Installing: Part K (4× Doubled 3.00" 2×6 Uprights w/ 90° Rear Ledge) & Part L (2× Birch Panels)',
   'Final Assembly: 78" × 23.5" × 4" Foam Cushion, Waxed Tenons & Storage Baskets'
 ];
 
 const Z_PILL_LABELS = [
-  'Z = 0.00" .. 34.50" FULL STACK',
+  'Z = 0.00" .. 39.00" FULL STACK',
   'PARTS A–M MASTER CUT MAP',
   'Z = 0.00" .. 19.00" (18-5/8" LEGS)',
   'Z = 15.50" .. 19.00" (3.0"×3.5" BEAM)',
-  'Z = 15.50" .. 19.00" (4× MORTISE SLOTS)',
+  'Z = 15.50" .. 19.00" (4× 3-1/8" SLOTS)',
   'Z = 19.00" .. 19.75" (3/4" BIRCH DECK)',
   'Z = 15.25" .. 20.75" (1.00" CUSHION LIP)',
-  'Z = 15.50" .. 34.50" (10° BACKRESTS)',
+  'Z = 15.50" .. 39.00" (90° LEDGE + 10°)',
   'FINISHED RENDER & TABLE MODE'
 ];
 

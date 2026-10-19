@@ -16,7 +16,7 @@ const FRAMES_DIR = path.join(VIDEO_BUILD_DIR, 'frames');
 const SEGMENTS_DIR = path.join(VIDEO_BUILD_DIR, 'segments');
 const MANIFEST_PATH = path.join(VIDEO_BUILD_DIR, 'chapters_manifest.json');
 const STAGE_URL = 'file://' + path.join(VIDEO_BUILD_DIR, 'video_studio_stage.html');
-const OUTPUT_MP4 = path.join(BASE_DIR, 'modular_couch_instructional_video.mp4');
+const OUTPUT_MP4 = path.join(BASE_DIR, 'videos', 'modular_couch_instructional_video.mp4');
 
 fs.mkdirSync(FRAMES_DIR, { recursive: true });
 fs.mkdirSync(SEGMENTS_DIR, { recursive: true });

@@ -1,17 +1,20 @@
 <svg viewBox="0 0 640 210" class="phase-svg" xmlns="http://www.w3.org/2000/svg">
   <rect width="640" height="210" fill="#f8fafc" rx="8" stroke="#cbd5e1"/>
-  <text x="18" y="26" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0f172a">PHASE 6 DIAGRAM: Assembling the Two 40&quot; Drop-In Slanted Backrest Modules</text>
-  <!-- Backrest module front view -->
-  <rect x="60" y="50" width="240" height="92" fill="#fed7aa" stroke="#c2410c" stroke-width="2"/>
-  <!-- Two uprights behind panel -->
-  <rect x="92" y="45" width="24" height="145" fill="#fdba74" stroke="#9a3412" stroke-width="1.8" fill-opacity="0.75"/>
-  <rect x="244" y="45" width="24" height="145" fill="#fdba74" stroke="#9a3412" stroke-width="1.8" fill-opacity="0.75"/>
-  <text x="180" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#7c2d12">PART [L]: 39.25&quot; × 15.00&quot; PANEL</text>
-  <text x="180" y="114" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#9a3412">Starts 3.50&quot; above deck (clears 4&quot; cushion)</text>
-  <text x="345" y="75" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#15803d">Foolproof Self-Alignment Trick:</text>
-  <text x="345" y="96" font-family="Inter, sans-serif" font-size="11" fill="#334155">1. Drop the two 2x6 Uprights [Part K] directly into Slots 1 &amp; 2.</text>
-  <text x="345" y="115" font-family="Inter, sans-serif" font-size="11" fill="#334155">2. Rest a 3.50&quot; scrap 2x4 spacer block on the plywood deck.</text>
-  <text x="345" y="134" font-family="Inter, sans-serif" font-size="11" fill="#334155">3. Set the 39.25&quot; × 15.00&quot; Birch Panel [Part L] on the block,</text>
-  <text x="345" y="151" font-family="Inter, sans-serif" font-size="11" fill="#334155">   clamp to the uprights, and screw from the rear with 1-3/4&quot; screws!</text>
-  <text x="345" y="172" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#0369a1">Result: Guaranteed 100% zero-bind drop-in alignment!</text>
+  <text x="18" y="26" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0f172a">PHASE 6 DIAGRAM: Doubled 2x6 Uprights (90° Solid Wood Ledge + 10° Front Lean)</text>
+  <!-- Side profile of Doubled 2x6 Upright sitting in couch slot -->
+  <rect x="42" y="145" width="48" height="45" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/>
+  <rect x="118" y="145" width="84" height="45" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="92,190 116,190 116,145 198,145 198,48 156,48 92,145" fill="#fdba74" stroke="#c2410c" stroke-width="2.2"/>
+  <line x1="116" y1="145" x2="198" y2="145" stroke="#15803d" stroke-width="4"/>
+  <text x="157" y="162" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="800" fill="#15803d">90° Wood Ledge</text>
+  <text x="104" y="203" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#0369a1">1.44&quot; Peg</text>
+  <text x="112" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="800" fill="#c2410c">10° Front</text>
+  <text x="205" y="92" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#0f172a">90° Back</text>
+
+  <text x="285" y="62" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#15803d">Doubled 2x6 Lamination &amp; Self-Alignment:</text>
+  <text x="285" y="84" font-family="Inter, sans-serif" font-size="11" fill="#334155">1. Cut 8 halves from two 8-ft 2x6s (90° back L-notch + 10° front lean).</text>
+  <text x="285" y="103" font-family="Inter, sans-serif" font-size="11" fill="#334155">2. Glue &amp; screw pairs face-to-face → four 3.00&quot; wide uprights [Part K].</text>
+  <text x="285" y="122" font-family="Inter, sans-serif" font-size="11" fill="#334155">3. Drop into the 3-1/8&quot;×1-1/2&quot; slots so the 90° wood ledge sits flat on couch.</text>
+  <text x="285" y="141" font-family="Inter, sans-serif" font-size="11" fill="#334155">4. Set 39.25&quot;×15.00&quot; Birch Panel [Part L] on a 3.5&quot; spacer &amp; screw to uprights!</text>
+  <text x="285" y="168" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#0369a1">Fit: 1/16&quot; Snug Front-to-Back (1-7/16&quot; peg) | 1/8&quot; Relaxed Left-to-Right</text>
 </svg>

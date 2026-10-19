@@ -11,7 +11,8 @@ import subprocess
 import urllib.request
 import urllib.error
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(SCRIPT_DIR) if os.path.basename(SCRIPT_DIR) == "scripts" else SCRIPT_DIR
 VIDEO_BUILD_DIR = os.path.join(BASE_DIR, ".video_build")
 AUDIO_DIR = os.path.join(VIDEO_BUILD_DIR, "audio_beginner")
 STAGE_HTML_PATH = os.path.join(VIDEO_BUILD_DIR, "beginner_studio_stage.html")
@@ -23,7 +24,7 @@ def load_deepgram_key() -> str:
     key = os.environ.get("DEEPGRAM_API_KEY", "").strip()
     if key:
         return key
-    for env_path in [".env", os.path.expanduser("~/.env")]:
+    for env_path in [os.path.join(BASE_DIR, ".env"), ".env", os.path.expanduser("~/.env")]:
         if os.path.exists(env_path):
             with open(env_path, "r", encoding="utf-8") as f:
                 for line in f:
@@ -41,7 +42,7 @@ BEGINNER_CHAPTERS = [
         "badge": "OVERVIEW",
         "title": "80\" Playroom Couch, Bench & Table",
         "tool": "Circular Saw, Drill, Chisel & Clamps",
-        "material": "4×4s, 2×4s, 1×6 Trim & 1 Plywood Sheet",
+        "material": "4×4s, 2×4s, Two 2×6s, 1×6 Trim & 1 Plywood Sheet",
         "action": "Build a sturdy couch that converts to a table",
         "narration": (
             "Here is how to build our eighty-inch playroom couch, bench, and table. "
@@ -54,12 +55,12 @@ BEGINNER_CHAPTERS = [
         "badge": "PREP",
         "title": "Measure & Cut Your Wood",
         "tool": "Circular Saw, Tape Measure & Pencil",
-        "material": "3/4\" Plywood, 4×4s, 2×4s, 2×6 & 1×6 Trim",
+        "material": "3/4\" Plywood, 4×4, Six 2×4s, Two 2×6s & 1×6 Trim",
         "action": "Cut boards to size and label each piece",
         "narration": (
             "First, use your tape measure and circular saw to cut your wood. "
             "Cut one sheet of three-quarter-inch plywood into the main seat board and two backrest boards. "
-            "Then cut your four-by-four legs, your two-by-four frame boards, and your one-by-six trim boards."
+            "Then cut your four-by-four legs, your two-by-four frame boards, two two-by-six boards for the doubled backrest posts, and your one-by-six trim boards."
         ),
     },
     {
@@ -95,12 +96,11 @@ BEGINNER_CHAPTERS = [
         "title": "Add Cross Boards & Back Slots",
         "tool": "Drill, Pocket-Hole Jig & Clamps",
         "material": "Seven 2×4 Cross Boards & Five Spacer Blocks",
-        "action": "Screw cross boards in place & leave 4 back slots",
+        "action": "Screw cross boards in place & leave four 3-1/8\" slots",
         "narration": (
             "Step three: build the middle frame and backrest slots. "
             "Use your drill and two-and-a-half-inch pocket screws to attach the two side boards and five middle cross-boards. "
-            "At the back, screw in five short two-by-four spacer blocks and a back board to leave four open slots. "
-            "Hold a scrap piece of two-by-four inside each slot while screwing so the openings stay the exact right size."
+            "At the back, screw in five two-by-four spacer blocks and a back board to leave four open slots that are three and one-eighth inches wide by one and a half inches deep."
         ),
     },
     {
@@ -132,15 +132,16 @@ BEGINNER_CHAPTERS = [
     {
         "id": "07_step6_backrests",
         "badge": "STEP 6",
-        "title": "Build the Two Drop-In Backrests",
-        "tool": "Circular Saw & Cordless Drill",
-        "material": "Four Angled 2×6 Posts & Two Plywood Panels",
-        "action": "Screw backrest panels to posts & drop into slots",
+        "title": "Build the Two Doubled-2×6 Backrests",
+        "tool": "Circular Saw, Clamps & Cordless Drill",
+        "material": "Two 2×6 Boards (8 Halves → 4 Posts) & 2 Panels",
+        "action": "Cut 90° back ledge + 10° front lean, glue pairs & attach panels",
         "narration": (
-            "Step six: build the two removable backrests. "
-            "Cut four angled posts from a two-by-six board using your circular saw. "
-            "Connect each pair of posts with two-by-four rails, and glue and screw the plywood backrest boards onto the front. "
-            "Slide both backrests straight down into the four slots at the back of the bench."
+            "Step six: build the two removable backrests from two two-by-six boards. "
+            "Cut eight pieces to twenty-three and a half inches long. "
+            "On the back edge, cut a ninety-degree L-notch at the bottom to leave a one-and-seven-sixteenths-inch peg and a flat solid wood shoulder ledge that rests right on top of the couch. "
+            "On the front edge, cut a ten-degree angle where people lean back. "
+            "Glue and screw the eight halves together in pairs to make four thick three-inch-wide posts, screw the plywood panels onto the front, and drop them into the slots."
         ),
     },
     {
@@ -398,7 +399,7 @@ addBox(1.5, 22.25, 3.5, 77.75, 3.75, 15.5, 'joist', 3, [15, 14, 0]);
   addBox(1.5, 20.0, 3.5, jx - 0.75, 3.75, 15.5, 'joist', 3, [0, 16, 0]);
 }});
 addBox(78.5, 1.5, 3.5, 0.75, 23.75, 15.5, 'beam', 3, [0, 18, -5]);
-[[0.75, 5.25], [9.50, 21.00], [34.00, 12.00], [49.50, 21.00], [74.00, 5.25]].forEach(([sx, sw]) => {{
+[[0.75, 5.50], [9.375, 21.25], [33.75, 12.50], [49.375, 21.25], [73.75, 5.50]].forEach(([sx, sw]) => {{
   addBox(sw, 1.5, 3.5, sx, 25.25, 15.5, 'spacer', 3, [0, 20, -8]);
 }});
 
@@ -408,18 +409,46 @@ addBox(78.5, 1.5, 0.75, 0.75, 26.75, 19.0, 'deck', 4, [0, 22, -6]);
 
 // STEP 5: 1x6 Outer Trim Boards
 addBox(80.0, 0.75, 5.5, 0.0, 0.0, 15.25, 'trim', 5, [0, 6, 18]);
-addBox(80.0, 0.75, 5.5, 0.0, 28.25, 15.25, 'trim', 5, [0, 6, -18]);
+addBox(80.0, 0.75, 4.5, 0.0, 28.25, 15.25, 'trim', 5, [0, 6, -18]);
 addBox(0.75, 29.0, 5.5, 0.0, 0.0, 15.25, 'trim', 5, [-20, 6, 0]);
 addBox(0.75, 29.0, 5.5, 79.25, 0.0, 15.25, 'trim', 5, [20, 6, 0]);
 
-// STEP 6: Two Drop-In Backrests
-[6.0, 30.5, 46.0, 70.5].forEach(sx => {{
-  addBox(3.5, 1.5, 4.25, sx, 25.25, 15.5, 'backSpine', 6, [0, 24, 0]);
-  const p = addBox(3.5, 2.2, 16.0, sx, 25.6, 19.75, 'backSpine', 6, [0, 24, 0]);
-  p.mesh.rotation.x = -10 * Math.PI / 180;
+// STEP 6: Two Drop-In Backrests (4 Doubled 2x6 Uprights = 8 Halves with 90° Solid Wood Rear Ledge + 10° Front Lean)
+function addExtruded2x6Half(x0, phaseNum, flyOffset) {{
+  const sh = new THREE.Shape();
+  sh.moveTo(0.0, 0.0);
+  sh.lineTo(1.44, 0.0);
+  sh.lineTo(1.44, 4.25);
+  sh.lineTo(5.50, 4.25);
+  sh.lineTo(5.50, 23.50);
+  sh.lineTo(3.39, 23.50);
+  sh.lineTo(0.0, 4.25);
+  sh.closePath();
+  const geom = new THREE.ExtrudeGeometry(sh, {{ depth: 1.50, bevelEnabled: false }});
+  geom.rotateY(Math.PI / 2);
+  const mesh = new THREE.Mesh(geom, cadMats['backSpine']);
+  const basePos = new THREE.Vector3(x0 - 40, 15.5, 14.5 - 25.25);
+  mesh.position.copy(basePos);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  const edges = new THREE.EdgesGeometry(geom);
+  const line = new THREE.LineSegments(
+    edges,
+    new THREE.LineBasicMaterial({{ color: 0x0f172a, transparent: true, opacity: 0.6 }})
+  );
+  mesh.add(line);
+  scene.add(mesh);
+  allParts.push({{
+    mesh, line, matKey: 'backSpine', phaseNum, basePos,
+    flyOffset: new THREE.Vector3(flyOffset[0], flyOffset[1], flyOffset[2])
+  }});
+}}
+[6.3125, 30.6875, 46.3125, 70.6875].forEach(ux => {{
+  addExtruded2x6Half(ux, 6, [0, 24, 0]);
+  addExtruded2x6Half(ux + 1.50, 6, [0, 24, 0]);
 }});
 [0.5, 40.25].forEach(bx => {{
-  const bp = addBox(39.25, 0.75, 15.0, bx, 24.9, 20.2, 'backPanel', 6, [0, 26, 0]);
+  const bp = addBox(39.25, 0.75, 15.0, bx, 25.3, 23.25, 'backPanel', 6, [0, 26, 0]);
   bp.mesh.rotation.x = -10 * Math.PI / 180;
 }});
 

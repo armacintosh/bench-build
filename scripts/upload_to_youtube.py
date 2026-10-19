@@ -13,7 +13,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(SCRIPT_DIR) if os.path.basename(SCRIPT_DIR) == "scripts" else SCRIPT_DIR
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 VIDEO_BUILD_DIR = os.path.join(BASE_DIR, ".video_build")
 os.makedirs(VIDEO_BUILD_DIR, exist_ok=True)
@@ -25,18 +26,19 @@ SCOPE = "https://www.googleapis.com/auth/youtube.upload"
 LOGIN_HINT = "alexander.macintosh@gmail.com"
 
 GITHUB_REPO_URL = "https://github.com/armacintosh/bench-build"
-HTML_GUIDE_LIVE_URL = "https://armacintosh.github.io/bench-build/modular_couch_build_guide.html"
+HTML_GUIDE_LIVE_URL = "https://armacintosh.github.io/bench-build/"
 HTML_GUIDE_SOURCE_URL = "https://github.com/armacintosh/bench-build/blob/main/modular_couch_build_guide.html"
 
 
 VIDEOS_TO_UPLOAD = [
     {
         "key": "beginner",
-        "file": os.path.join(BASE_DIR, "modular_couch_beginner_video.mp4"),
+        "file": os.path.join(BASE_DIR, "videos", "modular_couch_beginner_video.mp4"),
         "title": "How to Build an 80\" Modular Playroom Couch, Bench & Table (Beginner 3D DIY Guide)",
         "description": (
-            "Step-by-step beginner 3D DIY build guide for an 80\" × 29\" modular playroom couch, bench, and table.\n\n"
-            "📐 Interactive 3D CAD Build Guide & Cut Lists (HTML Instructions):\n"
+            "Step-by-step beginner 3D DIY build guide for an 80\" × 29\" modular playroom couch, bench, and table "
+            "with doubled 3.00\"-wide 2×6 backrest posts (90° solid wood rear shoulder ledge + 10° front lean).\n\n"
+            "📐 Grounded Scientific Interactive 3D CAD Build Website & Cut Lists:\n"
             f"👉 {HTML_GUIDE_LIVE_URL}\n\n"
             "💻 GitHub Repository (Blueprints, Cut Maps, Specs & Source Files):\n"
             f"👉 {GITHUB_REPO_URL}\n"
@@ -46,40 +48,39 @@ VIDEOS_TO_UPLOAD = [
             "⏱️ Chapters:\n"
             "00:00 Overview & Tools Needed\n"
             "00:13 Measure & Cut Your Wood\n"
-            "00:33 Step 1: Prep the Five 4×4 Legs (Wheels, Pads & Top Notches)\n"
-            "00:52 Step 2: Attach the Front & Back Beams\n"
-            "01:18 Step 3: Add Cross Boards & 4 Backrest Slots\n"
-            "01:46 Step 4: Screw Down the 3/4\" Plywood Seat\n"
-            "02:05 Step 5: Attach the Outer 1×6 Trim Boards (1\" Cushion Lip)\n"
-            "02:26 Step 6: Build the Two Drop-In Backrests\n"
-            "02:50 Step 7: Sand, Wax Tenons & Drop In the Cushions\n"
+            "00:34 Step 1: Prep the Five 4×4 Legs (Wheels, Pads & Top Notches)\n"
+            "00:54 Step 2: Attach the Front & Back Beams\n"
+            "01:20 Step 3: Add Cross Boards & Four 3-1/8\" × 1-1/2\" Backrest Slots\n"
+            "01:44 Step 4: Screw Down the 3/4\" Plywood Seat\n"
+            "02:04 Step 5: Attach the Outer 1×6 Trim Boards (1\" Cushion Lip)\n"
+            "02:25 Step 6: Build the Two Doubled-2×6 Backrests (90° Rear Ledge + 10° Front Lean)\n"
+            "02:58 Step 7: Sand, Wax Tenons & Drop In the Cushions\n"
         ),
         "tags": ["DIY Furniture", "Woodworking", "Modular Couch", "Playroom Bench", "3D CAD Guide"],
     },
     {
         "key": "detailed",
-        "file": os.path.join(BASE_DIR, "modular_couch_instructional_video.mp4"),
+        "file": os.path.join(BASE_DIR, "videos", "modular_couch_instructional_video.mp4"),
         "title": "80\" × 29\" Modular Playroom Couch, Bench & Table — Full 3D CAD & Blueprint Walkthrough",
         "description": (
             "Complete 7-phase engineering, orthographic blueprint, and 3D CAD assembly walkthrough for the 80\" × 29\" "
-            "heavy-duty modular playroom couch, bench, and activity table (1,000+ lb dynamic capacity).\n\n"
-            "📐 Interactive 3D CAD Build Guide, Cut Lists & Printable Blueprints (HTML Instructions):\n"
+            "heavy-duty modular playroom couch, bench, and activity table (1,000+ lb dynamic capacity, doubled 3.00\"-wide "
+            "2×6 uprights with 90° solid wood rear shoulder ledge & 10° front lean).\n\n"
+            "📐 Grounded Scientific Interactive 3D CAD Build Website, Cut Lists & Printable Blueprints:\n"
             f"👉 {HTML_GUIDE_LIVE_URL}\n\n"
             "💻 GitHub Repository (Full Specification, CAD Generator & Blueprints):\n"
             f"👉 {GITHUB_REPO_URL}\n"
             f"👉 HTML File in Repo: {HTML_GUIDE_SOURCE_URL}\n\n"
-            "🎥 Simplified Beginner 3D DIY Video:\n"
-            "👉 https://youtu.be/gW_k-L_8o7U\n\n"
             "⏱️ Chapters:\n"
             "00:00 Overview & Coplanar Torsion-Box Specs\n"
-            "00:25 Master Cut Maps & Material Layout (Parts A–M)\n"
-            "00:50 Phase 1: Prepping the Five Notched 4×4 Legs & Rollers\n"
-            "01:20 Phase 2: Laminating the Front Beam & Perimeter Portals\n"
-            "01:48 Phase 3: Ladder Joist Grid & Captive Mortise Sleeves\n"
-            "02:20 Phase 4: Installing the 3/4\" Birch Plywood Torsion Deck\n"
-            "02:49 Phase 5: Blind-Fastened 1×6 Stain-Grade Apron Trim\n"
-            "03:17 Phase 6: Building the Two 40\" Slanted Drop-In Backrests\n"
-            "03:41 Phase 7: Finishing, Waxing Tenons & Table Conversion\n"
+            "00:25 Master Cut Maps & Doubled 2×6 Upright Layout (Parts A–M)\n"
+            "00:52 Phase 1: Prepping the Five Notched 4×4 Legs & Rollers\n"
+            "01:23 Phase 2: Laminating the Front Beam & Perimeter Portals\n"
+            "01:51 Phase 3: Ladder Joist Grid & Four 3-1/8\" × 1-1/2\" Slots\n"
+            "02:23 Phase 4: Installing the 3/4\" Birch Plywood Torsion Deck\n"
+            "02:53 Phase 5: Blind-Fastened 1×6 Stain-Grade Apron Trim\n"
+            "03:20 Phase 6: Doubled 3.00\"-Wide 2×6 Uprights (90° Rear Ledge + 10° Front Lean)\n"
+            "03:52 Phase 7: Finishing, Waxing Tenons & Table Conversion\n"
         ),
         "tags": ["Woodworking Plans", "3D CAD", "Furniture Engineering", "DIY Couch", "Modular Bench"],
     },

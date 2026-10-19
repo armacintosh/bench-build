@@ -1,81 +1,127 @@
-<svg viewBox="0 0 960 520" class="blueprint-svg" xmlns="http://www.w3.org/2000/svg">
-  <rect width="960" height="520" fill="#f8fafc" rx="8"/>
+<svg viewBox="0 0 960 620" class="blueprint-svg" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="bpArr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#1e3a8a"/>
+    </marker>
+    <marker id="redArr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="620" fill="#f8fafc" rx="8"/>
+  <!-- Blueprint Title Bar -->
   <rect x="14" y="12" width="932" height="34" fill="#0f172a" rx="5"/>
   <text x="28" y="34" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#f8fafc">
-    BLUEPRINT 3: FRONT &amp; REAR ELEVATIONS (X–Z PLANE) — 71.50&quot; CLEAR BAY vs. 3-LEG REAR
+    BLUEPRINT 1: SIDE CROSS-SECTION (Y–Z PLANE) — COPLANAR Z-STACK &amp; DOUBLED 2x6 UPRIGHT
+  </text>
+  <text x="932" y="34" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#93c5fd">
+    SCALE: EXACT PARAMETRIC | UNITS: INCHES
   </text>
 
-  <!-- ================= LEFT: FRONT ELEVATION ================= -->
-  <text x="250.0" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="13.5" font-weight="800" fill="#0f172a">
-    FRONT ELEVATION (Looking +Y) — Zero Center Front Leg!
-  </text>
-  <line x1="26.4" y1="435.0" x2="473.6" y2="435.0" stroke="#334155" stroke-width="2"/>
-
-  <!-- Under-bench 71.50" x 15.50" Basket Bay -->
-  <rect x="64.1" y="354.4" width="371.8" height="80.60000000000001" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="250.0" y="390.8" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#0369a1">
-    71.50&quot; W × 15.50&quot; H UNOBSTRUCTED BASKET OPENING
-  </text>
-  <text x="250.0" y="406.4" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#0284c7">
-    Fits 4 to 5 Large Playroom Storage Baskets Side-by-Side
+  <!-- Floor Datum Line Z = 0.00" -->
+  <line x1="40" y1="545.0" x2="920" y2="545.0" stroke="#334155" stroke-width="2.5"/>
+  <text x="48" y="563.0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#334155">
+    FLOOR DATUM PLANE (Z = 0.00&quot;)
   </text>
 
-  <!-- Front 2 Legs + 3/8" Rubber Pads -->
-  <rect x="45.9" y="433.05" width="18.2" height="1.9500000000000002" fill="#0f172a"/>
-  <rect x="45.9" y="336.2" width="18.2" height="96.85000000000001" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.6"/>
-  <rect x="435.90000000000003" y="433.05" width="18.2" height="1.9500000000000002" fill="#0f172a"/>
-  <rect x="435.90000000000003" y="336.2" width="18.2" height="96.85000000000001" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.6"/>
-
-  <!-- Outer 1x6 Stain-Grade Apron (Z=15.25..20.75) -->
-  <rect x="42.0" y="327.1" width="416.0" height="28.6" fill="#c4b5fd" fill-opacity="0.88" stroke="#4c1d95" stroke-width="2"/>
-  <!-- Hidden Plywood Deck line at Z=19.75 -->
-  <line x1="45.9" y1="332.3" x2="454.1" y2="332.3" stroke="#b45309" stroke-width="1.6" stroke-dasharray="4,3"/>
-  <text x="250.0" y="344.0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#4c1d95">
-    1x6 APRON (80&quot; × 5.5&quot;) — Top 1.00&quot; Lip Holds Cushion Captive
+  <!-- Under-Bench Basket Zone Highlight (Z=0 to 15.50", Y=0.75 to 21.75") -->
+  <rect x="159.15" y="355.9" width="256.2" height="189.1" fill="#e0f2fe" fill-opacity="0.45" stroke="#0284c7" stroke-width="1.3" stroke-dasharray="6,4"/>
+  <text x="287.25" y="441.3" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0369a1">
+    UNOBSTRUCTED UNDER-BENCH BASKET BAY
+  </text>
+  <text x="287.25" y="463.26" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#0284c7">
+    Z = 0.00&quot; to 15.50&quot; (15-1/2&quot; Vertical Clearance to Frame)
   </text>
 
-  <!-- 4" Seat Cushion (Z=19.75..23.75) -->
-  <rect x="47.2" y="311.5" width="405.6" height="20.8" rx="5" fill="#38bdf8" fill-opacity="0.35" stroke="#0284c7" stroke-width="1.6"/>
-
-  <!-- Two 39.25" Wide Modular Backrest Panels (Z=23.25..38.25) -->
-  <rect x="45.9" y="236.1" width="203.32000000000002" height="78.0" fill="#fed7aa" stroke="#c2410c" stroke-width="2"/>
-  <text x="147.56" y="276.4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#7c2d12">
-    LEFT BACKREST MODULE (39.25&quot; W)
-  </text>
-  <rect x="250.78" y="236.1" width="203.32000000000002" height="78.0" fill="#fed7aa" stroke="#c2410c" stroke-width="2"/>
-  <text x="352.44" y="276.4" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#7c2d12">
-    RIGHT BACKREST MODULE (39.25&quot; W)
+  <!-- Front Rubber Grip Pad (Y=0.75..4.25, Z=0..0.375) -->
+  <rect x="159.15" y="540.425" width="42.699999999999996" height="4.574999999999999" fill="#1e293b" stroke="#0f172a" stroke-width="1.2"/>
+  <!-- Front 4x4 Leg (Y=0.75..4.25, Z=0.375..19.00, notched at Y=0.75..2.25, Z=15.50..19.00) -->
+  <polygon points="159.2,540.4 201.8,540.4 201.8,313.2 177.4,313.2 177.4,355.9 159.2,355.9" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="180.5" y="423.0" text-anchor="middle" transform="rotate(-90 180.5 423.0)" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#1e3a8a">
+    FRONT 4x4 LEG (18-5/8&quot;)
   </text>
 
-  <!-- ================= RIGHT: REAR ELEVATION ================= -->
-  <text x="716.0" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="13.5" font-weight="800" fill="#0f172a">
-    REAR ELEVATION — 3 Roller Legs + 4 Captive Upright Spines
+  <!-- Rear Recessed Roller (Y=21.75..25.25, Z=0..0.375) + Housing inside leg -->
+  <rect x="424.5" y="529.75" width="24.4" height="12.2" fill="#475569" stroke="#0f172a" stroke-width="1"/>
+  <circle cx="436.7" cy="538.29" r="6.71" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.8"/>
+  <!-- Rear 4x4 Leg (Y=21.75..25.25, Z=0.375..19.00, notched at Y=23.75..25.25, Z=15.50..19.00) -->
+  <polygon points="415.3,540.4 458.0,540.4 458.0,355.9 439.8,355.9 439.8,313.2 415.3,313.2" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2" fill-opacity="0.88"/>
+  <text x="431.82" y="423.0" text-anchor="middle" transform="rotate(-90 431.82 423.0)" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#1e3a8a">
+    REAR 4x4 LEG (18-5/8&quot;)
   </text>
-  <line x1="492.4" y1="435.0" x2="939.6" y2="435.0" stroke="#334155" stroke-width="2"/>
 
-  <!-- 3 Rear Legs (BL, BC at X=38.25..41.75, BR) with 3/8" Recessed Rollers -->
-  <circle cx="521.0" cy="433.05" r="4" fill="#dc2626"/>
-  <rect x="511.9" y="336.2" width="18.2" height="96.85000000000001" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.6"/>
-  <circle cx="716.0" cy="433.05" r="4" fill="#dc2626"/>
-  <rect x="706.9" y="336.2" width="18.2" height="96.85000000000001" fill="#93c5fd" stroke="#1d4ed8" stroke-width="2"/>
-  <text x="716.0" y="388.2" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="800" fill="#1e3a8a">5th Leg_BC (X=38.25..41.75)</text>
-  <circle cx="911.0" cy="433.05" r="4" fill="#dc2626"/>
-  <rect x="901.9000000000001" y="336.2" width="18.2" height="96.85000000000001" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.6"/>
+  <!-- Dual Laminated Front 2x4 Beam: Outer (Y=0.75..2.25) + Inner (Y=2.25..3.75), Z=15.50..19.00 -->
+  <rect x="159.15" y="313.20000000000005" width="18.299999999999997" height="42.699999999999996" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <line x1="159.15" y1="313.20000000000005" x2="177.45" y2="355.9" stroke="#b45309" stroke-width="1"/>
+  <rect x="177.45" y="313.20000000000005" width="18.299999999999997" height="42.699999999999996" fill="#fcd34d" stroke="#b45309" stroke-width="2"/>
+  <line x1="177.45" y1="313.20000000000005" x2="195.75" y2="355.9" stroke="#b45309" stroke-width="1"/>
 
-  <!-- Rear Apron Trim -->
-  <rect x="508.0" y="327.1" width="416.0" height="28.6" fill="#c4b5fd" fill-opacity="0.7" stroke="#4c1d95" stroke-width="2"/>
+  <!-- Interior Cross-Joist (Y=3.75..23.75, Z=15.50..19.00) -->
+  <rect x="195.75" y="313.20000000000005" width="244.0" height="42.699999999999996" fill="#fef3c7" stroke="#b45309" stroke-width="1.8"/>
+  <text x="317.75" y="337.6" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="#92400e">
+    5× COPLANAR 2x4 CROSS-JOISTS (20.00&quot; L, Z = 15.50&quot;..19.00&quot;)
+  </text>
 
-  <!-- Backrest Panels (seen from rear) -->
-  <rect x="511.9" y="236.1" width="203.32000000000002" height="78.0" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
-  <rect x="716.78" y="236.1" width="203.32000000000002" height="78.0" fill="#ffedd5" stroke="#c2410c" stroke-width="1.6"/>
+  <!-- Main Structural Back Rail (Y=23.75..25.25, Z=15.50..19.00) -->
+  <rect x="439.75" y="313.20000000000005" width="18.299999999999997" height="42.699999999999996" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+  <!-- Rear Pocket Backer Rail (Y=26.75..28.25, Z=15.50..19.00) -->
+  <rect x="476.34999999999997" y="313.20000000000005" width="18.299999999999997" height="42.699999999999996" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
 
-  <!-- 4 Angled Uprights dropping into Slots 1..4 -->
-  <rect x="539.2" y="233.708" width="18.2" height="120.69200000000001" fill="#fdba74" stroke="#9a3412" stroke-width="1.8"/>
-  <rect x="666.6" y="233.708" width="18.2" height="120.69200000000001" fill="#fdba74" stroke="#9a3412" stroke-width="1.8"/>
-  <rect x="747.2" y="233.708" width="18.2" height="120.69200000000001" fill="#fdba74" stroke="#9a3412" stroke-width="1.8"/>
-  <rect x="874.6" y="233.708" width="18.2" height="120.69200000000001" fill="#fdba74" stroke="#9a3412" stroke-width="1.8"/>
+  <!-- 3/4" Birch Plywood Seat Deck (Y=0.75..24.50, Z=19.00..19.75) -->
+  <rect x="159.15" y="304.05" width="289.75" height="9.149999999999999" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
 
-  <text x="716.0" y="469.0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#dc2626">
-    3× Rear Recessed Rollers (3/8&quot; Protrusion) — Lift Front Apron 1&quot; to Roll Like a Wheelbarrow!
+  <!-- 1x2 Rear Cushion Stop / Pocket Cap Trim (Y=26.75..28.25, Z=19.00..19.75) -->
+  <rect x="476.34999999999997" y="304.05" width="18.299999999999997" height="9.149999999999999" fill="#c4b5fd" stroke="#5b21b6" stroke-width="1.6"/>
+
+  <!-- Front Stain-Grade 1x6 Outer Apron Trim (Z=15.25..20.75, height=5.50") & Rear Apron flush at Z=19.75 at slots -->
+  <rect x="150.0" y="291.85" width="9.149999999999999" height="67.1" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/>
+  <rect x="494.65" y="304.05" width="9.149999999999999" height="54.9" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/>
+
+  <!-- Doubled 2x6 Backrest Upright in Mortise Slot (Y=25.25..26.69 peg + 90-deg solid wood shoulder resting on Z=19.75") -->
+  <polygon points="458.0,355.9 475.6,355.9 475.6,304.1 525.1,304.1 525.1,69.2 499.4,69.2 458.0,304.1" fill="#fdba74" stroke="#c2410c" stroke-width="2.2"/>
+  <line x1="475.6" y1="304.1" x2="525.1" y2="304.1" stroke="#15803d" stroke-width="3.5"/>
+  <!-- Backrest 3/4" Plywood Panel -->
+  <polygon points="456.5,261.4 465.6,261.4 497.3,81.2 488.2,81.2" fill="#fed7aa" stroke="#9a3412" stroke-width="2"/>
+
+  <!-- 4" High-Density Foam Seat Cushion (Y=0.75..24.25, Z=19.75..23.75) seated in 1.00" Pocket -->
+  <rect x="160.37" y="255.25" width="286.7" height="48.8" rx="8" fill="#38bdf8" fill-opacity="0.28" stroke="#0284c7" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="303.72" y="282.7" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#0369a1">
+    4.00&quot; FOAM SEAT CUSHION (Sits 1.00&quot; Recessed Inside 1x6 Trim Lip!)
+  </text>
+
+  <!-- Left Z-Stack Dimension Ladder -->
+  <line x1="88" y1="545.0" x2="88" y2="355.9" stroke="#1e3a8a" stroke-width="1.5" marker-start="url(#bpArr)" marker-end="url(#bpArr)"/>
+  <text x="80" y="450.45" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#1e3a8a">15.50&quot; Clear</text>
+
+  <line x1="88" y1="355.9" x2="88" y2="313.20000000000005" stroke="#1e3a8a" stroke-width="1.5" marker-start="url(#bpArr)" marker-end="url(#bpArr)"/>
+  <text x="80" y="334.55" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#1e3a8a">Z=15.5..19.0&quot;</text>
+
+  <line x1="88" y1="313.20000000000005" x2="88" y2="304.05" stroke="#b45309" stroke-width="1.5"/>
+  <text x="80" y="307.71000000000004" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#b45309">19.75&quot; Deck</text>
+
+  <line x1="88" y1="304.05" x2="88" y2="291.85" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="80" y="293.07000000000005" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#dc2626">20.75&quot; Lip (+1&quot;)</text>
+
+  <!-- Callout Leaders -->
+  <text x="176.84" y="209.5" font-family="Inter, sans-serif" font-size="11.5" font-weight="700" fill="#4c1d95">
+    1x6 Outer Trim (Z = 15.25&quot;..20.75&quot;)
+  </text>
+  <text x="176.84" y="226.57999999999998" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#dc2626">
+    Projects +1.00&quot; above 3/4&quot; Plywood Deck
+  </text>
+  <line x1="174.4" y1="232.68" x2="154.88" y2="291.24" stroke="#4c1d95" stroke-width="1.4" marker-end="url(#bpArr)"/>
+
+  <text x="308.6" y="124.10000000000002" font-family="Inter, sans-serif" font-size="11.5" font-weight="800" fill="#9a3412">
+    Doubled 2x6 Upright (3.0&quot; W): 10° Front Lean + 90° Vertical Back
+  </text>
+  <text x="308.6" y="142.40000000000003" font-family="JetBrains Mono, monospace" font-size="10" fill="#15803d" font-weight="700">
+    90° Solid Wood Bottom Ledge Rests Flat on Couch Top (Z=19.75&quot;)!
+  </text>
+  <line x1="442.79999999999995" y1="136.3" x2="481.84" y2="166.8" stroke="#9a3412" stroke-width="1.4" marker-end="url(#redArr)"/>
+
+  <!-- Overall Y Depth Dimension (29.00") -->
+  <line x1="150.0" y1="587.0" x2="503.79999999999995" y2="587.0" stroke="#1e3a8a" stroke-width="1.6" marker-start="url(#bpArr)" marker-end="url(#bpArr)"/>
+  <text x="326.9" y="603.0" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="800" fill="#1e3a8a">
+    Y = 0.00&quot; TO 29.00&quot; TOTAL BASE DEPTH (90° SOLID WOOD SHOULDER LEDGE AT Z = 19.75&quot;)
   </text>
 </svg>

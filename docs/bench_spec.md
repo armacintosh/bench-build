@@ -110,40 +110,39 @@ To guarantee **exact `15.50"` floor-to-beam clearance** underneath while maintai
   - `Y`: `[3.75, 23.75]`, `Z`: `[14.75, 18.25]`
   - `X` Centers: `16.00"`, `28.00"`, `40.00"`, `52.00"`, `64.00"`.
 
-### 4.3 Drop-In Backrest Pocket Assembly (`Y = [25.25, 28.25]`, `Z = [15.50, 19.00]`)
+### 4.3 Drop-In Backrest Pocket Assembly (`Y = [25.25, 28.25]`, `Z = [15.50, 19.75]`)
 - **Rear_Pocket_Backer_Rail:** `78.50" × 1.50" × 3.50"`
-  - `X`: `[0.75, 79.25]`, `Y`: `[26.75, 28.25]`, `Z`: `[15.50, 19.00]`.
-- **4 Vertical Receiver Slots (`3.50"` wide along X × `1.50"` deep along Y × `3.50"` tall along Z):**
-  - **Slot 1 (Left-Outer):** `X = [6.00, 9.50]`
-  - **Slot 2 (Left-Inner):** `X = [30.50, 34.00]`
-  - **Slot 3 (Right-Inner):** `X = [46.00, 49.50]`
-  - **Slot 4 (Right-Outer):** `X = [70.50, 74.00]`
-- **Pocket Spacer Blocks (`2x4` blocks, `1.50"` thick along Y = `[25.25, 26.75]`, `Z = [15.50, 19.00]`):**
-  - `Spacer_1`: `X = [0.75, 6.00]` (`5.25"` long)
-  - `Spacer_2`: `X = [9.50, 30.50]` (`21.00"` long)
-  - `Spacer_3 (Center)`: `X = [34.00, 46.00]` (`12.00"` long)
-  - `Spacer_4`: `X = [49.50, 70.50]` (`21.00"` long)
-  - `Spacer_5`: `X = [74.00, 79.25]` (`5.25"` long)
+  - `X`: `[0.75, 79.25]`, `Y`: `[26.75, 28.25]`, `Z`: `[15.50, 19.00]` (capped with `1x2` strip at `Z = [19.00, 19.75]`).
+- **4 Vertical Receiver Slots (`3.125"` [3-1/8"] wide along X × `1.50"` deep along Y × `4.25"` tall along Z = `[15.50, 19.75]`):**
+  - Sized with a `1/8"` Left-to-Right clearance for the `3.00"` wide doubled `2x6` upright (`1.50" + 1.50"`) and a `1/16"` Front-to-Back slip-fit for the `1-7/16"` tenon.
+  - **Slot 1 (Left-Outer):** `X = [6.25, 9.375]` (`3.125"` wide)
+  - **Slot 2 (Left-Inner):** `X = [30.625, 33.75]` (`3.125"` wide)
+  - **Slot 3 (Right-Inner):** `X = [46.25, 49.375]` (`3.125"` wide)
+  - **Slot 4 (Right-Outer):** `X = [70.625, 73.75]` (`3.125"` wide)
+- **Pocket Spacer Blocks (`2x4` blocks, `1.50"` thick along Y = `[25.25, 26.75]`, `Z = [15.50, 19.00]`, capped with `1x2` strips at `Z = [19.00, 19.75]`):**
+  - `Spacer_1 (Left End)`: `X = [0.75, 6.25]` (`5.50"` long)
+  - `Spacer_2 (Left Span)`: `X = [9.375, 30.625]` (`21.25"` long)
+  - `Spacer_3 (Center)`: `X = [33.75, 46.25]` (`12.50"` long)
+  - `Spacer_4 (Right Span)`: `X = [49.375, 70.625]` (`21.25"` long)
+  - `Spacer_5 (Right End)`: `X = [73.75, 79.25]` (`5.50"` long)
 
 ### 4.4 Recessed Plywood Seat Deck & Cushion Pocket
 - **Plywood_Seat_Deck (`3/4" Birch Plywood`):**
-  - Dimensions: `75.50"` (X: `2.25..77.75`) × `21.50"` (Y: `2.25..23.75`) × `0.75"` (Z: `18.25..19.00`).
-  - *Note:* If using `1x4` outer trim shifted up to `Z = [16.50, 20.00]`, the plywood deck sits directly on top of the un-notched 2x4 frame at `Z = [19.00, 19.75]` (`76.50" × 23.00"`), leaving a `1.00"` cushion lip if `1x6` (`5.50"`) trim is used (`Z = [15.25, 20.75]`).
-  - **Recommended CAD Spec:** Use **`1x6` Select Pine/Poplar ripped to `4.50"` height** (or standard `1x6` at `5.50"`) for the Outer Trim Apron (`Z = [15.50, 20.00]`), and put the `0.75"` Birch Plywood Deck directly on top of the flush `2x4` frame (`Z = [19.00, 19.75]`, `X = [0.75, 79.25]`, `Y = [0.75, 24.50]`). That way:
-    1. Zero ripping or dropping of `2x4` joists is required—all `2x4` tops are coplanar at `Z = 19.00"`.
-    2. The `3/4"` plywood sheet bridges the full `2x4` perimeter (`78.50" × 23.75"`), turning the entire top into a true structural torsion box.
-    3. The outer trim rises to `Z = 20.75"`, creating an exact **`1.00"` deep Cushion Pocket** (`Z = 19.75"` to `20.75"`).
+  - Dimensions: `78.50"` (X: `0.75..79.25`) × `23.75"` (Y: `0.75..24.50`) × `0.75"` (Z: `19.00..19.75`).
+  - Glued and screwed directly on top of the coplanar `2x4` frame (`Z = [19.00, 19.75]`).
+  - Outer `1x6` (`5.50"`) Stain-Grade Trim Apron spans `Z = [15.25, 20.75]` on the Front and Left/Right sides (creating the **`1.00"` deep Cushion Pocket** from `Z = 19.75"` to `20.75"`), while at the 4 rear slot locations (`Y = 26.75..29.00`) the top surface is flush at `Z = 19.75"` so the `90°` solid wood bottom shoulder ledge of each doubled `2x6` upright rests flat on the couch surface.
 
-### 4.5 Two 40" Modular Drop-In Slanted Backrests
-- **Angled Uprights (Qty 4 — Cut from a single `2x6 × 8ft` board):**
-  - Total Length: `23.50"`
-  - **Bottom Tenon (`Z = 15.50"` to `19.75"`, length `4.25"`):** Straight profile, `3.4375"` (3-7/16") wide along X × `1.4375"` along Y so it drops smoothly into the `3.50" × 1.50"` pocket.
-  - **Upper Spine (`Z = 19.75"` to `38.50"`, length `19.25"`):** Starting at `Z = 19.75"`, the front edge cants backward (`+Y`) at **`10.0°`** from vertical.
-    - Horizontal setback at top (`19.25" × sin(10°)`): `+3.34"` along Y.
-    - Vertical rise (`19.25" × cos(10°)`): `+18.96"` along Z (Top of backrest reaches `Z = 38.71"`).
+### 4.5 Two 40" Modular Drop-In Slanted Backrests (Doubled `2x6` Laminated Uprights)
+- **Doubled `2x6` Angled Uprights (Qty 4 Laminated Posts — 8 Halves Cut from Two `2x6 × 8ft` Boards):**
+  - **Board Orientation:** Each `2x6` (`1.50"` thick × `5.50"` wide × `23.50"` tall) is oriented edgewise so its **`5.50"` wide face runs Front-to-Back (`Y` axis)** and its **`1.50"` thickness runs Left-to-Right (`X` axis)**. Two identical `2x6` cutouts are glued and screwed face-to-face (`1.50" + 1.50" = 3.00"`) to form each **`3.00"` wide (Left-to-Right)** upright.
+  - **Bottom Peg / Tenon (`Z = 15.50"` to `19.75"`, height `4.25"`):** Cut to `1.50"` Front-to-Back (`1-7/16"` finished for a `1/16"` slip-fit) × `3.00"` Left-to-Right so it drops vertically into the `3.125" × 1.50"` slot (`Y = 25.25..26.75`).
+  - **`90°` Solid Wood Rear Shoulder Ledge (`Z = 19.75"`):** At `4.25"` up from the bottom, the back of the peg and the bottom of the upper spine form a **`90°` solid wood L-shoulder** (`4.00"` deep on a full `5.50"` `2x6`, or `2.25"` if trimmed flush with `Y = 29.00"`). This flat horizontal wood bottom rests directly on top of the couch surface (`Z = 19.75"`) behind the slot (`Y = 26.75..29.00`), carrying 100% of vertical weight and resisting backward rocking.
+  - **Upper Spine (`Z = 19.75"` to `39.00"`, height `19.25"`):**
+    - **Back Side:** Stays straight vertical (`90°`, using the uncut factory back edge of the `2x6`).
+    - **Front Side (Where People Lean):** Starting right at the couch surface (`Z = 19.75"`, `Y = 25.25"`), the front face angles backward (`+Y`) at **`10.0°` past vertical** (`19.25" × tan(10°) = 3.39"` backward shift, tapering the `5.50"` board to `2.11"` Front-to-Back at the top).
 - **Backrest Panels (Qty 2 — `3/4" Birch Plywood`):**
   - Dimensions: `39.25" Wide × 15.00" Tall × 0.75" Thick`.
-  - Mounted to the `10°` angled front faces of the upright pairs, starting `3.50"` above the plywood deck (`Z = 23.25"`) so the `4.00"` seat cushion slides underneath the bottom edge of the backrest panel.
+  - Glued and screwed onto the `3.00"` wide × `10°` angled front faces of the upright pairs, starting `3.50"` above the plywood deck (`Z = 23.25"`) so the `4.00"` seat cushion tucks cleanly underneath.
 
 ---
 

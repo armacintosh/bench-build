@@ -17,6 +17,6 @@
   <!-- Rear Pocket Backer Rail -->
   <rect x="35" y="101" width="570" height="22" fill="#fde68a" stroke="#b45309" stroke-width="1.8"/>
   <text x="320" y="116" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#78350f">Rear Pocket Backer Rail (Y = 26.75&quot;..28.25&quot;) — Clamp Around Scrap 2x4 Gauge Block!</text>
-  <text x="320" y="152" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" font-weight="700" fill="#15803d">Green Boxes = Four 3.50&quot; × 1.50&quot; Drop-In Slots [X = 6..9.5, 30.5..34, 46..49.5, 70.5..74]</text>
-  <text x="320" y="182" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#334155">All 2x4 rails, joists, and spacer blocks sit 100% coplanar at Z = 15.50&quot; to 19.00&quot;!</text>
+  <text x="320" y="152" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" font-weight="700" fill="#15803d">Green Boxes = Four 3-1/8&quot; (L-R) × 1-1/2&quot; (F-B) Slots for Doubled 3.00&quot;×1.44&quot; Uprights!</text>
+  <text x="320" y="182" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#334155">Spacers [Part F]: Two 5.50&quot; Ends, Two 21.25&quot; Spans, One 12.50&quot; Center (Coplanar at Z = 15.50&quot;..19.00&quot;)</text>
 </svg>

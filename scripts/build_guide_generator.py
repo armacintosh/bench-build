@@ -136,68 +136,47 @@ def generate_svg_plywood_cut_map() -> str:
 
 
 def generate_svg_2x6_backrest_nesting() -> str:
-    """SVG 2: 2x6 Angled Backrest Post Nesting Map (96" x 5.5")."""
-    # Scale: X = 9.2 px/in, Y = 22 px/in (exaggerated vertically slightly for crystal-clear reading of the 10° taper)
+    """SVG 2: 2x6 Angled Backrest Post Nesting Map (96" x 5.5") + 3-Step Visual Orientation Diagram."""
     sx = 9.0
-    sy = 20.0
-    pad_l, pad_t, pad_r, pad_b = 65, 65, 45, 70
+    sy = 19.0
+    pad_l, pad_t, pad_r = 65, 62, 45
     W = int(96 * sx + pad_l + pad_r)
-    H = int(5.5 * sy + pad_t + pad_b)
+    H = 420
 
     def rx(x): return pad_l + x * sx
     def ry(y): return pad_t + y * sy
 
-    # Each upright is 23.50" long:
-    # Bottom tenon = 4.25" long, width = 3.4375" (3-7/16").
-    # Upper spine = 19.25" long, front edge angles back at 10° (19.25 * tan(10°) = 3.39" taper, or nested head-to-toe / side-by-side in 23.5" blanks).
-    # Even simpler and 100% foolproof for a DIYer: Crosscut the 96" 2x6 into FOUR equal 23.50" blanks (4 * 23.50" = 94.00", leaving 2.00" scrap),
-    # then mark the identical layout template on all 4 blanks!
     blanks_svg = []
     for i in range(4):
-        x0 = i * 23.75  # 23.50" blank + 0.25" kerf/margin
-        # Polygon for upright inside 23.50" x 5.50" blank:
-        # Tenon: X from x0 to x0+4.25, Y from 2.0625 to 5.50 (height = 3.4375" = 3-7/16")
-        # At X = x0+4.25, shoulder steps up to Y = 0.00..3.50 or front edge slants at 10°:
-        # Let's show the exact one-piece profile inside each 23.50" x 5.50" blank:
-        # Bottom Tenon (left 4.25"): Y = [2.06, 5.50] (width = 3.4375" = 3-7/16")
-        # At X = x0 + 4.25" (Deck Line Z=19.75"): front edge starts at Y = 2.06" and cants toward rear (+Y) or starts at Y = 0.0" (front overhang) and cants at 10° (+3.34" shift over 19.25")!
-        # Wait: in a 5.50" wide 2x6 board:
-        # Front edge at Z=19.75" (X = x0+4.25) is at Y_board = 0.25", and at top (X = x0+23.50) is at Y_board = 0.25 + 3.39 = 3.64"!
-        # Rear edge at Z=19.75" (X = x0+4.25) is at Y_board = 3.6875", and at top (X = x0+23.50) is at Y_board = 5.50"!
-        # And the tenon (X = x0 to x0+4.25) uses Y_board = [0.25, 3.6875] (exact 3.4375" = 3-7/16" width)!
-        # Let's verify that!
-        # If Tenon is Y_board = [0.25, 3.6875] (width 3.4375"):
-        # At X = x0+4.25: Front of spine starts right at Y_board = 0.25" (flush with front of tenon!) and angles back 10° to Y_board = 0.25 + 19.25*tan(10°) = 3.644" at X = x0+23.50!
-        # And the back edge of spine starts at Y_board = 3.6875" (flush with back of tenon!) and angles back to Y_board = 5.50" at X = x0+23.50 (giving a beefy 1.86" top thickness and 3.44" base thickness)!
-        # Zero awkward notches, 3 straight saw cuts per blank, fits 100% inside a 5.50" 2x6!
+        x0 = i * 23.75
         pts = [
-            f"{rx(x0):.1f},{ry(0.25):.1f}",
-            f"{rx(x0+4.25):.1f},{ry(0.25):.1f}",
-            f"{rx(x0+23.50):.1f},{ry(3.64):.1f}",
+            f"{rx(x0):.1f},{ry(0.00):.1f}",
+            f"{rx(x0+4.25):.1f},{ry(0.00):.1f}",
+            f"{rx(x0+23.50):.1f},{ry(3.39):.1f}",
             f"{rx(x0+23.50):.1f},{ry(5.50):.1f}",
-            f"{rx(x0+4.25):.1f},{ry(3.69):.1f}",
-            f"{rx(x0):.1f},{ry(3.69):.1f}",
+            f"{rx(x0+4.25):.1f},{ry(5.50):.1f}",
+            f"{rx(x0+4.25):.1f},{ry(1.44):.1f}",
+            f"{rx(x0):.1f},{ry(1.44):.1f}",
         ]
         poly = " ".join(pts)
         blanks_svg.append(f'''
   <!-- Blank {i+1} -->
   <rect x="{rx(x0)}" y="{ry(0)}" width="{23.50*sx}" height="{5.50*sy}" fill="none" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4,3"/>
   <polygon points="{poly}" fill="#fed7aa" stroke="#c2410c" stroke-width="2.2"/>
-  <line x1="{rx(x0+4.25)}" y1="{ry(0.25)}" x2="{rx(x0+4.25)}" y2="{ry(3.69)}" stroke="#0284c7" stroke-width="1.6" stroke-dasharray="3,2"/>
-  <text x="{rx(x0+2.1)}" y="{ry(2.1)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#0369a1">TENON</text>
-  <text x="{rx(x0+2.1)}" y="{ry(2.9)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0369a1">4.25&quot;×3-7/16&quot;</text>
-  <text x="{rx(x0+13.5)}" y="{ry(3.1)}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#7c2d12">PART [K] #{i+1}</text>
-  <text x="{rx(x0+13.5)}" y="{ry(3.9)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#9a3412">10° Tapered Spine (19.25&quot;)</text>
-  <text x="{rx(x0+11.75)}" y="{ry(0)-10}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#0f172a">Blank #{i+1}: 23.50&quot; (23-1/2&quot;)</text>
+  <line x1="{rx(x0+4.25)}" y1="{ry(1.44)}" x2="{rx(x0+4.25)}" y2="{ry(5.50)}" stroke="#15803d" stroke-width="3.2"/>
+  <text x="{rx(x0+2.1)}" y="{ry(0.95)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#0369a1">1.44&quot; PEG</text>
+  <text x="{rx(x0+13.5)}" y="{ry(3.4)}" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" font-weight="800" fill="#7c2d12">PART [K] HALF #{i+1}</text>
+  <text x="{rx(x0+13.5)}" y="{ry(4.35)}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#9a3412">10° Front | 90° Back</text>
+  <text x="{rx(x0+11.75)}" y="{ry(0)-10}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#0f172a">Blank #{i+1}: 23.50&quot; (Cut 4 per 2x6 × 2 Boards = 8 Halves)</text>
 ''')
 
     return f'''<svg viewBox="0 0 {W} {H}" class="blueprint-svg" xmlns="http://www.w3.org/2000/svg">
   <rect width="{W}" height="{H}" fill="#f8fafc" rx="8"/>
-  <text x="{pad_l}" y="26" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#0f172a">
-    BOARD: 1× 2x6 × 8 ft (Actual 1.50&quot; × 5.50&quot; × 96.00&quot;) — Four 10° Angled Backrest Uprights [Part K]
+  <text x="{pad_l}" y="26" font-family="Inter, system-ui, sans-serif" font-size="14.5" font-weight="800" fill="#0f172a">
+    BOARDS: 2× 2x6 × 8 ft (1.50&quot; × 5.50&quot; × 96.00&quot;) — 8 Cutouts Glued Face-to-Face into 4 Doubled 3.00&quot;-Wide Uprights [Part K]
   </text>
-  <text x="{W - pad_r}" y="26" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#475569">
-    Crosscut into 4× 23.50&quot; Blanks → Rip 10° Front &amp; Rear Tapers
+  <text x="{W - pad_r}" y="26" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#15803d" font-weight="700">
+    Only 2 Saw Cuts Per Blank: 90° Back L-Notch + 10° Front Lean!
   </text>
 
   <!-- Full 96x5.5 board outline -->
@@ -206,9 +185,45 @@ def generate_svg_2x6_backrest_nesting() -> str:
 
   <!-- Dimension Callouts -->
   <text x="{rx(0)-14}" y="{ry(2.75)}" text-anchor="middle" transform="rotate(-90 {rx(0)-14} {ry(2.75)})" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700" fill="#0f172a">5.50&quot; (2x6)</text>
-  <text x="{rx(48)}" y="{ry(5.5)+36}" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#334155">
-    PRO-TIP: Plane or sand the 4.25&quot; bottom tenon thickness by 1/16&quot; (to 1-7/16&quot; × 3-7/16&quot;) and rub with paraffin wax so it drops into the 1.50&quot; × 3.50&quot; pocket with zero binding.
-  </text>
+
+  <!-- 3-STEP VISUAL EXPLAINER CARDS INSIDE SVG 2 -->
+  <!-- Card 1: Side View of Cutout -->
+  <rect x="65" y="185" width="280" height="215" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" rx="6"/>
+  <text x="79" y="207" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#0f172a">STEP 1: Side View of 2x6 Cutout</text>
+  <text x="79" y="222" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">5.50&quot; Width Runs Front-to-Back!</text>
+  <polygon points="135,382 162,382 162,342 235,342 235,238 196,238 135,342" fill="#fed7aa" stroke="#c2410c" stroke-width="2.2"/>
+  <line x1="162" y1="342" x2="235" y2="342" stroke="#15803d" stroke-width="4"/>
+  <text x="126" y="290" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#c2410c">10° Front Lean</text>
+  <text x="126" y="303" text-anchor="end" font-family="Inter, sans-serif" font-size="9" fill="#475569">(Where you lean)</text>
+  <text x="243" y="290" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#0f172a">90° Straight</text>
+  <text x="243" y="303" font-family="Inter, sans-serif" font-size="9" fill="#475569">(Factory back)</text>
+  <text x="205" y="358" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="800" fill="#15803d">90° Solid Wood Ledge</text>
+  <text x="205" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#15803d">(Sits flat on couch!)</text>
+  <text x="148" y="395" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#0369a1">1.44&quot; Peg</text>
+
+  <!-- Card 2: Glue 2 Halves Face-to-Face -->
+  <rect x="365" y="185" width="280" height="215" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" rx="6"/>
+  <text x="379" y="207" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#0f172a">STEP 2: Glue 2 Halves Face-to-Face</text>
+  <text x="379" y="222" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">1.50&quot; + 1.50&quot; = 3.00&quot; Wide (Left-to-Right)</text>
+  <rect x="445" y="245" width="55" height="120" fill="#fed7aa" stroke="#c2410c" stroke-width="2"/>
+  <rect x="500" y="245" width="55" height="120" fill="#fdba74" stroke="#c2410c" stroke-width="2"/>
+  <line x1="500" y1="245" x2="500" y2="365" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4,2"/>
+  <text x="472" y="305" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#7c2d12">1.50&quot;</text>
+  <text x="527" y="305" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#7c2d12">1.50&quot;</text>
+  <text x="500" y="385" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="800" fill="#0f172a">← 3.00&quot; Wide Laminated Post →</text>
+
+  <!-- Card 3: Fit Inside Couch Slot -->
+  <rect x="665" y="185" width="300" height="215" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" rx="6"/>
+  <text x="679" y="207" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#15803d">STEP 3: How It Sits in the Couch</text>
+  <text x="679" y="222" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#475569">Slot = 3-1/8&quot; (L-R) × 1-1/2&quot; (Front-to-Back)</text>
+  <rect x="695" y="330" width="42" height="50" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/>
+  <rect x="765" y="330" width="68" height="50" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="739,378 763,378 763,330 833,330 833,242 796,242 739,330" fill="#fdba74" stroke="#c2410c" stroke-width="2"/>
+  <line x1="763" y1="330" x2="833" y2="330" stroke="#15803d" stroke-width="4"/>
+  <text x="842" y="334" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="800" fill="#15803d">Flat 90° Ledge</text>
+  <text x="842" y="346" font-family="Inter, sans-serif" font-size="9" fill="#334155">rests on couch</text>
+  <text x="842" y="368" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#0369a1">1/16&quot; Snug Fit</text>
+  <text x="842" y="380" font-family="Inter, sans-serif" font-size="9" fill="#334155">in 1.50&quot; slot</text>
 </svg>'''
 
 
@@ -228,19 +243,19 @@ def generate_svg_dimensional_lumber_map() -> str:
         ]),
         ("2x4 #1 (8 ft)", "Actual 1.5\"×3.5\"", [
             ("Part B: Front Outer Rail (78.50\")", 78.50, "#fde68a"),
-            ("Part F: End Spacer (5.25\")", 5.25, "#fca5a5"),
-            ("Part F: End Spacer (5.25\")", 5.25, "#fca5a5"),
+            ("Part F: End Spacer (5.50\")", 5.50, "#fca5a5"),
+            ("Part F: End Spacer (5.50\")", 5.50, "#fca5a5"),
         ]),
         ("2x4 #2 (8 ft)", "Actual 1.5\"×3.5\"", [
             ("Part B: Main Back Rail (78.50\")", 78.50, "#fde68a"),
-            ("Part F: Ctr Spacer (12.00\")", 12.00, "#fca5a5"),
+            ("Part F: Ctr Spacer (12.50\")", 12.50, "#fca5a5"),
         ]),
         ("2x4 #3 (8 ft)", "Actual 1.5\"×3.5\"", [
             ("Part B: Rear Pocket Rail (78.50\")", 78.50, "#fde68a"),
         ]),
         ("2x4 #4 (8 ft)", "Actual 1.5\"×3.5\"", [
             ("Part C: Inner Laminated Front Beam (71.50\")", 71.50, "#fdba74"),
-            ("Part F: Mid Spacer (21.00\")", 21.00, "#fca5a5"),
+            ("Part F: Mid Spacer (21.25\")", 21.25, "#fca5a5"),
         ]),
         ("2x4 #5 (8 ft)", "Actual 1.5\"×3.5\"", [
             ("Part E: Joist 1 (20\")", 20.00, "#bbf7d0"),
@@ -252,7 +267,7 @@ def generate_svg_dimensional_lumber_map() -> str:
             ("Part E: Joist 5 (20\")", 20.00, "#bbf7d0"),
             ("Part D: Side L (19.5\")", 19.50, "#86efac"),
             ("Part D: Side R (19.5\")", 19.50, "#86efac"),
-            ("Part F: Mid Spacer (21.00\")", 21.00, "#fca5a5"),
+            ("Part F: Mid Spacer (21.25\")", 21.25, "#fca5a5"),
         ]),
         ("1x6 #1 (8 ft)", "Stain-Grade 0.75\"×5.5\"", [
             ("Part H: Front Mitered Apron Trim (80.00\" point-to-point)", 80.00, "#ddd6fe"),
@@ -314,21 +329,23 @@ def generate_svg_blueprint_side_section() -> str:
     def py(y): return ox + y * s
     def pz(z): return oz - z * s
 
-    # Backrest upright polygon in Y-Z plane:
-    # Tenon: Y = 25.25..26.69, Z = 15.50..19.75
-    # Upper spine: Z = 19.75..38.71, canted 10 deg backward (+3.34" Y shift)
+    # Doubled 2x6 Backrest Upright polygon in Y-Z plane:
+    # - Peg (Tenon): Y = 25.25..26.69 (1.44" in 1.50" slot), Z = 15.50..19.75 (4.25" tall)
+    # - 90° Solid Wood Shoulder Ledge at Z = 19.75": extends from Y = 26.69" to Y = 30.75" (4.06" flat wood resting on couch top!)
+    # - Upper Spine (Z = 19.75..39.00, 19.25" tall):
+    #   * Back edge goes straight up vertically (90°) at Y = 30.75"
+    #   * Front edge (where people lean) angles back 10° from Y = 25.25" at Z = 19.75" to Y = 28.64" at Z = 39.00"
     upright_pts = " ".join([
         f"{py(25.25):.1f},{pz(15.50):.1f}",
-        f"{py(26.70):.1f},{pz(15.50):.1f}",
-        f"{py(26.70):.1f},{pz(19.75):.1f}",
-        f"{py(30.04):.1f},{pz(38.71):.1f}",
-        f"{py(28.59):.1f},{pz(38.71):.1f}",
+        f"{py(26.69):.1f},{pz(15.50):.1f}",
+        f"{py(26.69):.1f},{pz(19.75):.1f}",
+        f"{py(30.75):.1f},{pz(19.75):.1f}",
+        f"{py(30.75):.1f},{pz(39.00):.1f}",
+        f"{py(28.64):.1f},{pz(39.00):.1f}",
         f"{py(25.25):.1f},{pz(19.75):.1f}",
     ])
 
     # Backrest 3/4" plywood panel (15.0" tall along 10-deg slope, starting at Z=23.25")
-    # At Z=23.25 (dz=3.50 above 19.75): dy = 3.50 * tan(10°) = 0.62" -> front face of upright is at Y = 25.25 + 0.62 = 25.87
-    # Panel sits on front face (-0.75" in Y perpendicular to slope)
     panel_pts = " ".join([
         f"{py(25.12):.1f},{pz(23.25):.1f}",
         f"{py(25.87):.1f},{pz(23.25):.1f}",
@@ -350,7 +367,7 @@ def generate_svg_blueprint_side_section() -> str:
   <!-- Blueprint Title Bar -->
   <rect x="14" y="12" width="{W-28}" height="34" fill="#0f172a" rx="5"/>
   <text x="28" y="34" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#f8fafc">
-    BLUEPRINT 1: SIDE CROSS-SECTION (Y–Z PLANE) — COPLANAR TORSION-BOX Z-STACK
+    BLUEPRINT 1: SIDE CROSS-SECTION (Y–Z PLANE) — COPLANAR Z-STACK &amp; DOUBLED 2x6 UPRIGHT
   </text>
   <text x="{W-28}" y="34" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#93c5fd">
     SCALE: EXACT PARAMETRIC | UNITS: INCHES
@@ -405,20 +422,21 @@ def generate_svg_blueprint_side_section() -> str:
   <!-- Rear Pocket Backer Rail (Y=26.75..28.25, Z=15.50..19.00) -->
   <rect x="{py(26.75)}" y="{pz(19.00)}" width="{1.50*s}" height="{3.50*s}" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
 
-  <!-- 10-deg Slanted Backrest Upright in Mortise Slot (Y=25.25..26.75) -->
-  <polygon points="{upright_pts}" fill="#fdba74" stroke="#c2410c" stroke-width="2.2"/>
-  <!-- Backrest 3/4" Plywood Panel -->
-  <polygon points="{panel_pts}" fill="#fed7aa" stroke="#9a3412" stroke-width="2"/>
-
   <!-- 3/4" Birch Plywood Seat Deck (Y=0.75..24.50, Z=19.00..19.75) -->
   <rect x="{py(0.75)}" y="{pz(19.75)}" width="{23.75*s}" height="{0.75*s}" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
 
   <!-- 1x2 Rear Cushion Stop / Pocket Cap Trim (Y=26.75..28.25, Z=19.00..19.75) -->
   <rect x="{py(26.75)}" y="{pz(19.75)}" width="{1.50*s}" height="{0.75*s}" fill="#c4b5fd" stroke="#5b21b6" stroke-width="1.6"/>
 
-  <!-- Front & Rear Stain-Grade 1x6 Outer Apron Trim (Z=15.25..20.75, height=5.50") -->
+  <!-- Front Stain-Grade 1x6 Outer Apron Trim (Z=15.25..20.75, height=5.50") & Rear Apron flush at Z=19.75 at slots -->
   <rect x="{py(0.00)}" y="{pz(20.75)}" width="{0.75*s}" height="{5.50*s}" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/>
-  <rect x="{py(28.25)}" y="{pz(20.75)}" width="{0.75*s}" height="{5.50*s}" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/>
+  <rect x="{py(28.25)}" y="{pz(19.75)}" width="{0.75*s}" height="{4.50*s}" fill="#a78bfa" stroke="#4c1d95" stroke-width="2"/>
+
+  <!-- Doubled 2x6 Backrest Upright in Mortise Slot (Y=25.25..26.69 peg + 90-deg solid wood shoulder resting on Z=19.75") -->
+  <polygon points="{upright_pts}" fill="#fdba74" stroke="#c2410c" stroke-width="2.2"/>
+  <line x1="{py(26.69):.1f}" y1="{pz(19.75):.1f}" x2="{py(30.75):.1f}" y2="{pz(19.75):.1f}" stroke="#15803d" stroke-width="3.5"/>
+  <!-- Backrest 3/4" Plywood Panel -->
+  <polygon points="{panel_pts}" fill="#fed7aa" stroke="#9a3412" stroke-width="2"/>
 
   <!-- 4" High-Density Foam Seat Cushion (Y=0.75..24.25, Z=19.75..23.75) seated in 1.00" Pocket -->
   <rect x="{py(0.85)}" y="{pz(23.75)}" width="{23.50*s}" height="{4.00*s}" rx="8" fill="#38bdf8" fill-opacity="0.28" stroke="#0284c7" stroke-width="2" stroke-dasharray="5,3"/>
@@ -448,18 +466,18 @@ def generate_svg_blueprint_side_section() -> str:
   </text>
   <line x1="{py(2.0)}" y1="{pz(25.6)}" x2="{py(0.4)}" y2="{pz(20.8)}" stroke="#4c1d95" stroke-width="1.4" marker-end="url(#bpArr)"/>
 
-  <text x="{py(15.0)}" y="{pz(33.5)}" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#9a3412">
-    10.0° Ergonomic Backrest Recline
+  <text x="{py(13.0)}" y="{pz(34.5)}" font-family="Inter, sans-serif" font-size="11.5" font-weight="800" fill="#9a3412">
+    Doubled 2x6 Upright (3.0&quot; W): 10° Front Lean + 90° Vertical Back
   </text>
-  <text x="{py(15.0)}" y="{pz(32.0)}" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#7c2d12">
-    2x6 Upright drops into 1.5&quot;×3.5&quot; Captive Slot
+  <text x="{py(13.0)}" y="{pz(33.0)}" font-family="JetBrains Mono, monospace" font-size="10" fill="#15803d" font-weight="700">
+    90° Solid Wood Bottom Ledge Rests Flat on Couch Top (Z=19.75&quot;)!
   </text>
-  <line x1="{py(24.0)}" y1="{pz(32.5)}" x2="{py(27.5)}" y2="{pz(31.0)}" stroke="#9a3412" stroke-width="1.4" marker-end="url(#redArr)"/>
+  <line x1="{py(24.0)}" y1="{pz(33.5)}" x2="{py(27.2)}" y2="{pz(31.0)}" stroke="#9a3412" stroke-width="1.4" marker-end="url(#redArr)"/>
 
   <!-- Overall Y Depth Dimension (29.00") -->
   <line x1="{py(0)}" y1="{pz(0)+42}" x2="{py(29.0)}" y2="{pz(0)+42}" stroke="#1e3a8a" stroke-width="1.6" marker-start="url(#bpArr)" marker-end="url(#bpArr)"/>
   <text x="{py(14.5)}" y="{pz(0)+58}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="800" fill="#1e3a8a">
-    Y = 0.00&quot; TO 29.00&quot; TOTAL BASE DEPTH (32.13&quot; AT TOP OF CANTED BACKREST)
+    Y = 0.00&quot; TO 29.00&quot; TOTAL BASE DEPTH (90° SOLID WOOD SHOULDER LEDGE AT Z = 19.75&quot;)
   </text>
 </svg>'''
 
@@ -473,7 +491,7 @@ def generate_svg_blueprint_top_plan() -> str:
     def px(x): return ox + x * s
     def py(y): return oy + y * s
 
-    # 5Interior Joists at X = 16, 28, 40, 52, 64
+    # 5 Interior Joists at X = 16, 28, 40, 52, 64
     joists_svg = []
     for jx in [16.0, 28.0, 40.0, 52.0, 64.0]:
         joists_svg.append(
@@ -481,13 +499,13 @@ def generate_svg_blueprint_top_plan() -> str:
             f'<text x="{px(jx):.1f}" y="{py(13.75):.1f}" text-anchor="middle" transform="rotate(-90 {px(jx):.1f} {py(13.75):.1f})" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#78350f">JOIST X={jx:.0f}&quot;</text>'
         )
 
-    # 5 Spacer blocks in Y=25.25..26.75
+    # 5 Spacer blocks in Y=25.25..26.75 (for four 3.125" [3-1/8"] slots)
     spacers = [
-        (0.75, 6.00, "5.25\""),
-        (9.50, 30.50, "Spacer 2 (21.00\")"),
-        (34.00, 46.00, "Ctr Spacer (12.00\")"),
-        (49.50, 70.50, "Spacer 4 (21.00\")"),
-        (74.00, 79.25, "5.25\""),
+        (0.75, 6.25, "5.50\""),
+        (9.375, 30.625, "Spacer 2 (21.25\")"),
+        (33.75, 46.25, "Ctr Spacer (12.50\")"),
+        (49.375, 70.625, "Spacer 4 (21.25\")"),
+        (73.75, 79.25, "5.50\""),
     ]
     spacers_svg = []
     for x0, x1, lbl in spacers:
@@ -497,19 +515,19 @@ def generate_svg_blueprint_top_plan() -> str:
             f'<text x="{px((x0+x1)/2):.1f}" y="{py(26.25):.1f}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" fill="#7f1d1d">{lbl}</text>'
         )
 
-    # 4 Receiver Slots in Y=25.25..26.75
+    # 4 Receiver Slots in Y=25.25..26.75 (each 3.125" [3-1/8"] wide x 1.50" deep for 3.00"x1.44" doubled 2x6 peg)
     slots = [
-        (6.00, 9.50, "SLOT 1 [6.0..9.5]"),
-        (30.50, 34.00, "SLOT 2 [30.5..34.0]"),
-        (46.00, 49.50, "SLOT 3 [46.0..49.5]"),
-        (70.50, 74.00, "SLOT 4 [70.5..74.0]"),
+        (6.25, 9.375, "SLOT 1 [3-1/8\"×1-1/2\"]"),
+        (30.625, 33.75, "SLOT 2 [3-1/8\"×1-1/2\"]"),
+        (46.25, 49.375, "SLOT 3 [3-1/8\"×1-1/2\"]"),
+        (70.625, 73.75, "SLOT 4 [3-1/8\"×1-1/2\"]"),
     ]
     slots_svg = []
     for x0, x1, lbl in slots:
         slots_svg.append(
-            f'<rect x="{px(x0):.1f}" y="{py(25.25):.1f}" width="{3.50*s:.1f}" height="{1.50*s:.1f}" fill="#22c55e" fill-opacity="0.35" stroke="#15803d" stroke-width="2"/>'
+            f'<rect x="{px(x0):.1f}" y="{py(25.25):.1f}" width="{3.125*s:.1f}" height="{1.50*s:.1f}" fill="#22c55e" fill-opacity="0.35" stroke="#15803d" stroke-width="2"/>'
             f'<line x1="{px((x0+x1)/2):.1f}" y1="{py(26.75):.1f}" x2="{px((x0+x1)/2):.1f}" y2="{py(30.5):.1f}" stroke="#15803d" stroke-width="1.3"/>'
-            f'<text x="{px((x0+x1)/2):.1f}" y="{py(31.8):.1f}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="800" fill="#166534">{lbl}</text>'
+            f'<text x="{px((x0+x1)/2):.1f}" y="{py(31.8):.1f}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="800" fill="#166534">{lbl}</text>'
         )
 
     return f'''<svg viewBox="0 0 {W} {H}" class="blueprint-svg" xmlns="http://www.w3.org/2000/svg">
@@ -837,8 +855,8 @@ def generate_phase_svgs() -> dict:
   <!-- Rear Pocket Backer Rail -->
   <rect x="35" y="101" width="570" height="22" fill="#fde68a" stroke="#b45309" stroke-width="1.8"/>
   <text x="320" y="116" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#78350f">Rear Pocket Backer Rail (Y = 26.75&quot;..28.25&quot;) — Clamp Around Scrap 2x4 Gauge Block!</text>
-  <text x="320" y="152" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" font-weight="700" fill="#15803d">Green Boxes = Four 3.50&quot; × 1.50&quot; Drop-In Slots [X = 6..9.5, 30.5..34, 46..49.5, 70.5..74]</text>
-  <text x="320" y="182" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#334155">All 2x4 rails, joists, and spacer blocks sit 100% coplanar at Z = 15.50&quot; to 19.00&quot;!</text>
+  <text x="320" y="152" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" font-weight="700" fill="#15803d">Green Boxes = Four 3-1/8&quot; (L-R) × 1-1/2&quot; (F-B) Slots for Doubled 3.00&quot;×1.44&quot; Uprights!</text>
+  <text x="320" y="182" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#334155">Spacers [Part F]: Two 5.50&quot; Ends, Two 21.25&quot; Spans, One 12.50&quot; Center (Coplanar at Z = 15.50&quot;..19.00&quot;)</text>
 </svg>''',
 
         4: '''<svg viewBox="0 0 640 210" class="phase-svg" xmlns="http://www.w3.org/2000/svg">
@@ -882,20 +900,23 @@ def generate_phase_svgs() -> dict:
 
         6: '''<svg viewBox="0 0 640 210" class="phase-svg" xmlns="http://www.w3.org/2000/svg">
   <rect width="640" height="210" fill="#f8fafc" rx="8" stroke="#cbd5e1"/>
-  <text x="18" y="26" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0f172a">PHASE 6 DIAGRAM: Assembling the Two 40&quot; Drop-In Slanted Backrest Modules</text>
-  <!-- Backrest module front view -->
-  <rect x="60" y="50" width="240" height="92" fill="#fed7aa" stroke="#c2410c" stroke-width="2"/>
-  <!-- Two uprights behind panel -->
-  <rect x="92" y="45" width="24" height="145" fill="#fdba74" stroke="#9a3412" stroke-width="1.8" fill-opacity="0.75"/>
-  <rect x="244" y="45" width="24" height="145" fill="#fdba74" stroke="#9a3412" stroke-width="1.8" fill-opacity="0.75"/>
-  <text x="180" y="95" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#7c2d12">PART [L]: 39.25&quot; × 15.00&quot; PANEL</text>
-  <text x="180" y="114" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#9a3412">Starts 3.50&quot; above deck (clears 4&quot; cushion)</text>
-  <text x="345" y="75" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#15803d">Foolproof Self-Alignment Trick:</text>
-  <text x="345" y="96" font-family="Inter, sans-serif" font-size="11" fill="#334155">1. Drop the two 2x6 Uprights [Part K] directly into Slots 1 &amp; 2.</text>
-  <text x="345" y="115" font-family="Inter, sans-serif" font-size="11" fill="#334155">2. Rest a 3.50&quot; scrap 2x4 spacer block on the plywood deck.</text>
-  <text x="345" y="134" font-family="Inter, sans-serif" font-size="11" fill="#334155">3. Set the 39.25&quot; × 15.00&quot; Birch Panel [Part L] on the block,</text>
-  <text x="345" y="151" font-family="Inter, sans-serif" font-size="11" fill="#334155">   clamp to the uprights, and screw from the rear with 1-3/4&quot; screws!</text>
-  <text x="345" y="172" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#0369a1">Result: Guaranteed 100% zero-bind drop-in alignment!</text>
+  <text x="18" y="26" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0f172a">PHASE 6 DIAGRAM: Doubled 2x6 Uprights (90° Solid Wood Ledge + 10° Front Lean)</text>
+  <!-- Side profile of Doubled 2x6 Upright sitting in couch slot -->
+  <rect x="42" y="145" width="48" height="45" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/>
+  <rect x="118" y="145" width="84" height="45" fill="#fde68a" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="92,190 116,190 116,145 198,145 198,48 156,48 92,145" fill="#fdba74" stroke="#c2410c" stroke-width="2.2"/>
+  <line x1="116" y1="145" x2="198" y2="145" stroke="#15803d" stroke-width="4"/>
+  <text x="157" y="162" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="800" fill="#15803d">90° Wood Ledge</text>
+  <text x="104" y="203" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#0369a1">1.44&quot; Peg</text>
+  <text x="112" y="92" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="800" fill="#c2410c">10° Front</text>
+  <text x="205" y="92" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" fill="#0f172a">90° Back</text>
+
+  <text x="285" y="62" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#15803d">Doubled 2x6 Lamination &amp; Self-Alignment:</text>
+  <text x="285" y="84" font-family="Inter, sans-serif" font-size="11" fill="#334155">1. Cut 8 halves from two 8-ft 2x6s (90° back L-notch + 10° front lean).</text>
+  <text x="285" y="103" font-family="Inter, sans-serif" font-size="11" fill="#334155">2. Glue &amp; screw pairs face-to-face → four 3.00&quot; wide uprights [Part K].</text>
+  <text x="285" y="122" font-family="Inter, sans-serif" font-size="11" fill="#334155">3. Drop into the 3-1/8&quot;×1-1/2&quot; slots so the 90° wood ledge sits flat on couch.</text>
+  <text x="285" y="141" font-family="Inter, sans-serif" font-size="11" fill="#334155">4. Set 39.25&quot;×15.00&quot; Birch Panel [Part L] on a 3.5&quot; spacer &amp; screw to uprights!</text>
+  <text x="285" y="168" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#0369a1">Fit: 1/16&quot; Snug Front-to-Back (1-7/16&quot; peg) | 1/8&quot; Relaxed Left-to-Right</text>
 </svg>''',
 
         7: '''<svg viewBox="0 0 640 210" class="phase-svg" xmlns="http://www.w3.org/2000/svg">
@@ -2282,7 +2303,7 @@ def build_html_part1() -> str:
           <span class="feature-step-tag">Architecture // 03</span>
           <h4>Drop-In 10° Slanted Backrests</h4>
           <p>
-            Two independent <code>40&quot;</code>-wide backrest modules feature <code>2x6</code> uprights with straight <code>4.25&quot;</code> bottom tenons that drop vertically into <strong>4 captive wooden mortise sleeves</strong> behind the main back rail, reclining at an ergonomic <code>10°</code> angle—or lifting straight out for flat table mode.
+            Two independent <code>40&quot;</code>-wide backrest modules use <strong>doubled <code>2x6</code> uprights (<code>3.00&quot;</code> wide × <code>5.50&quot;</code> front-to-back)</strong>. Each upright has a <code>1-7/16&quot;</code> bottom peg that drops into the <code>1.50&quot;</code> slot, a <strong><code>90°</code> solid wood rear shoulder ledge</strong> that sits flat on top of the couch, and a <strong><code>10°</code> front lean</strong> where people lean back.
           </p>
         </div>
       </div>
@@ -2441,7 +2462,7 @@ def build_html_part1() -> str:
             <button id="btn-toggle-yt-embed" class="cad-btn secondary" onclick="toggleYouTubeEmbed()">
               📺 Switch Player: YouTube Embed
             </button>
-            <a id="btn-youtube-link" href="https://youtu.be/gW_k-L_8o7U" target="_blank" rel="noopener" class="cad-btn active-mode" style="text-decoration:none; background:#dc2626; border-color:#ef4444;">
+            <a id="btn-youtube-link" href="https://youtu.be/tZgbSqcj_mg" target="_blank" rel="noopener" class="cad-btn active-mode" style="text-decoration:none; background:#dc2626; border-color:#ef4444;">
               ▶️ Open on YouTube
             </a>
             <a id="btn-download-video" href="videos/modular_couch_beginner_video.mp4" download class="cad-btn secondary" style="text-decoration:none;">
@@ -2462,13 +2483,13 @@ def build_html_part1() -> str:
           <span style="color:#94a3b8; font-size:0.76rem; font-weight:700; margin-right:4px;">Jump to Step (&amp; Sync 3D):</span>
           <button class="cad-btn secondary" onclick="seekVideoChapter(0, 0, 0)">Overview</button>
           <button class="cad-btn secondary" onclick="seekVideoChapter(13.1, 25.1, 0)">Cut Wood</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(32.8, 49.6, 1)">Step 1: 4×4 Legs</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(52.3, 80.2, 2)">Step 2: Front Beam</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(78.3, 107.9, 3)">Step 3: Cross Boards</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(105.6, 139.6, 4)">Step 4: Plywood Seat</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(125.0, 169.0, 5)">Step 5: 1×6 Trim</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(146.5, 196.5, 6)">Step 6: Backrests</button>
-          <button class="cad-btn secondary" onclick="seekVideoChapter(169.9, 221.3, 7)">Step 7: Sand &amp; Cushions</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(34.2, 51.9, 1)">Step 1: 4×4 Legs</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(53.7, 82.6, 2)">Step 2: Front Beam</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(79.7, 110.3, 3)">Step 3: Cross Boards</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(105.4, 144.9, 4)">Step 4: Plywood Seat</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(124.9, 174.2, 5)">Step 5: 1×6 Trim</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(146.3, 201.8, 6)">Step 6: Backrests</button>
+          <button class="cad-btn secondary" onclick="seekVideoChapter(186.1, 241.2, 7)">Step 7: Sand &amp; Cushions</button>
         </div>
       </div>
     </section>
@@ -2550,11 +2571,11 @@ def build_html_part1() -> str:
           </tr>
           <tr>
             <td><input type="checkbox" data-store="buy-3"></td>
-            <td><strong>2x6 × 8 ft Board</strong> (Kiln-Dried Doug Fir / Southern Pine)</td>
+            <td><strong>2x6 × 8 ft Boards</strong> (Kiln-Dried Doug Fir / Southern Pine)</td>
             <td class="mono">1.50&quot; × 5.50&quot; × 96&quot;</td>
-            <td class="mono"><strong>1 Board</strong></td>
-            <td>All 4 Slanted Backrest Uprights [Part K] (4 × 23.50&quot;)</td>
-            <td>Choose a flat, twist-free 2x6 with minimal knots along the edges so your 4.25&quot; bottom tenons machine smoothly.</td>
+            <td class="mono"><strong>2 Boards</strong></td>
+            <td>8 Upright Halves → Glued Face-to-Face into 4 Doubled 3.00&quot;-Wide Uprights [Part K] (8 × 23.50&quot;)</td>
+            <td>Each 2x6 stands on edge (5.50&quot; width runs Front-to-Back). Gluing 2 halves face-to-face gives four rock-solid <code>3.00&quot;</code> wide posts with a <code>90°</code> solid wood rear shoulder ledge and <code>10°</code> front lean!</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="buy-4"></td>
@@ -2570,7 +2591,7 @@ def build_html_part1() -> str:
             <td class="mono">0.75&quot; × 1.50&quot; × 96&quot;</td>
             <td class="mono"><strong>2 Boards</strong></td>
             <td>Rear Pocket Cap Trim [Part J] (78.50&quot;) + 5 Spacer Caps [Part M]</td>
-            <td>Frames the top of the rear mortise channel at Z=19.00&quot;..19.75&quot; so it sits 100% flush with the 3/4&quot; Birch Plywood deck.</td>
+            <td>Frames the top of the rear mortise channel at Z=19.00&quot;..19.75&quot; so the <code>90°</code> solid wood bottom shoulder ledge of each 2x6 upright rests flat on the couch surface!</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="buy-6"></td>
@@ -2606,8 +2627,8 @@ def build_html_part1() -> str:
             <td><input type="checkbox" data-store="hw-2"></td>
             <td><strong>Lamination Structural Screws</strong> (GRK R4™ or Spax® #10)</td>
             <td class="mono">#10 × 2.75&quot; (2-3/4&quot;)</td>
-            <td class="mono">20 pcs (1 box)</td>
-            <td>Laminating the 71.50&quot; Inner Front Beam [Part C] to the 78.50&quot; Outer Front Rail [Part B] in a staggered W-pattern every 8&quot; without poking through the 3.00&quot; double beam.</td>
+            <td class="mono">36 pcs (1 box)</td>
+            <td>Laminating the 71.50&quot; Inner Front Beam [Part C] to the 78.50&quot; Outer Front Rail [Part B] (20 pcs) + laminating the 4 pairs of Doubled 2x6 Uprights [Part K] face-to-face (16 pcs).</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="hw-3"></td>
@@ -2621,7 +2642,7 @@ def build_html_part1() -> str:
             <td><strong>Torsion-Deck &amp; Backrest Wood Screws</strong></td>
             <td class="mono">#8 × 1.75&quot; (1-3/4&quot;)</td>
             <td class="mono">65 pcs (1 box)</td>
-            <td>Screwing the 3/4&quot; Birch Plywood Deck [Part G] down into the 2x4 grid every 8&quot;, and fastening the 3/4&quot; Backrest Panels [Part L] from the back of the 2x6 uprights.</td>
+            <td>Screwing the 3/4&quot; Birch Plywood Deck [Part G] down into the 2x4 grid every 8&quot;, and fastening the 3/4&quot; Backrest Panels [Part L] into the 3.00&quot; wide doubled 2x6 uprights.</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="hw-5"></td>
@@ -2751,16 +2772,16 @@ def build_html_part1() -> str:
           <tr>
             <td><input type="checkbox" data-store="cut-F"></td>
             <td><span class="part-tag">F</span></td>
-            <td><strong>Rear Mortise Pocket Spacers</strong><br><small>(Forms the four 3.5&quot;×1.5&quot; slots)</small></td>
+            <td><strong>Rear Mortise Pocket Spacers</strong><br><small>(Forms the four 3-1/8&quot;×1-1/2&quot; slots)</small></td>
             <td>2x4 Stud</td>
             <td class="mono"><strong>5</strong></td>
             <td class="mono">1.50&quot; × 3.50&quot;</td>
             <td class="mono">
-              <strong>2× 5.250&quot;</strong> (5-1/4&quot;)<br>
-              <strong>2× 21.000&quot;</strong> (21&quot;)<br>
-              <strong>1× 12.000&quot;</strong> (12&quot;)
+              <strong>2× 5.500&quot;</strong> (5-1/2&quot;)<br>
+              <strong>2× 21.250&quot;</strong> (21-1/4&quot;)<br>
+              <strong>1× 12.500&quot;</strong> (12-1/2&quot;)
             </td>
-            <td>Sandwiched in Y=25.25..26.75&quot; between Main Back Rail &amp; Rear Pocket Rail to form Slots 1..4 at X=[6..9.5, 30.5..34, 46..49.5, 70.5..74].</td>
+            <td>Sandwiched in Y=25.25..26.75&quot; between Main Back Rail &amp; Rear Pocket Rail to form four <code>3-1/8&quot; (L-R) × 1-1/2&quot; (F-B)</code> slots at X=[6.25..9.375, 30.625..33.75, 46.25..49.375, 70.625..73.75].</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="cut-G"></td>
@@ -2780,7 +2801,7 @@ def build_html_part1() -> str:
             <td class="mono"><strong>2</strong></td>
             <td class="mono">0.75&quot; × 5.50&quot;</td>
             <td class="mono"><strong>80.000&quot;</strong> (80&quot;)</td>
-            <td>Mitered at 45° on both ends (80.00&quot; long-point to long-point). Mounted at Z=15.25..20.75&quot; (+1.00&quot; lip above deck).</td>
+            <td>Mitered at 45° on both ends. Front apron rises to Z=20.75&quot; (+1.00&quot; lip); Rear apron is notched/flush at Z=19.75&quot; at the 4 slots so the 2x6 90° wood ledge sits flat.</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="cut-I"></td>
@@ -2800,17 +2821,17 @@ def build_html_part1() -> str:
             <td class="mono"><strong>1</strong></td>
             <td class="mono">0.75&quot; × 1.50&quot;</td>
             <td class="mono"><strong>78.500&quot;</strong> (78-1/2&quot;)</td>
-            <td>Caps the Rear Pocket Backer Rail (Y=26.75..28.25&quot;) at Z=19.00..19.75&quot; so it sits flush with the 3/4&quot; plywood deck.</td>
+            <td>Caps the Rear Pocket Backer Rail (Y=26.75..28.25&quot;) at Z=19.00..19.75&quot; so the <code>90°</code> solid wood shoulder ledge of each upright sits flat on top of the couch!</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="cut-K"></td>
             <td><span class="part-tag">K</span></td>
-            <td><strong>10° Slanted Backrest Uprights</strong></td>
-            <td>2x6 Board</td>
-            <td class="mono"><strong>4</strong></td>
-            <td class="mono">1.50&quot; × 5.50&quot;</td>
+            <td><strong>Doubled 2x6 Angled Backrest Uprights</strong><br><small>(8 Halves → 4 Laminated 3.00&quot; Posts)</small></td>
+            <td>2× 2x6 Boards</td>
+            <td class="mono"><strong>8 Halves<br>(4 Pairs)</strong></td>
+            <td class="mono">3.00&quot; L-R ×<br>5.50&quot; F-B</td>
             <td class="mono"><strong>23.500&quot;</strong> (23-1/2&quot;)</td>
-            <td>4.25&quot; straight bottom tenon (planed/sanded to <code>1-7/16&quot; × 3-7/16&quot;</code>) + 19.25&quot; upper spine canted back at <code>10.0°</code>.</td>
+            <td><strong>5.50&quot; width runs Front-to-Back!</strong> Bottom 4.25&quot; peg = <code>3.00&quot; L-R × 1-7/16&quot; F-B</code> (1/16&quot; snug slip-fit in 1.50&quot; slot); <strong>Back side has a 90° solid wood shoulder ledge</strong> resting flat on the couch top + 90° vertical back edge; <strong>Front side leans back 10.0°</strong>.</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="cut-L"></td>
@@ -2820,7 +2841,7 @@ def build_html_part1() -> str:
             <td class="mono"><strong>2</strong></td>
             <td class="mono">0.75&quot; × 15.00&quot;</td>
             <td class="mono"><strong>39.250&quot;</strong> (39-1/4&quot;)</td>
-            <td>Each 39.25&quot; × 15.00&quot; panel spans a pair of 10° uprights, starting 3.50&quot; above the plywood deck to clear the 4&quot; cushion.</td>
+            <td>Each 39.25&quot; × 15.00&quot; panel screws onto the 3.00&quot;-wide 10° front faces of a pair of uprights, starting 3.50&quot; above the deck.</td>
           </tr>
           <tr>
             <td><input type="checkbox" data-store="cut-M"></td>
@@ -2830,9 +2851,9 @@ def build_html_part1() -> str:
             <td class="mono"><strong>5</strong></td>
             <td class="mono">0.75&quot; × 1.50&quot;</td>
             <td class="mono">
-              <strong>2× 5.25&quot; | 2× 21.00&quot; | 1× 12.00&quot;</strong>
+              <strong>2× 5.50&quot; | 2× 21.25&quot; | 1× 12.50&quot;</strong>
             </td>
-            <td>Glued &amp; bradded atop the 5 spacer blocks [Part F] at Z=19.00..19.75&quot; to frame the 4 open receiver slots flush with the deck.</td>
+            <td>Glued &amp; bradded atop the 5 spacer blocks [Part F] at Z=19.00..19.75&quot; to frame the four <code>3-1/8&quot; × 1-1/2&quot;</code> slots flush with the deck.</td>
           </tr>
         </tbody>
       </table>
@@ -2991,27 +3012,27 @@ def build_html_part2() -> str:
             </div>
             <div class="meta-panel meta-protip">
               <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-              <strong>NEVER rely on a tape measure alone when spacing the 4 rear backrest slots!</strong> Wrap a single layer of painter&apos;s tape around a scrap piece of <code>2x4</code> (<code>3.50&quot; × 1.50&quot;</code>) and clamp it inside each slot while screwing the adjacent spacer block. When you pull the taped scrap block out, you automatically get a velvety <code>1/32&quot;</code> slip-fit clearance!
+              <strong>NEVER rely on a tape measure alone when spacing the 4 rear backrest slots!</strong> Use two scrap pieces of <code>2x6</code> or <code>2x4</code> screwed together (`3.00&quot;` wide) plus a <code>1/8&quot;</code> cardboard shim (`3-1/8&quot;` total width × `1.50&quot;` front-to-back) and clamp that block inside each slot while screwing the adjacent spacer block. When you pull the gauge block out, every slot is guaranteed to be `3-1/8&quot; × 1-1/2&quot;`!
             </div>
           </div>
           <ol>
             <li><strong>Connect Front &amp; Rear Portals with Side Rails [Part D]:</strong> Stand the Front and Rear Portals upright on a flat floor. Glue and pocket-screw the two <code>19.50&quot;</code> Side Frame Rails [Part D] between the front and rear corner legs (<code>Y = 4.25&quot;..23.75&quot;</code>), keeping the top faces 100% coplanar at <code>Z = 19.00&quot;</code>.</li>
             <li><strong>Install the 5 Coplanar Cross-Joists [Part E]:</strong> Mark joist centerlines at <strong><code>X = 16.00&quot;, 28.00&quot;, 40.00&quot;, 52.00&quot;, and 64.00&quot;</code></strong> along the Inner Front Beam (<code>Y = 3.75&quot;</code>) and Main Back Rail (<code>Y = 23.75&quot;</code>). Glue and pocket-screw the five <code>20.00&quot;</code> Cross-Joists [Part E] flush with the top of the frame (<code>Z = 19.00&quot;</code>).</li>
-            <li><strong>Assemble the Rear Mortise Pocket Channel (<code>Y = 25.25&quot;..28.25&quot;</code>):</strong> Behind the Main Back Rail, glue and screw the 5 Spacer Blocks [Part F] at their exact X-positions:
+            <li><strong>Assemble the Rear Mortise Pocket Channel (<code>Y = 25.25&quot;..28.25&quot;</code>):</strong> Behind the Main Back Rail, glue and screw the 5 Spacer Blocks [Part F] at their exact X-positions to leave four <strong><code>3-1/8&quot; (3.125&quot;) L-R × 1-1/2&quot; (1.50&quot;) F-B</code></strong> slots:
               <ul>
-                <li><code>Spacer 1 (5.25&quot;)</code> at <code>X = 0.75..6.00&quot;</code> → leaves <strong>Slot 1 at <code>X = 6.00..9.50&quot;</code></strong></li>
-                <li><code>Spacer 2 (21.00&quot;)</code> at <code>X = 9.50..30.50&quot;</code> → leaves <strong>Slot 2 at <code>X = 30.50..34.00&quot;</code></strong></li>
-                <li><code>Spacer 3 (12.00&quot; Center)</code> at <code>X = 34.00..46.00&quot;</code> → leaves <strong>Slot 3 at <code>X = 46.00..49.50&quot;</code></strong></li>
-                <li><code>Spacer 4 (21.00&quot;)</code> at <code>X = 49.50..70.50&quot;</code> → leaves <strong>Slot 4 at <code>X = 70.50..74.00&quot;</code></strong></li>
-                <li><code>Spacer 5 (5.25&quot;)</code> at <code>X = 74.00..79.25&quot;</code></li>
+                <li><code>Spacer 1 (5.50&quot;)</code> at <code>X = 0.75..6.25&quot;</code> → leaves <strong>Slot 1 at <code>X = 6.25..9.375&quot;</code></strong></li>
+                <li><code>Spacer 2 (21.25&quot;)</code> at <code>X = 9.375..30.625&quot;</code> → leaves <strong>Slot 2 at <code>X = 30.625..33.75&quot;</code></strong></li>
+                <li><code>Spacer 3 (12.50&quot; Center)</code> at <code>X = 33.75..46.25&quot;</code> → leaves <strong>Slot 3 at <code>X = 46.25..49.375&quot;</code></strong></li>
+                <li><code>Spacer 4 (21.25&quot;)</code> at <code>X = 49.375..70.625&quot;</code> → leaves <strong>Slot 4 at <code>X = 70.625..73.75&quot;</code></strong></li>
+                <li><code>Spacer 5 (5.50&quot;)</code> at <code>X = 73.75..79.25&quot;</code></li>
               </ul>
             </li>
-            <li><strong>Close the Mortise Sleeve:</strong> Glue and screw the <code>78.50&quot;</code> Rear Pocket Backer Rail [Part B] (<code>Y = 26.75&quot;..28.25&quot;</code>) across the back of all 5 spacer blocks using <code>3.00&quot;</code> structural screws, checking each of the 4 slots with your taped scrap gauge block as you go.</li>
+            <li><strong>Close the Mortise Sleeve:</strong> Glue and screw the <code>78.50&quot;</code> Rear Pocket Backer Rail [Part B] (<code>Y = 26.75&quot;..28.25&quot;</code>) across the back of all 5 spacer blocks using <code>3.00&quot;</code> structural screws, checking each of the 4 slots (`3-1/8&quot; × 1-1/2&quot;`) with your gauge block as you go.</li>
           </ol>
           {p_svgs[3]}
           <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 03</span>
-            <span class="mono" style="font-size:0.75rem; color:var(--muted);">All joists coplanar at Z = 19.00&quot;; scrap 2x4 slides smoothly into all 4 rear mortise slots</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">All joists coplanar at Z = 19.00&quot;; 3.00&quot;-wide doubled 2x6 gauge slides smoothly into all 4 rear slots</span>
           </div>
         </div>
 
@@ -3067,12 +3088,12 @@ def build_html_part2() -> str:
             </div>
             <div class="meta-panel meta-protip">
               <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-              To get a laser-consistent <strong><code>1.00&quot;</code> cushion lip</strong> all the way around without measuring each clamp, place four <code>1.00&quot;</code> thick scrap blocks on top of the plywood deck near the edges and clamp your <code>1x6</code> apron flush with the top of those blocks!
+              To get a laser-consistent <strong><code>1.00&quot;</code> cushion lip</strong> all the way around without measuring each clamp, place four <code>1.00&quot;</code> thick scrap blocks on top of the plywood deck near the edges and clamp your <code>1x6</code> apron flush with the top of those blocks! (Note: On the Rear Apron [Part H], either mount its top flush at <code>Z = 19.75&quot;</code> behind the 4 slots or notch four <code>3-1/8&quot; × 1.00&quot;</code> reliefs so the <code>90°</code> solid wood rear shoulder ledge of each <code>2x6</code> upright rests flat on <code>Z = 19.75&quot;</code>.)
             </div>
           </div>
           <ol>
-            <li><strong>Cap the Rear Mortise Channel [Parts J &amp; M]:</strong> Glue and brad-nail the <code>78.50&quot;</code> <code>1x2</code> Rear Pocket Cap Strip [Part J] atop the Rear Pocket Backer Rail (<code>Y = 26.75&quot;..28.25&quot;</code>, <code>Z = 19.00&quot;..19.75&quot;</code>) and the five <code>1x2</code> Spacer Caps [Part M] directly atop the 5 spacer blocks. Now the entire rear deck surface around the 4 open mortise slots sits coplanar with the <code>Z = 19.75&quot;</code> Birch Plywood deck!</li>
-            <li><strong>Miter &amp; Clamp the Front &amp; Side 1x6 Aprons [Parts H &amp; I]:</strong> Cut the two <code>80.00&quot;</code> Front/Rear Aprons [Part H] and two <code>29.00&quot;</code> Side Aprons [Part I] with crisp <code>45°</code> mitered ends (long-point to long-point). Clamp the Front Apron in place so its top edge sits at <strong><code>Z = 20.75&quot;</code></strong> (<code>1.00&quot;</code> above the plywood deck) and its bottom edge sits at <code>Z = 15.25&quot;</code> (<code>0.25&quot;</code> below the <code>2x4</code> rail).</li>
+            <li><strong>Cap the Rear Mortise Channel [Parts J &amp; M]:</strong> Glue and brad-nail the <code>78.50&quot;</code> <code>1x2</code> Rear Pocket Cap Strip [Part J] atop the Rear Pocket Backer Rail (<code>Y = 26.75&quot;..28.25&quot;</code>, <code>Z = 19.00&quot;..19.75&quot;</code>) and the five <code>1x2</code> Spacer Caps [Part M] (<code>5.50&quot;, 21.25&quot;, 12.50&quot;, 21.25&quot;, 5.50&quot;</code>) directly atop the 5 spacer blocks. Now the entire rear deck surface around the 4 open mortise slots sits coplanar with the <code>Z = 19.75&quot;</code> Birch Plywood deck!</li>
+            <li><strong>Miter &amp; Clamp the Front &amp; Side 1x6 Aprons [Parts H &amp; I]:</strong> Cut the two <code>80.00&quot;</code> Front/Rear Aprons [Part H] and two <code>29.00&quot;</code> Side Aprons [Part I] with crisp <code>45°</code> mitered ends (long-point to long-point). Clamp the Front &amp; Side Aprons in place so their top edges sit at <strong><code>Z = 20.75&quot;</code></strong> (<code>1.00&quot;</code> above the plywood deck) and their bottom edges sit at <code>Z = 15.25&quot;</code> (<code>0.25&quot;</code> below the <code>2x4</code> rail).</li>
             <li><strong>Drive the Blind Inside Screws:</strong> Crawl/reach underneath the frame and drive <code>#8 × 1-7/8&quot;</code> screws through the <code>1.50&quot;</code> thick <code>2x4</code> perimeter rails into the back of the <code>0.75&quot;</code> <code>1x6</code> apron every <code>10&quot;–12&quot;</code>. Glue the <code>45°</code> miter corners tightly with wood glue and clamp until cured.</li>
           </ol>
           {p_svgs[5]}
@@ -3086,32 +3107,38 @@ def build_html_part2() -> str:
         <div class="phase-card" id="phase-card-6">
           <h3 class="phase-title">
             <span class="phase-pill">PHASE 06 // 07</span>
-            <span>Cutting &amp; Assembling the Two 40&quot; Slanted Drop-In Backrests</span>
+            <span>Cutting &amp; Laminating the Doubled 2x6 Uprights &amp; Two 40&quot; Drop-In Backrests</span>
             <button class="phase-3d-jump no-print" onclick="viewPhaseIn3DStudio(6)">▶ View Phase 06 in 3D CAD</button>
           </h3>
           <div class="phase-meta-grid">
             <div class="meta-panel meta-why">
               <strong>💡 Why We Do This:</strong><br>
-              Splitting the 80&quot; backrest into two lightweight <strong><code>40&quot;</code> modules</strong> means one adult can lift either backrest straight out in 3 seconds—converting half the couch into a chaise or the entire couch into a flat play table!
+              Each <code>2x6</code> stands with its <strong><code>5.50&quot;</code> width running Front-to-Back</strong> and has a <strong><code>90°</code> solid wood rear shoulder ledge</strong> that rests flat on top of the couch (`Z = 19.75&quot;`), while the front side leans back <strong><code>10.0°</code></strong>. Gluing two <code>1.50&quot;</code> halves face-to-face creates a <strong><code>3.00&quot;</code>-wide post</strong> with `6.75 sq in` of solid wood resting on the couch surface!
             </div>
             <div class="meta-panel meta-fasteners">
               <strong>🔩 Exact Fasteners &amp; Hardware:</strong><br>
-              • <strong>16× <code>#8 × 1.75&quot; (1-3/4&quot;)</code> Countersunk Wood Screws</strong> (4 per upright, driven from the rear/angled face of the upright or countersunk through the front panel into the <code>1.50&quot;</code> thick <code>2x6</code> spine) + Titebond wood glue.
+              • <strong>20× <code>#10 × 2.75&quot; (2-3/4&quot;)</code> Screws + Wood Glue</strong> (5 per upright to laminate the 8 cut halves into 4 doubled <code>3.00&quot;</code>-wide posts).<br>
+              • <strong>16× <code>#8 × 1.75&quot; (1-3/4&quot;)</code> Countersunk Wood Screws</strong> (4 per upright, driven through the <code>3/4&quot;</code> Birch panel into the <code>3.00&quot;</code>-wide <code>10°</code> front face of each post) + wood glue.
             </div>
             <div class="meta-panel meta-protip">
               <strong>🛠️ Pro-Tip / Mistake to Avoid:</strong><br>
-              <strong>Assemble the panels to the uprights while the uprights are sitting inside the bench slots!</strong> That way, the bench itself acts as your assembly jig and guarantees the two uprights are spaced at the exact slot pitch (<code>24.50&quot;</code> center-to-center) with zero bind.
+              <strong>Cut thefirst `2x6` half carefully and use it as a tracing template for the other 7 halves!</strong> And when attaching the Birch plywood panels, drop the laminated uprights into the couch slots first so the couch itself holds them at the exact `24.375&quot;` center-to-center spacing.
             </div>
           </div>
           <ol>
-            <li><strong>Cut the Four 2x6 Angled Uprights [Part K]:</strong> Follow <strong>SVG 2</strong> in Section 4 to crosscut your 8-ft <code>2x6</code> into four <code>23.50&quot;</code> blanks. Lay out the <code>4.25&quot;</code> bottom tenon (<code>3-7/16&quot;</code> wide) and the <code>19.25&quot;</code> upper spine canted backward at <strong><code>10.0°</code></strong>. Cut along the layout lines with your circular saw and straight-edge guide.</li>
-            <li><strong>Chamfer &amp; Test-Fit the Tenons:</strong> Lightly sand or plane the lower <code>4.25&quot;</code> tenon of each upright to <code>1-7/16&quot; × 3-7/16&quot;</code> and add a <code>1/8&quot;</code> lead-in chamfer around the bottom tip so each upright drops effortlessly into Slots 1, 2, 3, and 4 down to the <code>Z = 15.50&quot;</code> bottom stop (or add a screw stop pin under the slot at <code>Z = 15.50&quot;</code>).</li>
-            <li><strong>Attach the Two 39.25&quot; × 15.00&quot; Birch Panels [Part L]:</strong> Insert the Left pair of uprights into <strong>Slots 1 &amp; 2</strong> and the Right pair into <strong>Slots 3 &amp; 4</strong>. Place a temporary <code>3.50&quot;</code> tall scrap <code>2x4</code> block flat on the plywood seat deck so the bottom edge of each <code>39.25&quot; × 15.00&quot;</code> Birch Plywood panel starts at <code>Z = 23.25&quot;</code> (allowing the <code>4.00&quot;</code> foam seat cushion to tuck cleanly underneath!). Glue, clamp, and screw each panel to its two uprights with four <code>#8 × 1-3/4&quot;</code> screws per upright.</li>
+            <li><strong>Cut 8 Identical Halves from Your Two 2x6 Boards [Part K]:</strong> Follow <strong>SVG 2</strong> in Section 4 to crosscut both 8-ft <code>2x6</code> boards into eight <code>23.50&quot;</code> rectangles (`5.50&quot;` wide). On each piece, make <strong>only 2 saw cuts</strong>:
+              <ul>
+                <li><strong>Cut #1 (Back Side — 90° Solid Wood Shoulder Ledge):</strong> Measure up <code>4.25&quot;</code> from the bottom along the back edge, and cut a <code>90°</code> L-notch that leaves a <strong><code>1-7/16&quot; (1.44&quot;)</code> front-to-back peg</strong> at the bottom and a <strong><code>4-1/16&quot; (4.06&quot;)</code> flat horizontal solid wood shoulder ledge</strong> at <code>Z = 4.25&quot;</code>. Leave the upper <code>19.25&quot;</code> back edge uncut (`90°` vertical)!</li>
+                <li><strong>Cut #2 (Front Side — 10.0° Recline Angle):</strong> Starting at the front edge right at <code>4.25&quot;</code> from the bottom (the top of the peg), draw a straight line to a point <strong><code>3-3/8&quot; (3.39&quot;)</code> back from the front corner at the top edge</strong> (leaving `2-1/8&quot; / 2.11&quot;` of wood at the top) and rip that straight <code>10.0°</code> taper.</li>
+              </ul>
+            </li>
+            <li><strong>Laminate in Pairs to Make Four 3.00&quot;-Wide Uprights:</strong> Pair the 8 identical halves into <strong>4 sets of 2</strong>. Spread wood glue between each pair, clamp their bottom pegs (`3.00&quot; × 1.44&quot;`) and `90°` rear shoulder ledges flush, and drive five <code>2-3/4&quot;</code> screws through each pair. Add a <code>1/8&quot;</code> chamfer around the bottom tip of each peg and test-fit in Slots 1–4—the `90°` solid wood rear shoulder ledge (`2.25&quot; × 3.00&quot; = 6.75 sq in`) will sit rock-solid on the couch top (`Z = 19.75&quot;`)!</li>
+            <li><strong>Attach the Two 39.25&quot; × 15.00&quot; Birch Panels [Part L]:</strong> Insert the Left pair of uprights into <strong>Slots 1 &amp; 2</strong> and the Right pair into <strong>Slots 3 &amp; 4</strong>. Place a temporary <code>3.50&quot;</code> tall scrap <code>2x4</code> block flat on the plywood seat deck so the bottom edge of each <code>39.25&quot; × 15.00&quot;</code> Birch Plywood panel starts at <code>Z = 23.25&quot;</code> (allowing the <code>4.00&quot;</code> foam seat cushion to tuck cleanly underneath!). Glue, clamp, and screw each panel into the wide `3.00&quot;` front face of its two uprights with four <code>#8 × 1-3/4&quot;</code> screws per upright.</li>
           </ol>
           {p_svgs[6]}
           <div style="border-top:1px solid var(--border); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <span class="mono" style="font-size:0.7rem; font-weight:700; background:var(--color-arctic); padding:3px 8px; text-transform:uppercase; letter-spacing:0.1em;">✓ DOD CHECKPOINT 06</span>
-            <span class="mono" style="font-size:0.75rem; color:var(--muted);">Both 40&quot; backrest modules drop in &amp; lift out cleanly with one hand at 10° recline</span>
+            <span class="mono" style="font-size:0.75rem; color:var(--muted);">4 doubled 3.00&quot; uprights rest flat on their 90° solid wood rear ledges &amp; recline 10° on the front</span>
           </div>
         </div>
 
@@ -3277,8 +3304,8 @@ def build_html_part2() -> str:
         <div class="gs-footer-col">
           <h4>Video &amp; Assets</h4>
           <ul>
-            <li><a href="https://youtu.be/gW_k-L_8o7U" target="_blank" rel="noopener">Beginner 3D DIY Video (YouTube)</a></li>
-            <li><a href="https://youtu.be/40DqGxwdRx4" target="_blank" rel="noopener">Detailed Blueprint Video (YouTube)</a></li>
+            <li><a href="https://youtu.be/tZgbSqcj_mg" target="_blank" rel="noopener">Beginner 3D DIY Video (YouTube)</a></li>
+            <li><a href="https://youtu.be/bgo88c1nscw" target="_blank" rel="noopener">Detailed Blueprint Video (YouTube)</a></li>
             <li><a href="videos/modular_couch_beginner_video.mp4" download>Download Beginner MP4</a></li>
             <li><a href="videos/modular_couch_instructional_video.mp4" download>Download Detailed MP4</a></li>
             <li><a href="docs/bench_spec.md" target="_blank">Canonical Geometry Spec (.md)</a></li>
@@ -3737,16 +3764,16 @@ def build_html_part2() -> str:
         note: 'Y = 26.75"..28.25", Z = 15.50"..19.00" — Closes the 4 captive backrest mortise slots', finish: 'doug_fir'
       }});
       [
-        [0.75, 5.25, 'Left End Spacer #1'],
-        [9.50, 21.00, 'Left-Mid Spacer #2 (Between Slots 1 & 2)'],
-        [34.00, 12.00, 'Center Spacer #3 (Between Slots 2 & 3)'],
-        [49.50, 21.00, 'Right-Mid Spacer #4 (Between Slots 3 & 4)'],
-        [74.00, 5.25, 'Right End Spacer #5']
+        [0.75, 5.50, 'Left End Spacer #1'],
+        [9.375, 21.25, 'Left-Mid Spacer #2 (Between Slots 1 & 2)'],
+        [33.75, 12.50, 'Center Spacer #3 (Between Slots 2 & 3)'],
+        [49.375, 21.25, 'Right-Mid Spacer #4 (Between Slots 3 & 4)'],
+        [73.75, 5.50, 'Right End Spacer #5']
       ].forEach(([sx, sw, sName]) => {{
         addParametricBox(sw, 1.5, 3.5, sx, 25.25, 15.50, 0xf87171, new THREE.Vector3(0, 0, 4), null, 1.0, {{
           tag: 'PART F', name: `Rear Mortise Pocket Block — ${{sName}}`,
           stock: '2x4 Stud (1.50"×3.50")', dims: `1.50" × 3.50" × ${{sw.toFixed(2)}}"`,
-          note: `X = ${{sx}}"..${{(sx + sw).toFixed(2)}}", Y = 25.25"..26.75", Z = 15.50"..19.00"`, finish: 'doug_fir'
+          note: `X = ${{sx}}"..${{(sx + sw).toFixed(3)}}", Y = 25.25"..26.75", Z = 15.50"..19.00"`, finish: 'doug_fir'
         }});
         addParametricBox(sw, 1.5, 0.75, sx, 25.25, 19.00, 0xc4b5fd, new THREE.Vector3(0, 6, 4), null, 1.0, {{
           tag: 'PART M', name: `1x2 Mortise Spacer Cap — ${{sName}}`,
@@ -3757,7 +3784,7 @@ def build_html_part2() -> str:
       addParametricBox(78.5, 1.5, 0.75, 0.75, 26.75, 19.00, 0xc4b5fd, new THREE.Vector3(0, 6, 6), null, 1.0, {{
         tag: 'PART J', name: 'Rear Pocket Backer Cap Strip',
         stock: 'Stain-Grade 1x2 Trim (0.75"×1.50")', dims: '0.75" × 1.50" × 78.50" (78-1/2")',
-        note: 'Y = 26.75"..28.25", Z = 19.00"..19.75" — Frames rear of the 4 drop-in slots', finish: 'stain_oak'
+        note: 'Y = 26.75"..28.25", Z = 19.00"..19.75" — Supports the 90° solid wood rear shoulder ledge of each 2x6 upright!', finish: 'stain_oak'
       }});
 
       // --- 3. 3/4" BIRCH PLYWOOD SEAT DECK (Z = 19.00..19.75) ---
@@ -3773,10 +3800,10 @@ def build_html_part2() -> str:
         stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 80.00" (45° Mitered Ends)',
         note: 'Z = 15.25"..20.75" — Blind-screwed from inside; forms +1.00" cushion lip!', finish: 'stain_oak'
       }});
-      addParametricBox(80.0, 0.75, 5.50, 0.0, 28.25, 15.25, 0xa78bfa, new THREE.Vector3(0, 2, 12), null, 1.0, {{
+      addParametricBox(80.0, 0.75, 4.50, 0.0, 28.25, 15.25, 0xa78bfa, new THREE.Vector3(0, 2, 12), null, 1.0, {{
         tag: 'PART H', name: 'Rear Stain-Grade Outer Apron Trim',
-        stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 80.00" (45° Mitered Ends)',
-        note: 'Y = 28.25"..29.00", Z = 15.25"..20.75" — Blind-screwed from inside', finish: 'stain_oak'
+        stock: 'Stain-Grade 1x6 Select Pine / Oak', dims: '0.75" × 5.50" × 80.00" (Flush at Z=19.75" at Slots)',
+        note: 'Y = 28.25"..29.00", Z = 15.25"..19.75" — Flush with rear cap at slots so the 2x6 90° wood ledge sits flat', finish: 'stain_oak'
       }});
       addParametricBox(0.75, 27.5, 5.50, 0.0, 0.75, 15.25, 0x8b5cf6, new THREE.Vector3(-12, 2, 0), null, 1.0, {{
         tag: 'PART I', name: 'Left Side Stain-Grade Outer Apron',
@@ -3789,30 +3816,74 @@ def build_html_part2() -> str:
         note: 'X = 79.25"..80.00", Z = 15.25"..20.75" — Projects +1.00" above plywood deck', finish: 'stain_oak'
       }});
 
-      // --- 5. TWO 40" MODULAR DROP-IN 10° SLANTED BACKRESTS ---
+      // --- 5. TWO 40" MODULAR DROP-IN 10° SLANTED BACKRESTS (DOUBLED 2x6 = 3.00" WIDE) ---
       const backDir = new THREE.Vector3(0, 18, 4);
+      function addExtruded2x6Half(x0, colorHex, info) {{
+        // Exact 6-point side profile in (oldX = -(benchY - 25.25), oldY = benchZ - 15.50)
+        const sh = new THREE.Shape();
+        sh.moveTo(0.0, 0.0);        // Bottom-front of peg (Y=25.25, Z=15.50)
+        sh.lineTo(-1.44, 0.0);      // Bottom-back of peg (Y=26.69, Z=15.50)
+        sh.lineTo(-1.44, 4.25);     // 90° inner corner at top of peg (Y=26.69, Z=19.75)
+        sh.lineTo(-5.50, 4.25);     // 90° Solid Wood Rear Shoulder Ledge resting on couch (Y=30.75, Z=19.75)
+        sh.lineTo(-5.50, 23.50);    // 90° Vertical Back Edge up to top (Y=30.75, Z=39.00)
+        sh.lineTo(-3.39, 23.50);    // Top-front corner (2.11" wide top, Y=28.64, Z=39.00)
+        sh.lineTo(0.0, 4.25);       // 10° Front Lean down to couch surface (Y=25.25, Z=19.75)
+        sh.closePath();
+
+        const geom = new THREE.ExtrudeGeometry(sh, {{ depth: 1.50, bevelEnabled: false }});
+        geom.rotateY(Math.PI / 2);
+
+        const cadMat = new THREE.MeshStandardMaterial({{ color: colorHex, roughness: 0.55, metalness: 0.08 }});
+        const realMat = makeRealMaterial('stain_oak');
+        const mesh = new THREE.Mesh(geom, isRealisticRender ? realMat : cadMat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        const edges = new THREE.EdgesGeometry(geom);
+        const line = new THREE.LineSegments(
+          edges,
+          new THREE.LineBasicMaterial({{ color: 0x0f172a, transparent: true, opacity: 0.50 }})
+        );
+        mesh.add(line);
+
+        const cx = x0 - 40.0;
+        const cy = 15.50;
+        const cz = 25.25 - 14.5;
+        mesh.position.set(cx, cy, cz);
+        mesh.userData = info;
+
+        scene.add(mesh);
+        pickableMeshes.push(mesh);
+        explodeParts.push({{
+          mesh, line, cadMat, realMat,
+          basePos: new THREE.Vector3(cx, cy, cz),
+          dir: backDir
+        }});
+        backrestGroup.push(mesh);
+      }}
+
       [
-        [6.05, 'Slot #1 (X = 6.00..9.50", Left-Outer)'],
-        [30.55, 'Slot #2 (X = 30.50..34.00", Left-Inner)'],
-        [46.05, 'Slot #3 (X = 46.00..49.50", Right-Inner)'],
-        [70.55, 'Slot #4 (X = 70.50..74.00", Right-Outer)']
+        [6.3125, 'Slot #1 (X = 6.25..9.375", Left-Outer)'],
+        [30.6875, 'Slot #2 (X = 30.625..33.75", Left-Inner)'],
+        [46.3125, 'Slot #3 (X = 46.25..49.375", Right-Inner)'],
+        [70.6875, 'Slot #4 (X = 70.625..73.75", Right-Outer)']
       ].forEach(([ux, sDesc], idx) => {{
         const upInfo = {{
-          tag: 'PART K', name: `10° Angled Backrest Upright #${{idx + 1}} — ${{sDesc}}`,
-          stock: 'Cut from 2x6 × 8 ft Board (1.50"×5.50")', dims: '23.50" Total L (4.25" Tenon + 19.25" 10° Spine)',
-          note: 'Drops vertically into 3.5"×1.5" captive slot; waxed with paraffin for 1-hand lift', finish: 'stain_oak'
+          tag: 'PART K', name: `Doubled 2x6 Upright #${{idx + 1}} (3.00" Wide) — ${{sDesc}}`,
+          stock: '2× Laminated 2x6 Halves (3.00" L-R × 5.50" F-B × 23.50" H)',
+          dims: '3.00" × 1.44" Peg + 90° Solid Wood Rear Ledge + 10° Front Lean',
+          note: '90° solid wood rear shoulder sits flat on couch top (Z=19.75"); front leans back 10°', finish: 'stain_oak'
         }};
-        addParametricBox(3.4, 1.4, 4.25, ux, 25.3, 15.50, 0xfb923c, backDir, backrestGroup, 1.0, upInfo);
-        const spine = addParametricBox(3.4, 2.2, 19.0, ux, 26.6, 19.75, 0xf97316, backDir, backrestGroup, 1.0, upInfo);
-        spine.rotation.x = THREE.MathUtils.degToRad(10.0);
+        addExtruded2x6Half(ux, 0xfb923c, upInfo);
+        addExtruded2x6Half(ux + 1.50, 0xf97316, upInfo);
       }});
-      const pL = addParametricBox(39.25, 0.75, 15.0, 0.6, 26.4, 23.25, 0xfdba74, backDir, backrestGroup, 1.0, {{
+      const pL = addParametricBox(39.25, 0.75, 15.0, 0.6, 25.45, 23.25, 0xfdba74, backDir, backrestGroup, 1.0, {{
         tag: 'PART L', name: 'Left Modular Backrest Face Panel (#1 of 2)',
         stock: '3/4" Cabinet-Grade Birch Plywood', dims: '39.25" W × 15.00" H × 0.75" Thick',
-        note: 'Z = 23.25"..38.25" (Starts 3.50" above deck so 4" seat cushion tucks underneath)', finish: 'birch_ply'
+        note: 'Screwed into the 3.00"-wide 10° front faces of Uprights #1 & #2 (starts 3.50" above deck)', finish: 'birch_ply'
       }});
       pL.rotation.x = THREE.MathUtils.degToRad(10.0);
-      const pR = addParametricBox(39.25, 0.75, 15.0, 40.15, 26.4, 23.25, 0xfdba74, backDir, backrestGroup, 1.0, {{
+      const pR = addParametricBox(39.25, 0.75, 15.0, 40.15, 25.45, 23.25, 0xfdba74, backDir, backrestGroup, 1.0, {{
         tag: 'PART L', name: 'Right Modular Backrest Face Panel (#2 of 2)',
         stock: '3/4" Cabinet-Grade Birch Plywood', dims: '39.25" W × 15.00" H × 0.75" Thick',
         note: 'Lifts straight out in 3 seconds to convert couch into flat play/coffee table!', finish: 'birch_ply'
@@ -4010,8 +4081,8 @@ def build_html_part2() -> str:
         cam: [45, 42, -88]
       }},
       3: {{
-        title: 'Phase 3 of 7: Ladder Joist Grid & Captive Mortise Sleeves',
-        desc: 'Install 19.5" Side Rails, five 20.0" Interior Joists (X=16, 28, 40, 52, 64"), Rear Pocket Backer Rail & 5 Spacer Blocks using a scrap 2×4 gauge.',
+        title: 'Phase 3 of 7: Ladder Joist Grid & Captive 3-1/8" × 1-1/2" Mortise Sleeves',
+        desc: 'Install 19.5" Side Rails, five 20.0" Interior Joists (X=16, 28, 40, 52, 64"), Rear Pocket Backer Rail & 5 Spacer Blocks (5.50", 21.25", 12.50").',
         fasteners: '🔩 24× 2-1/2" HD Pocket Screws + 24× 3" Spacer Screws',
         cam: [38, 72, -62]
       }},
@@ -4028,9 +4099,9 @@ def build_html_part2() -> str:
         cam: [68, 44, -82]
       }},
       6: {{
-        title: 'Phase 6 of 7: Building the Two 40" Slanted Drop-In Backrests',
-        desc: 'Assemble the four 10° tapered 2×6 uprights and two 39.25" × 15.0" Birch Plywood panels, then drop into the 4 rear mortise slots.',
-        fasteners: '🔩 16× 2-1/2" Pocket Screws + 24× #8 × 1-1/2" Panel Screws',
+        title: 'Phase 6 of 7: Doubled 3.00"-Wide 2×6 Uprights (90° Rear Ledge + 10° Front Lean)',
+        desc: 'Cut 8 halves from two 2×6s (90° solid wood rear shoulder ledge + 10° front lean), glue in pairs to 3.00" wide, and attach the two 39.25"×15" panels.',
+        fasteners: '🔩 20× 2-3/4" Lamination Screws + 16× #8 × 1-3/4" Panel Screws',
         cam: [-54, 48, 78]
       }},
       7: {{
@@ -4173,7 +4244,7 @@ def build_html_part2() -> str:
     let isYouTubeEmbedActive = false;
 
     function getYouTubeEmbedUrl(startSec = 0) {{
-      const vidId = isBeginnerVideoEdition ? 'gW_k-L_8o7U' : '40DqGxwdRx4';
+      const vidId = isBeginnerVideoEdition ? 'tZgbSqcj_mg' : 'bgo88c1nscw';
       const s = Math.floor(startSec || 0);
       return `https://www.youtube.com/embed/${{vidId}}?rel=0&modestbranding=1${{s > 0 ? '&start=' + s + '&autoplay=1' : ''}}`;
     }}
@@ -4230,14 +4301,14 @@ def build_html_part2() -> str:
         btnEl.textContent = '📐 Switch to: Detailed Engineering Blueprint Video';
         dlEl.href = file;
         dlEl.textContent = '⬇ Download MP4';
-        if (ytEl) ytEl.href = 'https://youtu.be/gW_k-L_8o7U';
+        if (ytEl) ytEl.href = 'https://youtu.be/tZgbSqcj_mg';
       }} else {{
         if (badgeEl) badgeEl.textContent = '📐 DETAILED CAD & BLUEPRINT WALKTHROUGH';
         titleEl.textContent = 'Complete 7-Phase Workshop Video Walkthrough (3D CAD + Blueprints + Fastener HUD)';
         btnEl.textContent = '🌱 Switch to: Simplified Beginner 3D Video';
         dlEl.href = file;
         dlEl.textContent = '⬇ Download MP4';
-        if (ytEl) ytEl.href = 'https://youtu.be/40DqGxwdRx4';
+        if (ytEl) ytEl.href = 'https://youtu.be/bgo88c1nscw';
       }}
     }}
 
@@ -4284,6 +4355,36 @@ def main():
         out_path = repo_root / fname
         out_path.write_text(page_html, encoding="utf-8")
         print(f"[OK] Generated {out_path} (default_view='{default_view}', {len(page_html):,} bytes)")
+
+    # Also export all 14 standalone SVG files to assets/blueprints/
+    bp_dir = repo_root / "assets" / "blueprints"
+    bp_dir.mkdir(parents=True, exist_ok=True)
+    p_svgs = generate_phase_svgs()
+    svg_exports = [
+        ("cut_map_01_plywood_sheet.svg", generate_svg_plywood_cut_map()),
+        ("cut_map_02_framing_lumber.svg", generate_svg_2x6_backrest_nesting()),
+        ("cut_map_03_trim_and_4x4.svg", generate_svg_dimensional_lumber_map()),
+        ("blueprint_01_top_plan_view.svg", generate_svg_blueprint_top_plan()),
+        ("blueprint_02_front_elevation.svg", generate_svg_blueprint_elevations()),
+        ("blueprint_03_side_cross_section.svg", generate_svg_blueprint_side_section()),
+        ("blueprint_04_mortise_sleeve_detail.svg", generate_svg_blueprint_joinery_details()),
+        ("phase_01_legs_and_wheel_notches.svg", p_svgs[1]),
+        ("phase_02_outer_frame_and_sleeves.svg", p_svgs[2]),
+        ("phase_03_interior_ribs_and_center_leg.svg", p_svgs[3]),
+        ("phase_04_plywood_seat_deck.svg", p_svgs[4]),
+        ("phase_05_mitered_1x6_trim_apron.svg", p_svgs[5]),
+        ("phase_06_slanted_backrest_modules.svg", p_svgs[6]),
+        ("phase_07_finishing_pads_and_rollers.svg", p_svgs[7]),
+    ]
+    for svg_name, svg_wrap in svg_exports:
+        s_idx = svg_wrap.find("<svg")
+        e_idx = svg_wrap.rfind("</svg>")
+        if s_idx != -1 and e_idx != -1:
+            raw_svg = svg_wrap[s_idx : e_idx + 6]
+            if 'xmlns="http://www.w3.org/2000/svg"' not in raw_svg:
+                raw_svg = raw_svg.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ', 1)
+            (bp_dir / svg_name).write_text(raw_svg, encoding="utf-8")
+            print(f"[OK] Exported {bp_dir / svg_name}")
 
 
 if __name__ == "__main__":

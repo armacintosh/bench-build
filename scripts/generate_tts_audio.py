@@ -9,7 +9,9 @@ import subprocess
 import urllib.request
 import urllib.error
 
-VIDEO_BUILD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".video_build")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(SCRIPT_DIR) if os.path.basename(SCRIPT_DIR) == "scripts" else SCRIPT_DIR
+VIDEO_BUILD_DIR = os.path.join(BASE_DIR, ".video_build")
 AUDIO_DIR = os.path.join(VIDEO_BUILD_DIR, "audio")
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
@@ -18,7 +20,7 @@ def load_deepgram_key() -> str:
     key = os.environ.get("DEEPGRAM_API_KEY", "").strip()
     if key:
         return key
-    for env_path in [".env", os.path.expanduser("~/.env")]:
+    for env_path in [os.path.join(BASE_DIR, ".env"), ".env", os.path.expanduser("~/.env")]:
         if os.path.exists(env_path):
             with open(env_path, "r", encoding="utf-8") as f:
                 for line in f:
@@ -51,15 +53,15 @@ CHAPTERS = [
         "id": "01_cut_maps",
         "phase_num": 0,
         "badge": "PRE-BUILD CUT MAPS",
-        "title": "Master Cut List & Zero-Waste Nesting Layout",
-        "subtitle": "Parts A–M • 1 Sheet 3/4\" Birch Plywood + 8-Foot Dimensional Lumber",
-        "fasteners": "Part H: 78.50\" × 23.75\" Deck • Part L: 2× 39.25\" × 15.0\" Back Panels • Part K: 4× 23.5\" Uprights",
-        "pro_tip": "Nest the four 23.5\" angled backrest uprights (Part K) in opposing pairs from a single 8-foot 2×6 board.",
+        "title": "Master Cut List & Doubled 2×6 Backrest Layout",
+        "subtitle": "Parts A–M • 1 Sheet 3/4\" Birch Plywood + Two 2×6 Boards (8 Halves → 4 Doubled Posts)",
+        "fasteners": "Part G: 78.50\" × 23.75\" Deck • Part L: 2× 39.25\" × 15.0\" Back Panels • Part K: 8× 23.5\" 2×6 Halves",
+        "pro_tip": "Cut 8 identical 23.5\" halves from two 8-foot 2×6 boards (90° rear shoulder ledge + 10° front lean) and glue in pairs!",
         "narration": (
             "Before cutting, label every board from Part A through Part M. From one sheet of three-quarter-inch "
             "birch plywood, rip the seventy-eight-and-a-half by twenty-three-and-three-quarter-inch seat deck "
-            "and two backrest panels. From a single eight-foot two-by-six, lay out the four angled backrest uprights "
-            "in opposing pairs, combining a four-and-a-quarter-inch straight bottom tenon with a ten-degree reclined upper spine."
+            "and two backrest panels. From two eight-foot two-by-six boards, cut eight twenty-three-and-a-half-inch halves, "
+            "each with a one-and-seven-sixteenths-inch bottom peg, a ninety-degree solid wood rear shoulder ledge, and a ten-degree front lean."
         ),
     },
     {
@@ -96,15 +98,16 @@ CHAPTERS = [
         "id": "04_phase3_grid",
         "phase_num": 3,
         "badge": "PHASE 3 OF 7",
-        "title": "Ladder Joist Grid & Captive Mortise Sleeves",
-        "subtitle": "5 Interior Joists (X = 16\", 28\", 40\", 52\", 64\") + 4 Precision 1.5\" × 3.5\" Backrest Slots",
+        "title": "Ladder Joist Grid & Four 3-1/8\" × 1-1/2\" Slots",
+        "subtitle": "5 Interior Joists (X = 16\", 28\", 40\", 52\", 64\") + 5 Spacers (5.50\", 21.25\", 12.50\")",
         "fasteners": "24× 2-1/2\" HD Pocket Screws + 24× 3\" #10 Structural Screws Through Spacer Blocks",
-        "pro_tip": "Wrap a scrap 2×4 in painter's tape as a temporary spacer gauge inside each slot while driving screws!",
+        "pro_tip": "Use a 3.00\" doubled block plus a 1/8\" shim as a spacer gauge so every slot is 3-1/8\" × 1-1/2\"!",
         "narration": (
-            "Phase Three: Assemble the ladder joist grid and rear drop-in mortise sleeves. Connect the front "
-            "and rear assemblies with twenty-two-and-a-quarter-inch side rails and five interior cross-joists "
-            "spaced at sixteen, twenty-eight, forty, fifty-two, and sixty-four inches. Then install the inner "
-            "mortise rail and five spacer blocks, clamping a scrap two-by-four inside each pocket so the four backrest sleeves never bind."
+            "Phase Three: Assemble the ladder joist grid and four rear backrest slots. Connect the front "
+            "and rear assemblies with side rails and five interior cross-joists spaced at sixteen, twenty-eight, "
+            "forty, fifty-two, and sixty-four inches. Behind the main back rail, install five spacer blocks "
+            "at five and a half, twenty-one and a quarter, and twelve and a half inches, leaving four open slots "
+            "that are three and one-eighth inches wide by one and a half inches deep."
         ),
     },
     {
@@ -141,15 +144,16 @@ CHAPTERS = [
         "id": "07_phase6_backrests",
         "phase_num": 6,
         "badge": "PHASE 6 OF 7",
-        "title": "Building the Two 40\" Slanted Drop-In Backrests",
-        "subtitle": "Z = 15.50\" to 34.50\" • 10° Ergonomic Recline • Two Independent 39.25\" Modules",
-        "fasteners": "16× 2-1/2\" Pocket Screws + 24× #8 × 1-1/2\" Panel Screws + Wood Glue",
-        "pro_tip": "Chamfer the bottom 1/4\" of all four 2×6 tenon tips at 45° so they self-guide into the rear pockets.",
+        "title": "Doubled 3.00\"-Wide 2×6 Uprights & 10° Backrests",
+        "subtitle": "Z = 15.50\" to 39.00\" • 90° Solid Wood Rear Shoulder Ledge on Z = 19.75\" + 10° Front Lean",
+        "fasteners": "20× 2-3/4\" #10 Lamination Screws + 16× #8 × 1-3/4\" Panel Screws + Wood Glue",
+        "pro_tip": "The 90° solid wood rear shoulder ledge sits flat on top of the couch (6.75 sq in per post) for rock-solid support!",
         "narration": (
-            "Phase Six: Build the two modular forty-inch slanted backrests. Join each pair of ten-degree tapered "
-            "two-by-six uprights with thirty-nine-and-a-quarter-inch top and bottom rails, keeping the bottom rail "
-            "four-and-a-quarter inches above the base of the tenons. Glue and screw the fifteen-inch birch plywood "
-            "face panels onto the angled spines, then test-fit both modules in the rear sleeves."
+            "Phase Six: Build the four doubled two-by-six uprights and attach the backrest panels. "
+            "Each two-by-six stands with its five-and-a-half-inch width running front-to-back, featuring a ninety-degree "
+            "solid wood rear shoulder ledge that rests flat on top of the couch surface, a vertical back edge, and a ten-degree "
+            "front lean. Glue and screw the eight halves together in pairs to form four three-inch-wide posts, "
+            "screw the thirty-nine-and-a-quarter-inch birch panels onto the wide front faces, and drop both backrests into the slots."
         ),
     },
     {
